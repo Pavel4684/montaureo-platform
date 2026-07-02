@@ -408,6 +408,15 @@ export default function MontaureoPlatform() {
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [chat, chatBusy, section]);
 
+  // Загружаем скрипт Stripe Buy Button один раз при монтировании
+  useEffect(() => {
+    if (document.querySelector('script[src="https://js.stripe.com/v3/buy-button.js"]')) return;
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = "https://js.stripe.com/v3/buy-button.js";
+    document.head.appendChild(script);
+  }, []);
+
   useEffect(() => {
     try {
       const params = new URLSearchParams(window.location.search);
@@ -824,7 +833,12 @@ export default function MontaureoPlatform() {
                   <div style={{ display: "flex", flexDirection: "column", gap: 9, fontSize: 13, color: "#E6E5DE", flex: 1 }}>
                     {t.premF.map((x) => <div key={x} style={{ display: "flex", gap: 8, alignItems: "center" }}><Sparkles size={14} color={C.gold} /> {x}</div>)}
                   </div>
-                  <button onClick={() => setPlan("premium")} className="mt-cta" style={{ marginTop: 18, cursor: "pointer", border: "none", borderRadius: 12, padding: "13px", fontSize: 14.5, fontWeight: 700, color: "#1A1408", background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})` }}>{t.btnSub}</button>
+                  <div style={{ marginTop: 18 }}>
+                    <stripe-buy-button
+                      buy-button-id="buy_btn_1TommTIRsiHdRprOShYG5j1l"
+                      publishable-key="pk_live_51Tolc6IRsiHdRprORX1grlaxsmNJ4PBPzDi3foq44ITaC8kTIIsCo47AF2tQA84Mcoah6i8aEiKMz692BsNbomw1000BjYeooq"
+                    ></stripe-buy-button>
+                  </div>
                   <button onClick={() => setPlan("premium")} style={{ marginTop: 9, cursor: "pointer", border: `1px solid ${C.gold}`, borderRadius: 12, padding: "12px", fontSize: 13.5, fontWeight: 600, color: C.goldHi, background: "transparent" }}>{t.btnOnce}</button>
                 </div>
                 <div style={{ flex: "1 1 220px", maxWidth: 300, border: `1px solid ${C.line}`, borderRadius: 18, padding: "22px 20px", background: C.panel, display: "flex", flexDirection: "column" }}>
