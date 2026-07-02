@@ -71,6 +71,7 @@ const T = {
     pmcFreeTitle: "MONTAUREO PREMIUM", pmcFreeSub: "Unlock Velvet Concierge — Kate and Max turn the scenario into a plan", pmcUnlock: "Unlock",
     pmcPremTitle: "PREMIUM ACTIVE", pmcPremSub: "Want a real MFI advisor?", pmcToPrivate: "Upgrade to Private", pmcPrivTitle: "PRIVATE", pmcPrivSub: "A Monaco Finance International advisor will be in touch.",
     dom: { null: ["Velvet Concierge", "Banking, real estate, lifestyle, events, relocation — ask anything."], Banking: ["Banking", "Where and how to open an account — pros and cons by bank."], RealEstate: ["Real Estate", "Where to buy property, with price guidance."], Lifestyle: ["Lifestyle", "Where to dine, private service, seasonal trends."], Events: ["Events", "International forums, fairs, private events."], Credit: ["Credit", "Credit and Lombard — where and on what terms."] },
+    partnerBankingTitle: "Manage everything in one place", partnerBankingDesc: "monaco-finance.com is our free client portal — track all your accounts, Lombard lines and more.", partnerBankingCta: "Explore monaco-finance.com",
     suggest: { null: ["Best jurisdictions for my profile", "Compare Monaco vs UAE on tax", "Where do I start with relocation?"], Banking: ["Which bank should I open an account with?", "Compare private banks in Monaco", "What's needed for KYC?"], RealEstate: ["What can I buy within my budget?", "Rent or buy?", "Best areas by the sea"], Lifestyle: ["Best restaurants of the 2026 season", "Private service and clubs", "What's new on the Riviera"], Events: ["Upcoming private forums", "Calendar of fairs and auctions", "Grand Prix and yacht shows"], Credit: ["Lombard terms against my portfolio", "Where to get an in-fine loan?", "Rates by country"] },
   },
   fr: {
@@ -120,6 +121,7 @@ const T = {
     pmcFreeTitle: "MONTAUREO PREMIUM", pmcFreeSub: "Débloquez Velvet Concierge — Kate et Max transforment le scénario en plan", pmcUnlock: "Débloquer",
     pmcPremTitle: "PREMIUM ACTIF", pmcPremSub: "Vous voulez un vrai conseiller MFI ?", pmcToPrivate: "Passer à Private", pmcPrivTitle: "PRIVATE", pmcPrivSub: "Un conseiller Monaco Finance International vous contactera.",
     dom: { null: ["Velvet Concierge", "Banque, immobilier, art de vivre, événements, relocation — demandez tout."], Banking: ["Banque", "Où et comment ouvrir un compte — avantages et inconvénients par banque."], RealEstate: ["Immobilier", "Où acheter, avec une estimation de prix."], Lifestyle: ["Art de vivre", "Où dîner, service privé, tendances de saison."], Events: ["Événements", "Forums internationaux, foires, événements privés."], Credit: ["Crédit", "Crédit et Lombard — où et à quelles conditions."] },
+    partnerBankingTitle: "Tout centraliser en un lieu", partnerBankingDesc: "monaco-finance.com est notre portail client gratuit — suivez tous vos comptes, lignes Lombard et plus.", partnerBankingCta: "Découvrir monaco-finance.com",
     suggest: { null: ["Meilleures juridictions pour mon profil", "Comparez Monaco et les EAU sur la fiscalité", "Par où commencer la relocation ?"], Banking: ["Dans quelle banque ouvrir un compte ?", "Comparez les banques privées de Monaco", "Que faut-il pour le KYC ?"], RealEstate: ["Que puis-je acheter avec mon budget ?", "Louer ou acheter ?", "Meilleurs quartiers en bord de mer"], Lifestyle: ["Meilleurs restaurants de la saison 2026", "Service privé et clubs", "Quoi de neuf sur la Riviera"], Events: ["Prochains forums privés", "Calendrier des foires et ventes aux enchères", "Grand Prix et salons nautiques"], Credit: ["Conditions Lombard sur mon portefeuille", "Où obtenir un prêt in fine ?", "Taux par pays"] },
   },
   ru: {
@@ -169,6 +171,7 @@ const T = {
     pmcFreeTitle: "MONTAUREO PREMIUM", pmcFreeSub: "Откройте Velvet Concierge — Kate и Max превратят сценарий в план", pmcUnlock: "Разблокировать",
     pmcPremTitle: "PREMIUM АКТИВЕН", pmcPremSub: "Хотите реального советника MFI?", pmcToPrivate: "Перейти на Private", pmcPrivTitle: "PRIVATE", pmcPrivSub: "Советник Monaco Finance International свяжется с вами.",
     dom: { null: ["Velvet Concierge", "Банки, недвижимость, lifestyle, события, релокация — спросите что угодно."], Banking: ["Banking", "Где и как открыть счёт — плюсы и минусы по банкам."], RealEstate: ["Real Estate", "Где покупать недвижимость, с прикидкой по цене."], Lifestyle: ["Lifestyle", "Где поужинать, частный сервис, тренды сезона."], Events: ["Events", "Международные форумы, ярмарки, закрытые мероприятия."], Credit: ["Credit", "Кредит и Lombard — где и под какие условия."] },
+    partnerBankingTitle: "Всё в одном месте", partnerBankingDesc: "monaco-finance.com — наш бесплатный клиентский портал: все счета, Lombard-линии и многое другое.", partnerBankingCta: "Перейти на monaco-finance.com",
     suggest: { null: ["Лучшие юрисдикции под мой профиль", "Сравни Монако и ОАЭ по налогам", "С чего начать релокацию?"], Banking: ["В каком банке открыть счёт?", "Сравни приватные банки Монако", "Что нужно для KYC?"], RealEstate: ["Что купить под мой бюджет?", "Аренда или покупка?", "Лучшие районы у моря"], Lifestyle: ["Лучшие рестораны сезона 2026", "Частный сервис и клубы", "Что нового на Лазурном берегу"], Events: ["Ближайшие закрытые форумы", "Календарь ярмарок и аукционов", "Гран-при и яхт-шоу"], Credit: ["Условия Lombard под портфель", "Где взять кредит in fine?", "Ставки по странам"] },
   },
 };
@@ -870,9 +873,28 @@ export default function MontaureoPlatform() {
                     ); })}
                   </div>
                 </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginTop: 12 }}>
+                  {[["concierge", Sparkles], ["banking", Landmark], ["realestate", Building2], ["lifestyle", Heart], ["events", Calendar], ["credit", CreditCard]].map(([key, Icon]) => {
+                    const on = section === key;
+                    return (
+                      <button key={key} onClick={() => setSection(key)} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6, border: `1px solid ${on ? C.gold : C.line}`, background: on ? "rgba(198,163,90,0.14)" : "transparent", color: on ? C.snow : C.mist, padding: "7px 13px", borderRadius: 99, fontSize: 12.5, fontWeight: on ? 600 : 400 }}>
+                        <Icon size={13} color={on ? C.gold : C.mist} /> {t.nav[key]}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               <div style={{ flex: 1, overflowY: "auto", padding: "18px 22px", display: "flex", flexDirection: "column", gap: 14 }}>
+                {focus === "Banking" && (
+                  <div className="mt-up" style={{ alignSelf: "flex-start", maxWidth: 560, width: "100%", border: `1px solid rgba(198,163,90,0.35)`, borderRadius: 16, padding: "16px 18px", background: "linear-gradient(180deg, rgba(198,163,90,0.08), rgba(16,17,23,0.5))" }}>
+                    <div style={{ fontSize: 13.5, fontWeight: 600, color: C.goldHi, marginBottom: 4 }}>{t.partnerBankingTitle}</div>
+                    <div style={{ fontSize: 12.5, color: C.mist, lineHeight: 1.5, marginBottom: 12 }}>{t.partnerBankingDesc}</div>
+                    <a href="https://monaco-finance.com" target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 7, textDecoration: "none", border: `1px solid ${C.gold}`, borderRadius: 99, padding: "9px 16px", fontSize: 12.5, fontWeight: 600, color: C.goldHi }}>
+                      {t.partnerBankingCta} <ArrowRight size={13} strokeWidth={2.4} />
+                    </a>
+                  </div>
+                )}
                 {chat.length === 0 && (
                   <div className="mt-up" style={{ alignSelf: "flex-start", maxWidth: 560 }}>
                     <div style={{ fontSize: 10.5, letterSpacing: ".14em", textTransform: "uppercase", color: C.gold, marginBottom: 6 }}>{persona}</div>
