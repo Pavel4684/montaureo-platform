@@ -57,9 +57,10 @@ const T = {
     pwEyebrow: "Montaureo Concierge", pwReady: "Your future is ready.", pwVip: "Your VIP concierge", pwUnlock: "Unlock your personal AI concierge.",
     pwBodyA: "Kate and Max will help you turn this scenario", pwBodyB: "into a real plan: banking, real estate, credit, relocation.",
     tierFree: "Free", tierFreeNow: "Current plan", tierFreeActive: "Active", freeF: ["Landing and sign-in", "Profile questionnaire", "Two Futures · Stay vs Move"],
-    recommended: "Recommended", tierPremium: "Premium", perMonth: "/mo", premiumAlt: "or €299 — one-time relocation plan",
+    recommended: "Recommended", tierPremium: "Premium", perMonth: "/mo", premiumAlt: "or $299 — one-time relocation plan",
+    promoNote: "Use code WELCOME for your first month at $4.99",
     premF: ["Velvet Concierge · Kate & Max", "Banking · Real Estate · Credit", "Lifestyle · Events · KYC checklists", "8 jurisdictions, profile-aware"],
-    btnSub: "Subscribe €49/mo", btnOnce: "€299 — one-time plan",
+    btnSub: "Subscribe $49/mo", btnOnce: "$299 — one-time plan",
     tierPrivate: "Private", privatePrice: "By request", privateNote: "Inner circle", privF: ["Everything in Premium", "A real MFI advisor", "Deal & relocation support"], requestAccess: "Request access",
     pwReassure: "Two Futures stays free forever. Cancel anytime. Payment is a demo: buttons open the concierge immediately.",
     profile: "Profile", yourProfile: "Your profile", profileSub: "This data powers both Two Futures and Velvet Concierge. Fill it once.",
@@ -105,9 +106,10 @@ const T = {
     pwEyebrow: "Montaureo Concierge", pwReady: "Votre avenir est prêt.", pwVip: "Votre concierge VIP", pwUnlock: "Débloquez votre concierge IA personnel.",
     pwBodyA: "Kate et Max vous aideront à transformer ce scénario", pwBodyB: "en un vrai plan : banque, immobilier, crédit, relocation.",
     tierFree: "Free", tierFreeNow: "Plan actuel", tierFreeActive: "Actif", freeF: ["Accueil et connexion", "Questionnaire de profil", "Two Futures · Rester ou Partir"],
-    recommended: "Recommandé", tierPremium: "Premium", perMonth: "/mois", premiumAlt: "ou €299 — plan de relocation unique",
+    recommended: "Recommandé", tierPremium: "Premium", perMonth: "/mois", premiumAlt: "ou $299 — plan de relocation unique",
+    promoNote: "Utilisez le code WELCOME pour votre premier mois à $4.99",
     premF: ["Velvet Concierge · Kate & Max", "Banque · Immobilier · Crédit", "Art de vivre · Événements · Checklists KYC", "8 juridictions, profil pris en compte"],
-    btnSub: "Abonnement €49/mois", btnOnce: "€299 — plan unique",
+    btnSub: "Abonnement $49/mois", btnOnce: "$299 — plan unique",
     tierPrivate: "Private", privatePrice: "Sur demande", privateNote: "Cercle privé", privF: ["Tout le Premium", "Un vrai conseiller MFI", "Accompagnement transactions & relocation"], requestAccess: "Demander l'accès",
     pwReassure: "Two Futures reste gratuit pour toujours. Annulable à tout moment. Le paiement est une démo : les boutons ouvrent le concierge immédiatement.",
     profile: "Profil", yourProfile: "Votre profil", profileSub: "Ces données alimentent Two Futures et Velvet Concierge. À remplir une fois.",
@@ -153,9 +155,10 @@ const T = {
     pwEyebrow: "Montaureo Concierge", pwReady: "Ваше будущее готово.", pwVip: "Ваш VIP-консьерж", pwUnlock: "Откройте личного ИИ-консьержа.",
     pwBodyA: "Kate и Max помогут превратить этот сценарий", pwBodyB: "в реальный план: банки, недвижимость, кредит, релокация.",
     tierFree: "Free", tierFreeNow: "Текущий план", tierFreeActive: "Активен", freeF: ["Landing и вход", "Анкета профиля", "Two Futures · Stay vs Move"],
-    recommended: "Рекомендуем", tierPremium: "Premium", perMonth: "/мес", premiumAlt: "или €299 — разовый relocation plan",
+    recommended: "Рекомендуем", tierPremium: "Premium", perMonth: "/мес", premiumAlt: "или $299 — разовый relocation plan",
+    promoNote: "Промокод WELCOME — первый месяц за $4.99",
     premF: ["Velvet Concierge · Kate и Max", "Banking · Real Estate · Credit", "Lifestyle · Events · KYC-чеклисты", "8 юрисдикций, профиль учтён"],
-    btnSub: "Подписка €49/мес", btnOnce: "€299 — разовый план",
+    btnSub: "Подписка $49/мес", btnOnce: "$299 — разовый план",
     tierPrivate: "Private", privatePrice: "По запросу", privateNote: "Закрытый круг", privF: ["Всё из Premium", "Реальный советник MFI", "Сопровождение сделок и релокации"], requestAccess: "Запросить доступ",
     pwReassure: "Two Futures остаётся бесплатным навсегда. Отмена в любой момент. Оплата — демо: кнопки сразу открывают консьерж.",
     profile: "Profile", yourProfile: "Ваш профиль", profileSub: "Эти данные питают и Two Futures, и Velvet Concierge. Заполняются один раз.",
@@ -805,7 +808,7 @@ export default function MontaureoPlatform() {
               <div style={{ display: "flex", gap: 14, marginTop: 30, alignItems: "stretch", flexWrap: "wrap", justifyContent: "center", position: "relative" }}>
                 <div style={{ flex: "1 1 220px", maxWidth: 300, border: `1px solid ${C.line}`, borderRadius: 18, padding: "22px 20px", background: C.panel, display: "flex", flexDirection: "column" }}>
                   <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: C.faint }}>{t.tierFree}</div>
-                  <div style={{ fontSize: 30, fontWeight: 700, color: C.snow, margin: "8px 0 2px" }}>€0</div>
+                  <div style={{ fontSize: 30, fontWeight: 700, color: C.snow, margin: "8px 0 2px" }}>$0</div>
                   <div style={{ fontSize: 12.5, color: C.mist, marginBottom: 16 }}>{t.tierFreeNow}</div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 9, fontSize: 13, color: "#CFCFC8", flex: 1 }}>
                     {t.freeF.map((x) => <div key={x} style={{ display: "flex", gap: 8, alignItems: "center" }}><ShieldCheck size={14} color={C.faint} /> {x}</div>)}
@@ -815,8 +818,9 @@ export default function MontaureoPlatform() {
                 <div style={{ flex: "1 1 240px", maxWidth: 320, border: `1px solid rgba(198,163,90,0.5)`, borderRadius: 18, padding: "22px 20px", background: "linear-gradient(180deg, rgba(198,163,90,0.12), rgba(16,17,23,0.7))", display: "flex", flexDirection: "column", boxShadow: "0 0 50px rgba(198,163,90,0.12)", position: "relative" }}>
                   <div style={{ position: "absolute", top: -11, left: "50%", transform: "translateX(-50%)", background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})`, color: "#1A1408", fontSize: 10.5, fontWeight: 700, letterSpacing: ".08em", padding: "3px 12px", borderRadius: 99, textTransform: "uppercase" }}>{t.recommended}</div>
                   <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: C.gold }}>{t.tierPremium}</div>
-                  <div style={{ display: "flex", alignItems: "baseline", gap: 6, margin: "8px 0 2px" }}><span style={{ fontSize: 34, fontWeight: 700, color: C.snow }}>€49</span><span style={{ fontSize: 13, color: C.mist }}>{t.perMonth}</span></div>
-                  <div style={{ fontSize: 12.5, color: C.mist, marginBottom: 16 }}>{t.premiumAlt}</div>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: 6, margin: "8px 0 2px" }}><span style={{ fontSize: 34, fontWeight: 700, color: C.snow }}>$49</span><span style={{ fontSize: 13, color: C.mist }}>{t.perMonth}</span></div>
+                  <div style={{ fontSize: 12.5, color: C.mist, marginBottom: 4 }}>{t.premiumAlt}</div>
+                  <div style={{ fontSize: 12.5, color: C.goldHi, fontWeight: 600, marginBottom: 16 }}>{t.promoNote}</div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 9, fontSize: 13, color: "#E6E5DE", flex: 1 }}>
                     {t.premF.map((x) => <div key={x} style={{ display: "flex", gap: 8, alignItems: "center" }}><Sparkles size={14} color={C.gold} /> {x}</div>)}
                   </div>
