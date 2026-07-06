@@ -60,7 +60,7 @@ const T = {
     recommended: "Recommended", tierPremium: "Premium", perMonth: "/mo", premiumAlt: "or $299 — one-time relocation plan",
     promoNote: "Use code WELCOME for your first month at $4.99",
     premF: ["Velvet Concierge · Kate & Max", "Banking · Real Estate · Credit", "Lifestyle · Events · KYC checklists", "8 jurisdictions, profile-aware"],
-    btnSub: "Subscribe $49/mo", btnOnce: "$299 — one-time plan",
+    btnSub: "Request Premium access", btnOnce: "Ask about the one-time plan",
     tierPrivate: "Private", privatePrice: "By request", privateNote: "Inner circle", privF: ["Everything in Premium", "A real MFI advisor", "Deal & relocation support"], requestAccess: "Request access",
     pwReassure: "Two Futures stays free forever. Cancel anytime. Payment is a demo: buttons open the concierge immediately.",
     profile: "Profile", yourProfile: "Your profile", profileSub: "This data powers both Two Futures and Velvet Concierge. Fill it once.",
@@ -110,7 +110,7 @@ const T = {
     recommended: "Recommandé", tierPremium: "Premium", perMonth: "/mois", premiumAlt: "ou $299 — plan de relocation unique",
     promoNote: "Utilisez le code WELCOME pour votre premier mois à $4.99",
     premF: ["Velvet Concierge · Kate & Max", "Banque · Immobilier · Crédit", "Art de vivre · Événements · Checklists KYC", "8 juridictions, profil pris en compte"],
-    btnSub: "Abonnement $49/mois", btnOnce: "$299 — plan unique",
+    btnSub: "Demander l'accès Premium", btnOnce: "En savoir plus sur le plan unique",
     tierPrivate: "Private", privatePrice: "Sur demande", privateNote: "Cercle privé", privF: ["Tout le Premium", "Un vrai conseiller MFI", "Accompagnement transactions & relocation"], requestAccess: "Demander l'accès",
     pwReassure: "Two Futures reste gratuit pour toujours. Annulable à tout moment. Le paiement est une démo : les boutons ouvrent le concierge immédiatement.",
     profile: "Profil", yourProfile: "Votre profil", profileSub: "Ces données alimentent Two Futures et Velvet Concierge. À remplir une fois.",
@@ -160,7 +160,7 @@ const T = {
     recommended: "Рекомендуем", tierPremium: "Premium", perMonth: "/мес", premiumAlt: "или $299 — разовый relocation plan",
     promoNote: "Промокод WELCOME — первый месяц за $4.99",
     premF: ["Velvet Concierge · Kate и Max", "Banking · Real Estate · Credit", "Lifestyle · Events · KYC-чеклисты", "8 юрисдикций, профиль учтён"],
-    btnSub: "Подписка $49/мес", btnOnce: "$299 — разовый план",
+    btnSub: "Запросить доступ Premium", btnOnce: "Узнать про разовый план",
     tierPrivate: "Private", privatePrice: "По запросу", privateNote: "Закрытый круг", privF: ["Всё из Premium", "Реальный советник MFI", "Сопровождение сделок и релокации"], requestAccess: "Запросить доступ",
     pwReassure: "Two Futures остаётся бесплатным навсегда. Отмена в любой момент. Оплата — демо: кнопки сразу открывают консьерж.",
     profile: "Profile", yourProfile: "Ваш профиль", profileSub: "Эти данные питают и Two Futures, и Velvet Concierge. Заполняются один раз.",
@@ -410,15 +410,6 @@ export default function MontaureoPlatform() {
   const PLAN_LABEL = { free: "Free", premium: "Premium", private: "Private" };
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [chat, chatBusy, section]);
-
-  // Загружаем скрипт Stripe Buy Button один раз при монтировании
-  useEffect(() => {
-    if (document.querySelector('script[src="https://js.stripe.com/v3/buy-button.js"]')) return;
-    const script = document.createElement("script");
-    script.async = true;
-    script.src = "https://js.stripe.com/v3/buy-button.js";
-    document.head.appendChild(script);
-  }, []);
 
   useEffect(() => {
     try {
@@ -836,13 +827,8 @@ export default function MontaureoPlatform() {
                   <div style={{ display: "flex", flexDirection: "column", gap: 9, fontSize: 13, color: "#E6E5DE", flex: 1 }}>
                     {t.premF.map((x) => <div key={x} style={{ display: "flex", gap: 8, alignItems: "center" }}><Sparkles size={14} color={C.gold} /> {x}</div>)}
                   </div>
-                  <div style={{ marginTop: 18 }}>
-                    <stripe-buy-button
-                      buy-button-id="buy_btn_1TommTIRsiHdRprOShYG5j1l"
-                      publishable-key="pk_live_51Tolc6IRsiHdRprORX1grlaxsmNJ4PBPzDi3foq44ITaC8kTIIsCo47AF2tQA84Mcoah6i8aEiKMz692BsNbomw1000BjYeooq"
-                    ></stripe-buy-button>
-                  </div>
-                  <button onClick={() => setPlan("premium")} style={{ marginTop: 9, cursor: "pointer", border: `1px solid ${C.gold}`, borderRadius: 12, padding: "12px", fontSize: 13.5, fontWeight: 600, color: C.goldHi, background: "transparent" }}>{t.btnOnce}</button>
+                  <button onClick={openLead} className="mt-cta" style={{ marginTop: 18, cursor: "pointer", border: "none", borderRadius: 12, padding: "13px", fontSize: 14.5, fontWeight: 700, color: "#1A1408", background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})` }}>{t.btnSub}</button>
+                  <button onClick={openLead} style={{ marginTop: 9, cursor: "pointer", border: `1px solid ${C.gold}`, borderRadius: 12, padding: "12px", fontSize: 13.5, fontWeight: 600, color: C.goldHi, background: "transparent" }}>{t.btnOnce}</button>
                 </div>
                 <div style={{ flex: "1 1 220px", maxWidth: 300, border: `1px solid ${C.line}`, borderRadius: 18, padding: "22px 20px", background: C.panel, display: "flex", flexDirection: "column" }}>
                   <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: C.faint }}>{t.tierPrivate}</div>
