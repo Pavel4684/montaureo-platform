@@ -482,7 +482,7 @@ export default function MontaureoPlatform() {
     }
   };
 
-  const closeLeadAndEnterConcierge = () => { setLeadOpen(false); setPlan("private"); setSection("concierge"); };
+  const closeLeadAndEnterConcierge = () => { setLeadOpen(false); };
 
   const Chips = ({ fieldKey, opts }) => (
     <div>
@@ -620,7 +620,7 @@ export default function MontaureoPlatform() {
             {plan === "premium" && (<>
               <div style={{ fontSize: 12, letterSpacing: ".12em", color: C.gold, fontWeight: 600 }}>{t.pmcPremTitle}</div>
               <div style={{ fontSize: 11.5, color: C.mist, margin: "6px 0 12px", lineHeight: 1.45 }}>{t.pmcPremSub}</div>
-              <button onClick={() => setPlan("private")} style={{ width: "100%", cursor: "pointer", border: `1px solid ${C.gold}`, borderRadius: 11, padding: "10px", fontSize: 13, fontWeight: 600, color: C.goldHi, background: "transparent" }}>{t.pmcToPrivate}</button>
+              <button onClick={openLead} style={{ width: "100%", cursor: "pointer", border: `1px solid ${C.gold}`, borderRadius: 11, padding: "10px", fontSize: 13, fontWeight: 600, color: C.goldHi, background: "transparent" }}>{t.pmcToPrivate}</button>
             </>)}
             {plan === "private" && (<>
               <div style={{ fontSize: 12, letterSpacing: ".12em", color: C.gold, fontWeight: 600 }}>{t.pmcPrivTitle}</div>
