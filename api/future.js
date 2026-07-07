@@ -2,8 +2,9 @@
 // api/future.js — Vercel Serverless Function (Montaureo · Two Futures)
 // Лимиты на Upstash Redis; язык ответа приходит из фронта (lang).
 // KV: Vercel → Storage → Marketplace → Upstash → Redis → Connect to Project,
-// затем  npm i @upstash/redis  и redeploy. Креды интеграция кладёт в env сама.
-// Body: { profile, lang, clientId }. Ключ модели — только в env.
+// затем  npm i @upstash/redis  и redeploy. Ключи интеграция кладёт в env сама.
+// Body: { profile, lang, clientId, model }. Ключ модели — только в env.
+// model: "claude" (Kate) | "qwen-plus" (Jun) | "mistral-medium-2508" (Emily)
 // =====================================================================
 
 import { Redis } from "@upstash/redis";
@@ -71,9 +72,82 @@ Return ONLY clean JSON, no markdown:
  "disclaimer":"1 line: illustrative, not advice, confirm with an advisor"}
 Keep values short.`;
 
+function extractJson(raw) {
+  const cleaned = raw.replace(/```json|```/g, "").trim();
+  return JSON.parse(cleaned);
+}
+
+async function callClaude(profile, langLine) {
+  const r = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-api-key": process.env.ANTHROPIC_API_KEY,
+      "anthropic-version": "2023-06-01",
+    },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-6",
+      max_tokens: 2048,
+      system: [
+        { type: "text", text: SYSTEM, cache_control: { type: "ephemeral" } }, // кешируется
+        { type: "text", text: langLine },                                    // язык ответа
+      ],
+      messages: [{ role: "user", content: profile }],
+    }),
+  });
+  if (!r.ok) { console.error("anthropic", r.status, await r.text().catch(() => "")); throw new Error("model_error"); }
+  const data = await r.json();
+  const raw = (data.content || []).filter((b) => b.type === "text").map((b) => b.text).join("\n").trim();
+  return extractJson(raw);
+}
+
+async function callQwen(profile, langLine) {
+  const r = await fetch("https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "Authorization": `Bearer ${process.env.DASHSCOPE_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: "qwen-plus",
+      max_tokens: 2048,
+      messages: [
+        { role: "system", content: SYSTEM + langLine },
+        { role: "user", content: profile },
+      ],
+    }),
+  });
+  if (!r.ok) { console.error("qwen", r.status, await r.text().catch(() => "")); throw new Error("model_error"); }
+  const data = await r.json();
+  const raw = (data.choices?.[0]?.message?.content || "").trim();
+  return extractJson(raw);
+}
+
+async function callMistral(profile, langLine) {
+  const r = await fetch("https://api.mistral.ai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "Authorization": `Bearer ${process.env.MISTRAL_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: "mistral-medium-2508",
+      max_tokens: 2048,
+      messages: [
+        { role: "system", content: SYSTEM + langLine },
+        { role: "user", content: profile },
+      ],
+    }),
+  });
+  if (!r.ok) { console.error("mistral", r.status, await r.text().catch(() => "")); throw new Error("model_error"); }
+  const data = await r.json();
+  const raw = (data.choices?.[0]?.message?.content || "").trim();
+  return extractJson(raw);
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "method_not_allowed" });
-  const { profile, clientId, lang = "English" } = req.body || {};
+  const { profile, clientId, lang = "English", model = "claude" } = req.body || {};
   if (!profile || typeof profile !== "string") return res.status(400).json({ error: "bad_request" });
 
   const quota = await consumeQuota(clientId, FREE_DAILY_LIMIT);
@@ -82,32 +156,14 @@ export default async function handler(req, res) {
   const langLine = `\n\nRespond entirely in ${lang}. All JSON string values must be written in ${lang}.`;
 
   try {
-    const r = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-api-key": process.env.ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 2048,
-        system: [
-          { type: "text", text: SYSTEM, cache_control: { type: "ephemeral" } }, // кешируется
-          { type: "text", text: langLine },                                      // язык ответа
-        ],
-        messages: [{ role: "user", content: profile }],
-      }),
-    });
-    if (!r.ok) { console.error("anthropic", r.status, await r.text().catch(() => "")); return res.status(502).json({ error: "model_error" }); }
-    const data = await r.json();
-    const raw = (data.content || []).filter((b) => b.type === "text").map((b) => b.text).join("\n").trim();
     let parsed;
-    try { parsed = JSON.parse(raw.replace(/```json|```/g, "").trim()); }
-    catch { return res.status(502).json({ error: "parse_error" }); }
+    if (model === "qwen-plus") parsed = await callQwen(profile, langLine);
+    else if (model === "mistral-medium-2508") parsed = await callMistral(profile, langLine);
+    else parsed = await callClaude(profile, langLine);
     return res.status(200).json(parsed);
   } catch (e) {
     console.error(e);
-    return res.status(500).json({ error: "server_error" });
+    if (e.message === "model_error") return res.status(502).json({ error: "model_error" });
+    return res.status(502).json({ error: "parse_error" });
   }
 }
