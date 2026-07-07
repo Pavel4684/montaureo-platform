@@ -1,15 +1,10 @@
 import React, { useState, useId, useRef, useEffect } from "react";
-import { ArrowRight, RotateCcw, Sparkles, MapPin, ShieldCheck, Mountain, Users, Mail, Lock, Plane, Compass, Landmark, Building2, Heart, Calendar, CreditCard, User, Send, Crown } from "lucide-react";
+import { ArrowRight, RotateCcw, Sparkles, MapPin, ShieldCheck, Mountain, Users, Mail, Lock, Plane, Compass, Landmark, Building2, Heart, Calendar, CreditCard, User, Send, Crown, LogOut } from "lucide-react";
+import { supabase } from "./supabaseClient";
 
 /* =====================================================================
-   MONTAUREO — единая платформа (мультиязычная)
-   Landing → Profile/анкета → Two Futures → soft gate → Concierge
-   ---------------------------------------------------------------------
-   i18n: язык в state (default "en"), словарь T, переключатель EN·FR·RU.
-   Варианты анкеты хранятся как языконезависимые КЛЮЧИ (form/matters),
-   подписи берутся из T[lang].v[...]. Язык интерфейса прокидывается в модель,
-   поэтому Two Futures и консьерж отвечают на выбранном языке.
-   (AR + RTL добавляется расширением T и dir="rtl" — заложено на будущее.)
+   MONTAUREO — единая платформа (мультиязычная) + Supabase Auth
+   Landing → Auth (Supabase email/password) → Profile/анкета → Two Futures → soft gate → Concierge
    ===================================================================== */
 
 /* ===================== BRAND ===================== */
@@ -31,8 +26,13 @@ const T = {
     sub: "Montaureo is an AI platform for life-changing decisions: residency, wealth, legacy.",
     vp: [["Protect Your Wealth", "Optimize your financial future"], ["Elevate Your Life", "Access the world's best opportunities"], ["Secure Your Family", "A safe and prosperous legacy"]],
     beginTitle: "Begin Your Journey", beginSub: "Begin with clarity. Move with confidence.",
-    contEmail: "Continue with Email", contGoogle: "Continue with Google", contApple: "Continue with Apple",
-    newHere: "New to Montaureo?", createAcc: "Create account",
+    emailPh: "name@email.com", passwordPh: "Password",
+    signIn: "Sign in", signUp: "Create account", or: "or",
+    newHere: "New to Montaureo?", createAcc: "Create account", haveAcc: "Already have an account?", toSignIn: "Sign in",
+    authErr: "Something went wrong. Check your email and password.",
+    authCheckEmail: "Check your email to confirm your account, then sign in.",
+    signingIn: "Signing in…", signingUp: "Creating account…",
+    signOut: "Sign out",
     sec: [["Bank-Level Security", "256-bit encryption"], ["Your Data is Private", "Never shared with third parties"]],
     whoTitle: "Who are you?", whatTitle: "What matters to you?", step: "Step", of: "of",
     next: "Next", back: "Back", showTwo: "Show me two futures", drawing: "Montaureo is drawing two futures…",
@@ -60,11 +60,11 @@ const T = {
     recommended: "Recommended", tierPremium: "Premium", perMonth: "/mo", premiumAlt: "or $299 — one-time relocation plan",
     promoNote: "Use code WELCOME for your first month at $4.99",
     premF: ["Velvet Concierge · Kate & Max", "Banking · Real Estate · Credit", "Lifestyle · Events · KYC checklists", "8 jurisdictions, profile-aware"],
-    btnSub: "Request Premium access", btnOnce: "Ask about the one-time plan",
+    btnSub: "Subscribe", btnOnce: "$299 — one-time plan",
     tierPrivate: "Private", privatePrice: "By request", privateNote: "Inner circle", privF: ["Everything in Premium", "A real MFI advisor", "Deal & relocation support"], requestAccess: "Request access",
-    pwReassure: "Two Futures stays free forever. Cancel anytime. Payment is a demo: buttons open the concierge immediately.",
+    pwReassure: "Two Futures stays free forever. Cancel anytime.",
     profile: "Profile", yourProfile: "Your profile", profileSub: "This data powers both Two Futures and Velvet Concierge. Fill it once.",
-    priorities: "Priorities", saveProfile: "Save profile", saved: "Saved ✓", savedNote: "Profile updated — the concierge already accounts for the changes.", planLabel: "Plan", resetFree: "Reset to Free (demo)",
+    priorities: "Priorities", saveProfile: "Save profile", saved: "Saved ✓", savedNote: "Profile updated — the concierge already accounts for the changes.", planLabel: "Plan",
     cWelcomeA: "Given your profile", cWelcomeB: "I already know the details — no need to repeat anything. Where shall we begin?", cMoveInterest: "interest in",
     askPlaceholder: "Ask", cFooter: "Information, not advice. For KYC, documents are submitted directly to the bank or your MFI advisor.",
     nav: { future: "Design Your Future", concierge: "Concierge", banking: "Banking", realestate: "Real Estate", lifestyle: "Lifestyle", events: "Events", credit: "Credit", profile: "Profile" },
@@ -81,8 +81,13 @@ const T = {
     sub: "Montaureo est une plateforme d'IA pour les décisions qui changent une vie : résidence, patrimoine, héritage.",
     vp: [["Protéger votre patrimoine", "Optimisez votre avenir financier"], ["Élever votre vie", "Accédez aux meilleures opportunités au monde"], ["Sécuriser votre famille", "Un héritage sûr et prospère"]],
     beginTitle: "Commencez votre parcours", beginSub: "Commencez avec clarté. Avancez avec confiance.",
-    contEmail: "Continuer avec Email", contGoogle: "Continuer avec Google", contApple: "Continuer avec Apple",
-    newHere: "Nouveau sur Montaureo ?", createAcc: "Créer un compte",
+    emailPh: "nom@email.com", passwordPh: "Mot de passe",
+    signIn: "Se connecter", signUp: "Créer un compte", or: "ou",
+    newHere: "Nouveau sur Montaureo ?", createAcc: "Créer un compte", haveAcc: "Vous avez déjà un compte ?", toSignIn: "Se connecter",
+    authErr: "Une erreur est survenue. Vérifiez votre email et mot de passe.",
+    authCheckEmail: "Vérifiez votre email pour confirmer votre compte, puis connectez-vous.",
+    signingIn: "Connexion…", signingUp: "Création du compte…",
+    signOut: "Se déconnecter",
     sec: [["Sécurité bancaire", "Chiffrement 256 bits"], ["Vos données sont privées", "Jamais partagées avec des tiers"]],
     whoTitle: "Qui êtes-vous ?", whatTitle: "Qu'est-ce qui compte pour vous ?", step: "Étape", of: "sur",
     next: "Suivant", back: "Retour", showTwo: "Montrer mes deux avenirs", drawing: "Montaureo dessine deux avenirs…",
@@ -110,11 +115,11 @@ const T = {
     recommended: "Recommandé", tierPremium: "Premium", perMonth: "/mois", premiumAlt: "ou $299 — plan de relocation unique",
     promoNote: "Utilisez le code WELCOME pour votre premier mois à $4.99",
     premF: ["Velvet Concierge · Kate & Max", "Banque · Immobilier · Crédit", "Art de vivre · Événements · Checklists KYC", "8 juridictions, profil pris en compte"],
-    btnSub: "Demander l'accès Premium", btnOnce: "En savoir plus sur le plan unique",
+    btnSub: "S'abonner", btnOnce: "$299 — plan unique",
     tierPrivate: "Private", privatePrice: "Sur demande", privateNote: "Cercle privé", privF: ["Tout le Premium", "Un vrai conseiller MFI", "Accompagnement transactions & relocation"], requestAccess: "Demander l'accès",
-    pwReassure: "Two Futures reste gratuit pour toujours. Annulable à tout moment. Le paiement est une démo : les boutons ouvrent le concierge immédiatement.",
+    pwReassure: "Two Futures reste gratuit pour toujours. Annulable à tout moment.",
     profile: "Profil", yourProfile: "Votre profil", profileSub: "Ces données alimentent Two Futures et Velvet Concierge. À remplir une fois.",
-    priorities: "Priorités", saveProfile: "Enregistrer le profil", saved: "Enregistré ✓", savedNote: "Profil mis à jour — le concierge en tient déjà compte.", planLabel: "Plan", resetFree: "Réinitialiser sur Free (démo)",
+    priorities: "Priorités", saveProfile: "Enregistrer le profil", saved: "Enregistré ✓", savedNote: "Profil mis à jour — le concierge en tient déjà compte.", planLabel: "Plan",
     cWelcomeA: "Au vu de votre profil", cWelcomeB: "je connais déjà les détails — inutile de répéter. Par où commençons-nous ?", cMoveInterest: "intérêt pour",
     askPlaceholder: "Demandez à", cFooter: "Information, pas un conseil. Pour le KYC, les documents se soumettent directement à la banque ou à votre conseiller MFI.",
     nav: { future: "Design Your Future", concierge: "Concierge", banking: "Banque", realestate: "Immobilier", lifestyle: "Art de vivre", events: "Événements", credit: "Crédit", profile: "Profil" },
@@ -131,8 +136,13 @@ const T = {
     sub: "Montaureo — ИИ-платформа для решений, которые меняют жизнь: резидентство, капитал, наследие.",
     vp: [["Защитить капитал", "Оптимизация финансового будущего"], ["Поднять качество жизни", "Доступ к лучшим возможностям мира"], ["Обезопасить семью", "Надёжное и процветающее наследие"]],
     beginTitle: "Начните путь", beginSub: "С ясности. И уверенным шагом.",
-    contEmail: "Продолжить с Email", contGoogle: "Продолжить с Google", contApple: "Продолжить с Apple",
-    newHere: "Впервые здесь?", createAcc: "Создать аккаунт",
+    emailPh: "name@email.com", passwordPh: "Пароль",
+    signIn: "Войти", signUp: "Создать аккаунт", or: "или",
+    newHere: "Впервые здесь?", createAcc: "Создать аккаунт", haveAcc: "Уже есть аккаунт?", toSignIn: "Войти",
+    authErr: "Что-то пошло не так. Проверьте email и пароль.",
+    authCheckEmail: "Проверьте почту, чтобы подтвердить аккаунт, затем войдите.",
+    signingIn: "Вход…", signingUp: "Создание аккаунта…",
+    signOut: "Выйти",
     sec: [["Банковская защита", "256-битное шифрование"], ["Данные приватны", "Не передаём третьим лицам"]],
     whoTitle: "Кто вы?", whatTitle: "Что вам важно?", step: "Шаг", of: "из",
     next: "Далее", back: "Назад", showTwo: "Показать два будущих", drawing: "Montaureo рисует два будущих…",
@@ -160,11 +170,11 @@ const T = {
     recommended: "Рекомендуем", tierPremium: "Premium", perMonth: "/мес", premiumAlt: "или $299 — разовый relocation plan",
     promoNote: "Промокод WELCOME — первый месяц за $4.99",
     premF: ["Velvet Concierge · Kate и Max", "Banking · Real Estate · Credit", "Lifestyle · Events · KYC-чеклисты", "8 юрисдикций, профиль учтён"],
-    btnSub: "Запросить доступ Premium", btnOnce: "Узнать про разовый план",
+    btnSub: "Оформить подписку", btnOnce: "$299 — разовый план",
     tierPrivate: "Private", privatePrice: "По запросу", privateNote: "Закрытый круг", privF: ["Всё из Premium", "Реальный советник MFI", "Сопровождение сделок и релокации"], requestAccess: "Запросить доступ",
-    pwReassure: "Two Futures остаётся бесплатным навсегда. Отмена в любой момент. Оплата — демо: кнопки сразу открывают консьерж.",
+    pwReassure: "Two Futures остаётся бесплатным навсегда. Отмена в любой момент.",
     profile: "Profile", yourProfile: "Ваш профиль", profileSub: "Эти данные питают и Two Futures, и Velvet Concierge. Заполняются один раз.",
-    priorities: "Приоритеты", saveProfile: "Сохранить профиль", saved: "Сохранено ✓", savedNote: "Профиль обновлён — консьерж уже учитывает изменения.", planLabel: "Тариф", resetFree: "Сбросить на Free (демо)",
+    priorities: "Приоритеты", saveProfile: "Сохранить профиль", saved: "Сохранено ✓", savedNote: "Профиль обновлён — консьерж уже учитывает изменения.", planLabel: "Тариф",
     cWelcomeA: "С учётом вашего профиля", cWelcomeB: "я уже в курсе деталей — повторять ничего не нужно. С чего начнём?", cMoveInterest: "интерес к",
     askPlaceholder: "Спросите", cFooter: "Информация, не консультация. По KYC документы подаются напрямую в банк или советнику MFI.",
     nav: { future: "Design Your Future", concierge: "Concierge", banking: "Banking", realestate: "Real Estate", lifestyle: "Lifestyle", events: "Events", credit: "Credit", profile: "Profile" },
@@ -176,7 +186,7 @@ const T = {
   },
 };
 
-/* ===================== KNOWLEDGE + PROMPTS (English base; язык ответа прокидывается) ===================== */
+/* ===================== KNOWLEDGE + PROMPTS ===================== */
 const KB = `
 0% income tax: UAE, Qatar, Monaco (NOT for French citizens — 1963 treaty), Bahrain, Bahamas, Cayman.
 Territorial (foreign income untaxed): Singapore, Hong Kong, Panama, Georgia, Costa Rica, Malaysia, Thailand.
@@ -186,7 +196,6 @@ Closed/narrowed: UK non-dom abolished (2025); Portugal NHR closed (narrower IFIC
 High tax (where people leave from): France, Germany, UK, Canada, Scandinavia.
 `;
 
-// Логика подбора юрисдикции — открытая, с приоритетом MFI (используется в обоих промптах).
 const JLOGIC = `Jurisdiction coverage is OPEN — consider ANY relevant jurisdiction worldwide; the knowledge above is a starting set, not a limit. Match the destination to the client's CITIZENSHIP and constraints, never one-size-fits-all:
 - French nationals: Monaco does NOT remove French income tax (the 1963 France–Monaco treaty taxes French citizens resident in Monaco as if French residents) — never propose Monaco to them.
 - Wants to stay in the EU: consider Italy (lump-sum flat tax), Portugal, Greece, Cyprus, Malta.
@@ -246,7 +255,6 @@ FORMAT — return ONLY clean JSON, no markdown:
 Use a card for lists, comparisons and checklists (3-5 rows); otherwise card=null.`;
 
 /* ===================== HELPERS ===================== */
-// Профиль для модели строим всегда по EN-меткам (стабильно), язык ответа задаём отдельно.
 const buildProfileText = (form, matters) => {
   const v = T.en.v;
   return `age ${v[form.age]}, total wealth ${v[form.capital]}, liquid assets ${v[form.liquid]}, income ${v[form.income]}/yr, ${v[form.family]}, citizenship ${v[form.citizen]}, currently lives in ${v[form.from]}, priorities: ${(matters || []).map((m) => v[m]).join(", ") || "family & life"}`;
@@ -343,13 +351,10 @@ function SpinningGlobe() {
     </div>
   );
 }
-function AppleLogo({ size = 16 }) {
-  return (<svg width={size} height={size} viewBox="0 0 24 24" fill="#fff" aria-hidden><path d="M17.05 12.04c-.03-2.6 2.12-3.85 2.22-3.91-1.21-1.77-3.09-2.01-3.76-2.04-1.6-.16-3.12.94-3.93.94-.81 0-2.06-.92-3.39-.89-1.74.03-3.35 1.01-4.25 2.57-1.81 3.14-.46 7.79 1.3 10.34.86 1.25 1.88 2.65 3.22 2.6 1.29-.05 1.78-.83 3.34-.83 1.56 0 2 .83 3.37.81 1.39-.03 2.27-1.27 3.12-2.53.98-1.45 1.39-2.85 1.41-2.92-.03-.01-2.7-1.04-2.73-4.13M14.54 4.66c.71-.86 1.19-2.06 1.06-3.25-1.02.04-2.26.68-2.99 1.54-.66.76-1.23 1.98-1.08 3.15 1.14.09 2.3-.58 3.01-1.44" /></svg>);
-}
 
 /* ===================== SHARED UI ===================== */
-const Btn = ({ onClick, children }) => (
-  <button onClick={onClick} className="mt-cta" style={{ marginTop: 6, cursor: "pointer", border: "none", borderRadius: 14, padding: "15px", fontSize: 15, fontWeight: 600, color: "#1A1408", background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})`, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, width: "100%" }}>{children}</button>
+const Btn = ({ onClick, children, disabled }) => (
+  <button onClick={onClick} disabled={disabled} className="mt-cta" style={{ marginTop: 6, cursor: disabled ? "default" : "pointer", opacity: disabled ? 0.7 : 1, border: "none", borderRadius: 14, padding: "15px", fontSize: 15, fontWeight: 600, color: "#1A1408", background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})`, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, width: "100%" }}>{children}</button>
 );
 function ChatCard({ card }) {
   if (!card || !card.rows) return null;
@@ -378,7 +383,17 @@ const MATTER_KEYS = ["kids", "safety", "business", "sea", "taxes", "climate"];
 /* ===================== APP ===================== */
 export default function MontaureoPlatform() {
   const [lang, setLang] = useState("en");
-  const [authed, setAuthed] = useState(false);
+
+  // ---- Auth state ----
+  const [authLoading, setAuthLoading] = useState(true); // checking existing session
+  const [session, setSession] = useState(null);
+  const [authMode, setAuthMode] = useState("signin"); // 'signin' | 'signup'
+  const [authEmail, setAuthEmail] = useState("");
+  const [authPassword, setAuthPassword] = useState("");
+  const [authBusy, setAuthBusy] = useState(false);
+  const [authErr, setAuthErr] = useState("");
+  const [authMsg, setAuthMsg] = useState("");
+
   const [section, setSection] = useState("future");
   const [form, setForm] = useState({ age: "a50", capital: "c4", liquid: "l3", income: "i3", family: "fKids", citizen: "zEU", from: "pOther" });
   const [matters, setMatters] = useState(["kids", "sea"]);
@@ -390,7 +405,7 @@ export default function MontaureoPlatform() {
   const [chatInput, setChatInput] = useState("");
   const [chatBusy, setChatBusy] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [plan, setPlan] = useState("free");
+  const [plan, setPlan] = useState("free"); // now sourced from Supabase profiles table
   const [leadOpen, setLeadOpen] = useState(false);
   const [leadSent, setLeadSent] = useState(false);
   const [leadSending, setLeadSending] = useState(false);
@@ -425,7 +440,39 @@ export default function MontaureoPlatform() {
     }
   }, []);
 
-  const enter = () => { setAuthed(true); setSection("future"); setFutureState("form"); setStep(1); };
+  // ---- Fetch the user's plan from the profiles table ----
+  const fetchPlan = async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("plan")
+        .eq("id", userId)
+        .single();
+      if (!error && data) setPlan(data.plan || "free");
+    } catch {
+      // fail silently, default stays "free"
+    }
+  };
+
+  // ---- Check for existing Supabase session on load, and subscribe to changes ----
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session?.user) fetchPlan(session.user.id);
+      setAuthLoading(false);
+    });
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      setSession(newSession);
+      if (newSession?.user) {
+        fetchPlan(newSession.user.id);
+      } else {
+        setPlan("free");
+      }
+    });
+
+    return () => listener?.subscription?.unsubscribe();
+  }, []);
 
   const runFuture = async () => {
     setFutureState("loading");
@@ -484,6 +531,30 @@ export default function MontaureoPlatform() {
 
   const closeLeadAndEnterConcierge = () => { setLeadOpen(false); };
 
+  // ---- Real Supabase auth actions ----
+  const handleSignIn = async () => {
+    setAuthErr(""); setAuthMsg(""); setAuthBusy(true);
+    const { error } = await supabase.auth.signInWithPassword({ email: authEmail.trim(), password: authPassword });
+    setAuthBusy(false);
+    if (error) { setAuthErr(t.authErr); return; }
+    // onAuthStateChange will pick up the new session automatically
+  };
+
+  const handleSignUp = async () => {
+    setAuthErr(""); setAuthMsg(""); setAuthBusy(true);
+    const { error } = await supabase.auth.signUp({ email: authEmail.trim(), password: authPassword });
+    setAuthBusy(false);
+    if (error) { setAuthErr(t.authErr); return; }
+    setAuthMsg(t.authCheckEmail);
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setSection("future");
+    setFutureState("form");
+    setStep(1);
+  };
+
   const Chips = ({ fieldKey, opts }) => (
     <div>
       <div style={{ fontSize: 11, letterSpacing: ".18em", textTransform: "uppercase", color: C.gold, marginBottom: 9 }}>{t.f[fieldKey]}</div>
@@ -491,11 +562,6 @@ export default function MontaureoPlatform() {
         {opts.map((o) => { const on = form[fieldKey] === o; return <button key={o} onClick={() => setF(fieldKey, o)} style={{ cursor: "pointer", border: `1px solid ${on ? C.gold : C.line}`, background: on ? "rgba(198,163,90,0.12)" : "transparent", color: on ? C.snow : C.mist, padding: "9px 14px", borderRadius: 99, fontSize: 13, transition: "all .15s" }}>{v(o)}</button>; })}
       </div>
     </div>
-  );
-  const AuthBtn = ({ icon, children, primary }) => (
-    <button onClick={enter} className="auth-btn" style={{ cursor: "pointer", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 10, padding: "14px", borderRadius: 12, fontSize: 14.5, fontWeight: 600, border: primary ? "none" : `1px solid ${C.line}`, color: primary ? "#1A1408" : C.snow, background: primary ? `linear-gradient(140deg, ${C.goldHi}, ${C.gold})` : "rgba(255,255,255,0.03)", position: "relative" }}>
-      <span style={{ position: "absolute", left: 16, display: "flex" }}>{icon}</span>{children}
-    </button>
   );
   const langSwitch = (
     <div style={{ display: "flex", gap: 2, alignItems: "center" }}>
@@ -517,7 +583,7 @@ export default function MontaureoPlatform() {
       .mt-up{animation:up .55s cubic-bezier(.2,.7,.2,1) both}
       .fade{animation:fade .7s cubic-bezier(.2,.7,.2,1) both}
       .mt-cta:hover{filter:brightness(1.1)}
-      .auth-btn:hover{filter:brightness(1.06);border-color:rgba(198,163,90,0.4)}
+      .auth-input:focus{border-color:${C.gold}!important}
       .nav-item:hover{background:rgba(198,163,90,0.06)!important}
       .link:hover{color:${C.goldHi}!important}
       input::placeholder{color:${C.faint}}
@@ -534,8 +600,18 @@ export default function MontaureoPlatform() {
     `}</style>
   );
 
-  /* ===================== LANDING ===================== */
-  if (!authed) {
+  /* ===================== LOADING (checking session) ===================== */
+  if (authLoading) {
+    return (
+      <div style={{ background: C.void, minHeight: "100%", width: "100%", display: "grid", placeItems: "center" }}>
+        {STYLE}
+        <div style={{ animation: "pulse 1.5s ease-in-out infinite" }}><SummitMark size={56} /></div>
+      </div>
+    );
+  }
+
+  /* ===================== LANDING / AUTH ===================== */
+  if (!session) {
     return (
       <div style={{ background: C.void, minHeight: "100%", width: "100%", color: C.snow, fontFamily: "Inter, sans-serif" }}>
         {STYLE}
@@ -564,16 +640,53 @@ export default function MontaureoPlatform() {
                 </div>
               ))}
             </div>
+
+            {/* ===== REAL AUTH CARD ===== */}
             <div style={{ border: `1px solid ${C.line}`, borderRadius: 18, padding: 22, background: `linear-gradient(180deg, ${C.panelHi}, ${C.panel})` }}>
               <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 22, color: C.snow, marginBottom: 2 }}>{t.beginTitle}</div>
               <div style={{ fontSize: 13, color: C.mist, marginBottom: 18 }}>{t.beginSub}</div>
+
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                <AuthBtn primary icon={<Mail size={17} color="#1A1408" />}>{t.contEmail}</AuthBtn>
-                <AuthBtn icon={<span style={{ fontWeight: 700, fontSize: 15, color: "#fff" }}>G</span>}>{t.contGoogle}</AuthBtn>
-                <AuthBtn icon={<AppleLogo />}>{t.contApple}</AuthBtn>
+                <input
+                  className="auth-input"
+                  type="email"
+                  value={authEmail}
+                  onChange={(e) => setAuthEmail(e.target.value)}
+                  placeholder={t.emailPh}
+                  style={{ width: "100%", background: C.card, border: `1px solid ${C.line}`, borderRadius: 11, padding: "13px 14px", fontSize: 14.5, color: C.snow, fontFamily: "Inter, sans-serif", outline: "none", boxSizing: "border-box" }}
+                />
+                <input
+                  className="auth-input"
+                  type="password"
+                  value={authPassword}
+                  onChange={(e) => setAuthPassword(e.target.value)}
+                  placeholder={t.passwordPh}
+                  style={{ width: "100%", background: C.card, border: `1px solid ${C.line}`, borderRadius: 11, padding: "13px 14px", fontSize: 14.5, color: C.snow, fontFamily: "Inter, sans-serif", outline: "none", boxSizing: "border-box" }}
+                />
+
+                {authErr && <div style={{ fontSize: 12, color: "#E08A8A" }}>{authErr}</div>}
+                {authMsg && <div style={{ fontSize: 12, color: C.green }}>{authMsg}</div>}
+
+                {authMode === "signin" ? (
+                  <Btn onClick={handleSignIn} disabled={authBusy || !authEmail.trim() || !authPassword}>
+                    {authBusy ? t.signingIn : t.signIn}
+                  </Btn>
+                ) : (
+                  <Btn onClick={handleSignUp} disabled={authBusy || !authEmail.trim() || !authPassword}>
+                    {authBusy ? t.signingUp : t.signUp}
+                  </Btn>
+                )}
               </div>
-              <div style={{ textAlign: "center", fontSize: 13, color: C.mist, marginTop: 16 }}>{t.newHere} <span className="link" onClick={enter} style={{ color: C.gold, cursor: "pointer", fontWeight: 500 }}>{t.createAcc}</span></div>
+
+              <div style={{ textAlign: "center", fontSize: 13, color: C.mist, marginTop: 16 }}>
+                {authMode === "signin" ? (
+                  <>{t.newHere} <span className="link" onClick={() => { setAuthMode("signup"); setAuthErr(""); setAuthMsg(""); }} style={{ color: C.gold, cursor: "pointer", fontWeight: 500 }}>{t.createAcc}</span></>
+                ) : (
+                  <>{t.haveAcc} <span className="link" onClick={() => { setAuthMode("signin"); setAuthErr(""); setAuthMsg(""); }} style={{ color: C.gold, cursor: "pointer", fontWeight: 500 }}>{t.toSignIn}</span></>
+                )}
+              </div>
             </div>
+
             <div style={{ display: "flex", gap: 26, marginTop: 18, flexWrap: "wrap" }}>
               {[Lock, ShieldCheck].map((Icon, i) => (
                 <div key={i} style={{ display: "flex", gap: 9, alignItems: "center" }}><Icon size={15} color={C.gold} /><div><div style={{ fontSize: 12.5, color: C.snow }}>{t.sec[i][0]}</div><div style={{ fontSize: 11, color: C.faint }}>{t.sec[i][1]}</div></div></div>
@@ -585,7 +698,7 @@ export default function MontaureoPlatform() {
     );
   }
 
-  /* ===================== SHELL ===================== */
+  /* ===================== SHELL (authenticated) ===================== */
   const [domTitle, domSub] = t.dom[focus];
 
   return (
@@ -627,6 +740,9 @@ export default function MontaureoPlatform() {
               <div style={{ fontSize: 11.5, color: C.mist, margin: "6px 0 4px", lineHeight: 1.45 }}>{t.pmcPrivSub}</div>
             </>)}
           </div>
+          <button onClick={handleSignOut} style={{ cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, border: `1px solid ${C.line}`, background: "transparent", color: C.mist, borderRadius: 11, padding: "10px", fontSize: 12.5 }}>
+            <LogOut size={13} /> {t.signOut}
+          </button>
         </aside>
 
         {/* ===== MAIN ===== */}
@@ -790,7 +906,6 @@ export default function MontaureoPlatform() {
                 {saved && <div style={{ fontSize: 12, color: C.green, textAlign: "center" }}>{t.savedNote}</div>}
                 <div style={{ marginTop: 8, display: "flex", alignItems: "center", justifyContent: "space-between", border: `1px solid ${C.line}`, borderRadius: 12, padding: "12px 14px" }}>
                   <div><div style={{ fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: C.gold }}>{t.planLabel}</div><div style={{ fontSize: 14, color: C.snow, marginTop: 2 }}>{PLAN_LABEL[plan]}</div></div>
-                  {plan !== "free" && <button onClick={() => setPlan("free")} style={{ cursor: "pointer", border: `1px solid ${C.line}`, background: "transparent", color: C.mist, borderRadius: 99, padding: "7px 13px", fontSize: 12 }}>{t.resetFree}</button>}
                 </div>
               </div>
             </div>
@@ -827,8 +942,9 @@ export default function MontaureoPlatform() {
                   <div style={{ display: "flex", flexDirection: "column", gap: 9, fontSize: 13, color: "#E6E5DE", flex: 1 }}>
                     {t.premF.map((x) => <div key={x} style={{ display: "flex", gap: 8, alignItems: "center" }}><Sparkles size={14} color={C.gold} /> {x}</div>)}
                   </div>
-                  <button onClick={openLead} className="mt-cta" style={{ marginTop: 18, cursor: "pointer", border: "none", borderRadius: 12, padding: "13px", fontSize: 14.5, fontWeight: 700, color: "#1A1408", background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})` }}>{t.btnSub}</button>
-                  <button onClick={openLead} style={{ marginTop: 9, cursor: "pointer", border: `1px solid ${C.gold}`, borderRadius: 12, padding: "12px", fontSize: 13.5, fontWeight: 600, color: C.goldHi, background: "transparent" }}>{t.btnOnce}</button>
+                  {/* NOTE: replace this href with the real Stripe Payment Link / Checkout URL once ready */}
+                  <a href="https://buy.stripe.com/YOUR_PAYMENT_LINK" className="mt-cta" style={{ marginTop: 18, textDecoration: "none", textAlign: "center", cursor: "pointer", border: "none", borderRadius: 12, padding: "13px", fontSize: 14.5, fontWeight: 700, color: "#1A1408", background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})` }}>{t.btnSub}</a>
+                  <a href="https://buy.stripe.com/YOUR_ONETIME_LINK" style={{ marginTop: 9, textDecoration: "none", textAlign: "center", cursor: "pointer", border: `1px solid ${C.gold}`, borderRadius: 12, padding: "12px", fontSize: 13.5, fontWeight: 600, color: C.goldHi, background: "transparent" }}>{t.btnOnce}</a>
                 </div>
                 <div style={{ flex: "1 1 220px", maxWidth: 300, border: `1px solid ${C.line}`, borderRadius: 18, padding: "22px 20px", background: C.panel, display: "flex", flexDirection: "column" }}>
                   <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: C.faint }}>{t.tierPrivate}</div>
