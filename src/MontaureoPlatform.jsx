@@ -1,10 +1,11 @@
 import React, { useState, useId, useRef, useEffect } from "react";
-import { ArrowRight, RotateCcw, Sparkles, MapPin, ShieldCheck, Mountain, Users, Mail, Lock, Plane, Compass, Landmark, Building2, Heart, Calendar, CreditCard, User, Send, Crown, LogOut } from "lucide-react";
+import { ArrowRight, RotateCcw, Sparkles, MapPin, ShieldCheck, Mountain, Users, Mail, Lock, Plane, Compass, Landmark, Building2, Heart, Calendar, CreditCard, User, Send, Crown, LogOut, X } from "lucide-react";
 import { supabase } from "./supabaseClient";
 
 /* =====================================================================
-   MONTAUREO — единая платформа (мультиязычная) + Supabase Auth
-   Landing → Auth (Supabase email/password) → Profile/анкета → Two Futures → soft gate → Concierge
+   MONTAUREO — единая платформа (мультиязычная)
+   Landing → Profile/анкета → Two Futures (FREE, no login) → soft gate →
+   → (login/signup required only here) → Stripe checkout → Concierge
    ===================================================================== */
 
 /* ===================== BRAND ===================== */
@@ -26,13 +27,7 @@ const T = {
     sub: "Montaureo is an AI platform for life-changing decisions: residency, wealth, legacy.",
     vp: [["Protect Your Wealth", "Optimize your financial future"], ["Elevate Your Life", "Access the world's best opportunities"], ["Secure Your Family", "A safe and prosperous legacy"]],
     beginTitle: "Begin Your Journey", beginSub: "Begin with clarity. Move with confidence.",
-    emailPh: "name@email.com", passwordPh: "Password",
-    signIn: "Sign in", signUp: "Create account", or: "or",
-    newHere: "New to Montaureo?", createAcc: "Create account", haveAcc: "Already have an account?", toSignIn: "Sign in",
-    authErr: "Something went wrong. Check your email and password.",
-    authCheckEmail: "Check your email to confirm your account, then sign in.",
-    signingIn: "Signing in…", signingUp: "Creating account…",
-    signOut: "Sign out",
+    startFree: "Start free — no account needed",
     sec: [["Bank-Level Security", "256-bit encryption"], ["Your Data is Private", "Never shared with third parties"]],
     whoTitle: "Who are you?", whatTitle: "What matters to you?", step: "Step", of: "of",
     next: "Next", back: "Back", showTwo: "Show me two futures", drawing: "Montaureo is drawing two futures…",
@@ -73,6 +68,16 @@ const T = {
     dom: { null: ["Velvet Concierge", "Banking, real estate, lifestyle, events, relocation — ask anything."], Banking: ["Banking", "Where and how to open an account — pros and cons by bank."], RealEstate: ["Real Estate", "Where to buy property, with price guidance."], Lifestyle: ["Lifestyle", "Where to dine, private service, seasonal trends."], Events: ["Events", "International forums, fairs, private events."], Credit: ["Credit", "Credit and Lombard — where and on what terms."] },
     partnerBankingTitle: "Manage everything in one place", partnerBankingDesc: "monaco-finance.com is our free client portal — track all your accounts, Lombard lines and more.", partnerBankingCta: "Explore monaco-finance.com",
     suggest: { null: ["Best jurisdictions for my profile", "Compare Monaco vs UAE on tax", "Where do I start with relocation?"], Banking: ["Which bank should I open an account with?", "Compare private banks in Monaco", "What's needed for KYC?"], RealEstate: ["What can I buy within my budget?", "Rent or buy?", "Best areas by the sea"], Lifestyle: ["Best restaurants of the 2026 season", "Private service and clubs", "What's new on the Riviera"], Events: ["Upcoming private forums", "Calendar of fairs and auctions", "Grand Prix and yacht shows"], Credit: ["Lombard terms against my portfolio", "Where to get an in-fine loan?", "Rates by country"] },
+    // ---- Auth modal (only shown at the paywall) ----
+    authModalTitle: "Sign in to continue",
+    authModalSub: "Create an account or sign in to unlock Premium and track your subscription.",
+    emailPh: "name@email.com", passwordPh: "Password",
+    signIn: "Sign in", signUp: "Create account & continue",
+    newHere: "New to Montaureo?", createAcc: "Create account", haveAcc: "Already have an account?", toSignIn: "Sign in",
+    authErr: "Something went wrong. Check your email and password.",
+    authCheckEmail: "Check your email to confirm your account, then sign in.",
+    signingIn: "Signing in…", signingUp: "Creating account…",
+    signOut: "Sign out",
   },
   fr: {
     v: { a30: "30–40", a40: "40–50", a50: "50–60", a60: "60+", c1: "€500K–2M", c2: "€2–5M", c3: "€5–15M", c4: "€15–50M", c5: "€50–100M", c6: "€100M+", i1: "< €200K", i2: "€200–500K", i3: "€500K–1M", i4: "€1M+", l1: "< €500K", l2: "€500K–2M", l3: "€2–10M", l4: "€10–50M", l5: "€50M+", fSingle: "Seul", fCouple: "Couple", fKids: "Famille avec enfants", zEU: "UE", zUK: "R-U", zNA: "USA/Canada", zOther: "Autre", pMC: "Monaco", pCH: "Suisse", pAE: "EAU", pLU: "Luxembourg", pLI: "Liechtenstein", pAD: "Andorre", pSG: "Singapour", pFR: "France", pUK: "Royaume-Uni", pDE: "Allemagne", pOther: "Autre", kids: "Enfants", safety: "Sécurité", business: "Affaires", sea: "Mer", taxes: "Fiscalité", climate: "Climat" },
@@ -81,13 +86,7 @@ const T = {
     sub: "Montaureo est une plateforme d'IA pour les décisions qui changent une vie : résidence, patrimoine, héritage.",
     vp: [["Protéger votre patrimoine", "Optimisez votre avenir financier"], ["Élever votre vie", "Accédez aux meilleures opportunités au monde"], ["Sécuriser votre famille", "Un héritage sûr et prospère"]],
     beginTitle: "Commencez votre parcours", beginSub: "Commencez avec clarté. Avancez avec confiance.",
-    emailPh: "nom@email.com", passwordPh: "Mot de passe",
-    signIn: "Se connecter", signUp: "Créer un compte", or: "ou",
-    newHere: "Nouveau sur Montaureo ?", createAcc: "Créer un compte", haveAcc: "Vous avez déjà un compte ?", toSignIn: "Se connecter",
-    authErr: "Une erreur est survenue. Vérifiez votre email et mot de passe.",
-    authCheckEmail: "Vérifiez votre email pour confirmer votre compte, puis connectez-vous.",
-    signingIn: "Connexion…", signingUp: "Création du compte…",
-    signOut: "Se déconnecter",
+    startFree: "Commencer gratuitement — sans compte",
     sec: [["Sécurité bancaire", "Chiffrement 256 bits"], ["Vos données sont privées", "Jamais partagées avec des tiers"]],
     whoTitle: "Qui êtes-vous ?", whatTitle: "Qu'est-ce qui compte pour vous ?", step: "Étape", of: "sur",
     next: "Suivant", back: "Retour", showTwo: "Montrer mes deux avenirs", drawing: "Montaureo dessine deux avenirs…",
@@ -128,6 +127,15 @@ const T = {
     dom: { null: ["Velvet Concierge", "Banque, immobilier, art de vivre, événements, relocation — demandez tout."], Banking: ["Banque", "Où et comment ouvrir un compte — avantages et inconvénients par banque."], RealEstate: ["Immobilier", "Où acheter, avec une estimation de prix."], Lifestyle: ["Art de vivre", "Où dîner, service privé, tendances de saison."], Events: ["Événements", "Forums internationaux, foires, événements privés."], Credit: ["Crédit", "Crédit et Lombard — où et à quelles conditions."] },
     partnerBankingTitle: "Tout centraliser en un lieu", partnerBankingDesc: "monaco-finance.com est notre portail client gratuit — suivez tous vos comptes, lignes Lombard et plus.", partnerBankingCta: "Découvrir monaco-finance.com",
     suggest: { null: ["Meilleures juridictions pour mon profil", "Comparez Monaco et les EAU sur la fiscalité", "Par où commencer la relocation ?"], Banking: ["Dans quelle banque ouvrir un compte ?", "Comparez les banques privées de Monaco", "Que faut-il pour le KYC ?"], RealEstate: ["Que puis-je acheter avec mon budget ?", "Louer ou acheter ?", "Meilleurs quartiers en bord de mer"], Lifestyle: ["Meilleurs restaurants de la saison 2026", "Service privé et clubs", "Quoi de neuf sur la Riviera"], Events: ["Prochains forums privés", "Calendrier des foires et ventes aux enchères", "Grand Prix et salons nautiques"], Credit: ["Conditions Lombard sur mon portefeuille", "Où obtenir un prêt in fine ?", "Taux par pays"] },
+    authModalTitle: "Connectez-vous pour continuer",
+    authModalSub: "Créez un compte ou connectez-vous pour débloquer Premium et suivre votre abonnement.",
+    emailPh: "nom@email.com", passwordPh: "Mot de passe",
+    signIn: "Se connecter", signUp: "Créer un compte et continuer",
+    newHere: "Nouveau sur Montaureo ?", createAcc: "Créer un compte", haveAcc: "Vous avez déjà un compte ?", toSignIn: "Se connecter",
+    authErr: "Une erreur est survenue. Vérifiez votre email et mot de passe.",
+    authCheckEmail: "Vérifiez votre email pour confirmer votre compte, puis connectez-vous.",
+    signingIn: "Connexion…", signingUp: "Création du compte…",
+    signOut: "Se déconnecter",
   },
   ru: {
     v: { a30: "30–40", a40: "40–50", a50: "50–60", a60: "60+", c1: "€500K–2M", c2: "€2–5M", c3: "€5–15M", c4: "€15–50M", c5: "€50–100M", c6: "€100M+", i1: "< €200K", i2: "€200–500K", i3: "€500K–1M", i4: "€1M+", l1: "< €500K", l2: "€500K–2M", l3: "€2–10M", l4: "€10–50M", l5: "€50M+", fSingle: "Один", fCouple: "Пара", fKids: "Семья с детьми", zEU: "ЕС", zUK: "UK", zNA: "США/Канада", zOther: "Другое", pMC: "Монако", pCH: "Швейцария", pAE: "ОАЭ", pLU: "Люксембург", pLI: "Лихтенштейн", pAD: "Андорра", pSG: "Сингапур", pFR: "Франция", pUK: "Великобритания", pDE: "Германия", pOther: "Другая", kids: "Дети", safety: "Безопасность", business: "Бизнес", sea: "Море", taxes: "Налоги", climate: "Климат" },
@@ -136,13 +144,7 @@ const T = {
     sub: "Montaureo — ИИ-платформа для решений, которые меняют жизнь: резидентство, капитал, наследие.",
     vp: [["Защитить капитал", "Оптимизация финансового будущего"], ["Поднять качество жизни", "Доступ к лучшим возможностям мира"], ["Обезопасить семью", "Надёжное и процветающее наследие"]],
     beginTitle: "Начните путь", beginSub: "С ясности. И уверенным шагом.",
-    emailPh: "name@email.com", passwordPh: "Пароль",
-    signIn: "Войти", signUp: "Создать аккаунт", or: "или",
-    newHere: "Впервые здесь?", createAcc: "Создать аккаунт", haveAcc: "Уже есть аккаунт?", toSignIn: "Войти",
-    authErr: "Что-то пошло не так. Проверьте email и пароль.",
-    authCheckEmail: "Проверьте почту, чтобы подтвердить аккаунт, затем войдите.",
-    signingIn: "Вход…", signingUp: "Создание аккаунта…",
-    signOut: "Выйти",
+    startFree: "Начать бесплатно — без аккаунта",
     sec: [["Банковская защита", "256-битное шифрование"], ["Данные приватны", "Не передаём третьим лицам"]],
     whoTitle: "Кто вы?", whatTitle: "Что вам важно?", step: "Шаг", of: "из",
     next: "Далее", back: "Назад", showTwo: "Показать два будущих", drawing: "Montaureo рисует два будущих…",
@@ -183,6 +185,15 @@ const T = {
     dom: { null: ["Velvet Concierge", "Банки, недвижимость, lifestyle, события, релокация — спросите что угодно."], Banking: ["Banking", "Где и как открыть счёт — плюсы и минусы по банкам."], RealEstate: ["Real Estate", "Где покупать недвижимость, с прикидкой по цене."], Lifestyle: ["Lifestyle", "Где поужинать, частный сервис, тренды сезона."], Events: ["Events", "Международные форумы, ярмарки, закрытые мероприятия."], Credit: ["Credit", "Кредит и Lombard — где и под какие условия."] },
     partnerBankingTitle: "Всё в одном месте", partnerBankingDesc: "monaco-finance.com — наш бесплатный клиентский портал: все счета, Lombard-линии и многое другое.", partnerBankingCta: "Перейти на monaco-finance.com",
     suggest: { null: ["Лучшие юрисдикции под мой профиль", "Сравни Монако и ОАЭ по налогам", "С чего начать релокацию?"], Banking: ["В каком банке открыть счёт?", "Сравни приватные банки Монако", "Что нужно для KYC?"], RealEstate: ["Что купить под мой бюджет?", "Аренда или покупка?", "Лучшие районы у моря"], Lifestyle: ["Лучшие рестораны сезона 2026", "Частный сервис и клубы", "Что нового на Лазурном берегу"], Events: ["Ближайшие закрытые форумы", "Календарь ярмарок и аукционов", "Гран-при и яхт-шоу"], Credit: ["Условия Lombard под портфель", "Где взять кредит in fine?", "Ставки по странам"] },
+    authModalTitle: "Войдите, чтобы продолжить",
+    authModalSub: "Создайте аккаунт или войдите, чтобы открыть Premium и отслеживать подписку.",
+    emailPh: "name@email.com", passwordPh: "Пароль",
+    signIn: "Войти", signUp: "Создать аккаунт и продолжить",
+    newHere: "Впервые здесь?", createAcc: "Создать аккаунт", haveAcc: "Уже есть аккаунт?", toSignIn: "Войти",
+    authErr: "Что-то пошло не так. Проверьте email и пароль.",
+    authCheckEmail: "Проверьте почту, чтобы подтвердить аккаунт, затем войдите.",
+    signingIn: "Вход…", signingUp: "Создание аккаунта…",
+    signOut: "Выйти",
   },
 };
 
@@ -383,16 +394,21 @@ const MATTER_KEYS = ["kids", "safety", "business", "sea", "taxes", "climate"];
 /* ===================== APP ===================== */
 export default function MontaureoPlatform() {
   const [lang, setLang] = useState("en");
+  const [authed, setAuthed] = useState(false); // local "entered the app" flag — no login required for this
 
-  // ---- Auth state ----
-  const [authLoading, setAuthLoading] = useState(true); // checking existing session
+  // ---- Supabase session (only relevant once the user reaches the paywall) ----
   const [session, setSession] = useState(null);
-  const [authMode, setAuthMode] = useState("signin"); // 'signin' | 'signup'
+  const [plan, setPlan] = useState("free");
+
+  // ---- Auth modal state (shown only at paywall) ----
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState("signin");
   const [authEmail, setAuthEmail] = useState("");
   const [authPassword, setAuthPassword] = useState("");
   const [authBusy, setAuthBusy] = useState(false);
   const [authErr, setAuthErr] = useState("");
   const [authMsg, setAuthMsg] = useState("");
+  const [pendingStripeUrl, setPendingStripeUrl] = useState(null); // where to send the user after successful auth
 
   const [section, setSection] = useState("future");
   const [form, setForm] = useState({ age: "a50", capital: "c4", liquid: "l3", income: "i3", family: "fKids", citizen: "zEU", from: "pOther" });
@@ -405,7 +421,6 @@ export default function MontaureoPlatform() {
   const [chatInput, setChatInput] = useState("");
   const [chatBusy, setChatBusy] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [plan, setPlan] = useState("free"); // now sourced from Supabase profiles table
   const [leadOpen, setLeadOpen] = useState(false);
   const [leadSent, setLeadSent] = useState(false);
   const [leadSending, setLeadSending] = useState(false);
@@ -440,39 +455,28 @@ export default function MontaureoPlatform() {
     }
   }, []);
 
-  // ---- Fetch the user's plan from the profiles table ----
   const fetchPlan = async (userId) => {
     try {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("plan")
-        .eq("id", userId)
-        .single();
+      const { data, error } = await supabase.from("profiles").select("plan").eq("id", userId).single();
       if (!error && data) setPlan(data.plan || "free");
-    } catch {
-      // fail silently, default stays "free"
-    }
+    } catch { /* fail silently, stays free */ }
   };
 
-  // ---- Check for existing Supabase session on load, and subscribe to changes ----
+  // ---- Passively check for an existing Supabase session (does NOT block the free flow) ----
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       if (session?.user) fetchPlan(session.user.id);
-      setAuthLoading(false);
     });
-
     const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession);
-      if (newSession?.user) {
-        fetchPlan(newSession.user.id);
-      } else {
-        setPlan("free");
-      }
+      if (newSession?.user) fetchPlan(newSession.user.id);
+      else setPlan("free");
     });
-
     return () => listener?.subscription?.unsubscribe();
   }, []);
+
+  const enter = () => { setAuthed(true); setSection("future"); setFutureState("form"); setStep(1); };
 
   const runFuture = async () => {
     setFutureState("loading");
@@ -531,28 +535,39 @@ export default function MontaureoPlatform() {
 
   const closeLeadAndEnterConcierge = () => { setLeadOpen(false); };
 
-  // ---- Real Supabase auth actions ----
-  const handleSignIn = async () => {
+  // ---- Called when user clicks Subscribe / one-time / Private on the paywall ----
+  const requestPaidAccess = (stripeUrl) => {
+    if (session) {
+      // already logged in — go straight to Stripe
+      window.location.href = stripeUrl;
+      return;
+    }
+    setPendingStripeUrl(stripeUrl);
+    setAuthErr(""); setAuthMsg("");
+    setAuthModalOpen(true);
+  };
+
+  const handleModalSignIn = async () => {
     setAuthErr(""); setAuthMsg(""); setAuthBusy(true);
     const { error } = await supabase.auth.signInWithPassword({ email: authEmail.trim(), password: authPassword });
     setAuthBusy(false);
     if (error) { setAuthErr(t.authErr); return; }
-    // onAuthStateChange will pick up the new session automatically
+    setAuthModalOpen(false);
+    if (pendingStripeUrl) window.location.href = pendingStripeUrl;
   };
 
-  const handleSignUp = async () => {
+  const handleModalSignUp = async () => {
     setAuthErr(""); setAuthMsg(""); setAuthBusy(true);
     const { error } = await supabase.auth.signUp({ email: authEmail.trim(), password: authPassword });
     setAuthBusy(false);
     if (error) { setAuthErr(t.authErr); return; }
     setAuthMsg(t.authCheckEmail);
+    // Note: if email confirmation is required, the user must confirm before their session is active.
+    // If confirmation is disabled in Supabase, onAuthStateChange will fire immediately and we can redirect.
   };
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    setSection("future");
-    setFutureState("form");
-    setStep(1);
   };
 
   const Chips = ({ fieldKey, opts }) => (
@@ -562,6 +577,11 @@ export default function MontaureoPlatform() {
         {opts.map((o) => { const on = form[fieldKey] === o; return <button key={o} onClick={() => setF(fieldKey, o)} style={{ cursor: "pointer", border: `1px solid ${on ? C.gold : C.line}`, background: on ? "rgba(198,163,90,0.12)" : "transparent", color: on ? C.snow : C.mist, padding: "9px 14px", borderRadius: 99, fontSize: 13, transition: "all .15s" }}>{v(o)}</button>; })}
       </div>
     </div>
+  );
+  const AuthBtn = ({ icon, children, primary, onClick }) => (
+    <button onClick={onClick} className="auth-btn" style={{ cursor: "pointer", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 10, padding: "14px", borderRadius: 12, fontSize: 14.5, fontWeight: 600, border: primary ? "none" : `1px solid ${C.line}`, color: primary ? "#1A1408" : C.snow, background: primary ? `linear-gradient(140deg, ${C.goldHi}, ${C.gold})` : "rgba(255,255,255,0.03)", position: "relative" }}>
+      <span style={{ position: "absolute", left: 16, display: "flex" }}>{icon}</span>{children}
+    </button>
   );
   const langSwitch = (
     <div style={{ display: "flex", gap: 2, alignItems: "center" }}>
@@ -583,7 +603,7 @@ export default function MontaureoPlatform() {
       .mt-up{animation:up .55s cubic-bezier(.2,.7,.2,1) both}
       .fade{animation:fade .7s cubic-bezier(.2,.7,.2,1) both}
       .mt-cta:hover{filter:brightness(1.1)}
-      .auth-input:focus{border-color:${C.gold}!important}
+      .auth-btn:hover{filter:brightness(1.06);border-color:rgba(198,163,90,0.4)}
       .nav-item:hover{background:rgba(198,163,90,0.06)!important}
       .link:hover{color:${C.goldHi}!important}
       input::placeholder{color:${C.faint}}
@@ -600,18 +620,8 @@ export default function MontaureoPlatform() {
     `}</style>
   );
 
-  /* ===================== LOADING (checking session) ===================== */
-  if (authLoading) {
-    return (
-      <div style={{ background: C.void, minHeight: "100%", width: "100%", display: "grid", placeItems: "center" }}>
-        {STYLE}
-        <div style={{ animation: "pulse 1.5s ease-in-out infinite" }}><SummitMark size={56} /></div>
-      </div>
-    );
-  }
-
-  /* ===================== LANDING / AUTH ===================== */
-  if (!session) {
+  /* ===================== LANDING (no login required) ===================== */
+  if (!authed) {
     return (
       <div style={{ background: C.void, minHeight: "100%", width: "100%", color: C.snow, fontFamily: "Inter, sans-serif" }}>
         {STYLE}
@@ -640,53 +650,11 @@ export default function MontaureoPlatform() {
                 </div>
               ))}
             </div>
-
-            {/* ===== REAL AUTH CARD ===== */}
             <div style={{ border: `1px solid ${C.line}`, borderRadius: 18, padding: 22, background: `linear-gradient(180deg, ${C.panelHi}, ${C.panel})` }}>
               <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 22, color: C.snow, marginBottom: 2 }}>{t.beginTitle}</div>
               <div style={{ fontSize: 13, color: C.mist, marginBottom: 18 }}>{t.beginSub}</div>
-
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                <input
-                  className="auth-input"
-                  type="email"
-                  value={authEmail}
-                  onChange={(e) => setAuthEmail(e.target.value)}
-                  placeholder={t.emailPh}
-                  style={{ width: "100%", background: C.card, border: `1px solid ${C.line}`, borderRadius: 11, padding: "13px 14px", fontSize: 14.5, color: C.snow, fontFamily: "Inter, sans-serif", outline: "none", boxSizing: "border-box" }}
-                />
-                <input
-                  className="auth-input"
-                  type="password"
-                  value={authPassword}
-                  onChange={(e) => setAuthPassword(e.target.value)}
-                  placeholder={t.passwordPh}
-                  style={{ width: "100%", background: C.card, border: `1px solid ${C.line}`, borderRadius: 11, padding: "13px 14px", fontSize: 14.5, color: C.snow, fontFamily: "Inter, sans-serif", outline: "none", boxSizing: "border-box" }}
-                />
-
-                {authErr && <div style={{ fontSize: 12, color: "#E08A8A" }}>{authErr}</div>}
-                {authMsg && <div style={{ fontSize: 12, color: C.green }}>{authMsg}</div>}
-
-                {authMode === "signin" ? (
-                  <Btn onClick={handleSignIn} disabled={authBusy || !authEmail.trim() || !authPassword}>
-                    {authBusy ? t.signingIn : t.signIn}
-                  </Btn>
-                ) : (
-                  <Btn onClick={handleSignUp} disabled={authBusy || !authEmail.trim() || !authPassword}>
-                    {authBusy ? t.signingUp : t.signUp}
-                  </Btn>
-                )}
-              </div>
-
-              <div style={{ textAlign: "center", fontSize: 13, color: C.mist, marginTop: 16 }}>
-                {authMode === "signin" ? (
-                  <>{t.newHere} <span className="link" onClick={() => { setAuthMode("signup"); setAuthErr(""); setAuthMsg(""); }} style={{ color: C.gold, cursor: "pointer", fontWeight: 500 }}>{t.createAcc}</span></>
-                ) : (
-                  <>{t.haveAcc} <span className="link" onClick={() => { setAuthMode("signin"); setAuthErr(""); setAuthMsg(""); }} style={{ color: C.gold, cursor: "pointer", fontWeight: 500 }}>{t.toSignIn}</span></>
-                )}
-              </div>
+              <Btn onClick={enter}>{t.startFree} <ArrowRight size={18} strokeWidth={2.4} /></Btn>
             </div>
-
             <div style={{ display: "flex", gap: 26, marginTop: 18, flexWrap: "wrap" }}>
               {[Lock, ShieldCheck].map((Icon, i) => (
                 <div key={i} style={{ display: "flex", gap: 9, alignItems: "center" }}><Icon size={15} color={C.gold} /><div><div style={{ fontSize: 12.5, color: C.snow }}>{t.sec[i][0]}</div><div style={{ fontSize: 11, color: C.faint }}>{t.sec[i][1]}</div></div></div>
@@ -698,7 +666,7 @@ export default function MontaureoPlatform() {
     );
   }
 
-  /* ===================== SHELL (authenticated) ===================== */
+  /* ===================== SHELL ===================== */
   const [domTitle, domSub] = t.dom[focus];
 
   return (
@@ -740,9 +708,11 @@ export default function MontaureoPlatform() {
               <div style={{ fontSize: 11.5, color: C.mist, margin: "6px 0 4px", lineHeight: 1.45 }}>{t.pmcPrivSub}</div>
             </>)}
           </div>
-          <button onClick={handleSignOut} style={{ cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, border: `1px solid ${C.line}`, background: "transparent", color: C.mist, borderRadius: 11, padding: "10px", fontSize: 12.5 }}>
-            <LogOut size={13} /> {t.signOut}
-          </button>
+          {session && (
+            <button onClick={handleSignOut} style={{ cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, border: `1px solid ${C.line}`, background: "transparent", color: C.mist, borderRadius: 11, padding: "10px", fontSize: 12.5 }}>
+              <LogOut size={13} /> {t.signOut}
+            </button>
+          )}
         </aside>
 
         {/* ===== MAIN ===== */}
@@ -942,9 +912,8 @@ export default function MontaureoPlatform() {
                   <div style={{ display: "flex", flexDirection: "column", gap: 9, fontSize: 13, color: "#E6E5DE", flex: 1 }}>
                     {t.premF.map((x) => <div key={x} style={{ display: "flex", gap: 8, alignItems: "center" }}><Sparkles size={14} color={C.gold} /> {x}</div>)}
                   </div>
-                  {/* NOTE: replace this href with the real Stripe Payment Link / Checkout URL once ready */}
-                  <a href="https://buy.stripe.com/YOUR_PAYMENT_LINK" className="mt-cta" style={{ marginTop: 18, textDecoration: "none", textAlign: "center", cursor: "pointer", border: "none", borderRadius: 12, padding: "13px", fontSize: 14.5, fontWeight: 700, color: "#1A1408", background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})` }}>{t.btnSub}</a>
-                  <a href="https://buy.stripe.com/YOUR_ONETIME_LINK" style={{ marginTop: 9, textDecoration: "none", textAlign: "center", cursor: "pointer", border: `1px solid ${C.gold}`, borderRadius: 12, padding: "12px", fontSize: 13.5, fontWeight: 600, color: C.goldHi, background: "transparent" }}>{t.btnOnce}</a>
+                  <button onClick={() => requestPaidAccess("https://buy.stripe.com/plink_1TomhxIRsiHdRprO1oZrxcbN")} className="mt-cta" style={{ marginTop: 18, cursor: "pointer", border: "none", borderRadius: 12, padding: "13px", fontSize: 14.5, fontWeight: 700, color: "#1A1408", background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})` }}>{t.btnSub}</button>
+                  <button onClick={openLead} style={{ marginTop: 9, cursor: "pointer", border: `1px solid ${C.gold}`, borderRadius: 12, padding: "12px", fontSize: 13.5, fontWeight: 600, color: C.goldHi, background: "transparent" }}>{t.btnOnce}</button>
                 </div>
                 <div style={{ flex: "1 1 220px", maxWidth: 300, border: `1px solid ${C.line}`, borderRadius: 18, padding: "22px 20px", background: C.panel, display: "flex", flexDirection: "column" }}>
                   <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: C.faint }}>{t.tierPrivate}</div>
@@ -1033,6 +1002,64 @@ export default function MontaureoPlatform() {
         </main>
       </div>
 
+      {/* ===== AUTH MODAL — only shown when clicking Subscribe on the paywall ===== */}
+      {authModalOpen && (
+        <div
+          onClick={() => setAuthModalOpen(false)}
+          style={{ position: "fixed", inset: 0, zIndex: 70, background: "rgba(5,5,7,0.72)", display: "flex", alignItems: "center", justifyContent: "center", padding: 18, backdropFilter: "blur(3px)" }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="mt-up"
+            style={{ width: "100%", maxWidth: 420, borderRadius: 20, border: `1px solid rgba(198,163,90,0.35)`, background: `linear-gradient(180deg, ${C.panelHi}, ${C.panel})`, padding: "26px 24px", boxShadow: "0 30px 90px rgba(0,0,0,0.6)", position: "relative" }}
+          >
+            <button onClick={() => setAuthModalOpen(false)} style={{ position: "absolute", top: 16, right: 16, background: "transparent", border: "none", cursor: "pointer", color: C.mist }}>
+              <X size={18} />
+            </button>
+            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 21, color: C.snow, marginBottom: 6 }}>{t.authModalTitle}</div>
+            <div style={{ fontSize: 12.5, color: C.mist, marginBottom: 18, lineHeight: 1.5 }}>{t.authModalSub}</div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <input
+                type="email"
+                value={authEmail}
+                onChange={(e) => setAuthEmail(e.target.value)}
+                placeholder={t.emailPh}
+                style={{ width: "100%", background: C.card, border: `1px solid ${C.line}`, borderRadius: 11, padding: "13px 14px", fontSize: 14.5, color: C.snow, fontFamily: "Inter, sans-serif", outline: "none", boxSizing: "border-box" }}
+              />
+              <input
+                type="password"
+                value={authPassword}
+                onChange={(e) => setAuthPassword(e.target.value)}
+                placeholder={t.passwordPh}
+                style={{ width: "100%", background: C.card, border: `1px solid ${C.line}`, borderRadius: 11, padding: "13px 14px", fontSize: 14.5, color: C.snow, fontFamily: "Inter, sans-serif", outline: "none", boxSizing: "border-box" }}
+              />
+
+              {authErr && <div style={{ fontSize: 12, color: "#E08A8A" }}>{authErr}</div>}
+              {authMsg && <div style={{ fontSize: 12, color: C.green }}>{authMsg}</div>}
+
+              {authMode === "signin" ? (
+                <Btn onClick={handleModalSignIn} disabled={authBusy || !authEmail.trim() || !authPassword}>
+                  {authBusy ? t.signingIn : t.signIn}
+                </Btn>
+              ) : (
+                <Btn onClick={handleModalSignUp} disabled={authBusy || !authEmail.trim() || !authPassword}>
+                  {authBusy ? t.signingUp : t.signUp}
+                </Btn>
+              )}
+            </div>
+
+            <div style={{ textAlign: "center", fontSize: 13, color: C.mist, marginTop: 16 }}>
+              {authMode === "signin" ? (
+                <>{t.newHere} <span className="link" onClick={() => { setAuthMode("signup"); setAuthErr(""); setAuthMsg(""); }} style={{ color: C.gold, cursor: "pointer", fontWeight: 500 }}>{t.createAcc}</span></>
+              ) : (
+                <>{t.haveAcc} <span className="link" onClick={() => { setAuthMode("signin"); setAuthErr(""); setAuthMsg(""); }} style={{ color: C.gold, cursor: "pointer", fontWeight: 500 }}>{t.toSignIn}</span></>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ===== LEAD MODAL — Private Consultation ===== */}
       {leadOpen && (
         <div
@@ -1117,20 +1144,4 @@ export default function MontaureoPlatform() {
               </>
             ) : (
               <div style={{ textAlign: "center", padding: "10px 4px" }}>
-                <div style={{ width: 52, height: 52, borderRadius: "50%", background: "rgba(127,176,130,0.14)", display: "grid", placeItems: "center", margin: "0 auto 16px" }}>
-                  <ShieldCheck size={24} color={C.green} />
-                </div>
-                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 19, color: C.snow, marginBottom: 6 }}>{t.leadConfirmTitle}</div>
-                <div style={{ fontSize: 13.5, color: C.mist, lineHeight: 1.5, marginBottom: 22 }}>{t.leadConfirmBody}</div>
-                <div style={{ display: "flex", gap: 10 }}>
-                  <button onClick={() => setLeadOpen(false)} style={{ flex: 1, cursor: "pointer", border: `1px solid ${C.line}`, background: "transparent", color: C.mist, borderRadius: 12, padding: "13px", fontSize: 13.5 }}>{t.leadClose}</button>
-                  <button onClick={closeLeadAndEnterConcierge} className="mt-cta" style={{ flex: 1, cursor: "pointer", border: "none", borderRadius: 12, padding: "13px", fontSize: 13.5, fontWeight: 700, color: "#1A1408", background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})` }}>{t.leadContinue}</button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
+                <div style={{ 
