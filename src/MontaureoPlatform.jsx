@@ -50,11 +50,11 @@ const T = {
     fcTitle: "Future Confidence", fcSub: "How well this future matches your priorities",
     discPrefix: "* Illustrative estimate under the stated assumptions", scenariosBoth: "both futures are scenarios, not a country forecast.", discDefault: "This is not financial, legal or tax advice; confirm with an advisor.",
     pwEyebrow: "Montaureo Concierge", pwReady: "Your future is ready.", pwVip: "Your VIP concierge", pwUnlock: "Unlock your personal AI concierge.",
-    pwBodyA: "Kate and Max will help you turn this scenario", pwBodyB: "into a real plan: banking, real estate, credit, relocation.",
+    pwBodyA: "Kate, Jun and Emily will help you turn this scenario", pwBodyB: "into a real plan: banking, real estate, credit, relocation.",
     tierFree: "Free", tierFreeNow: "Current plan", tierFreeActive: "Active", freeF: ["Landing and sign-in", "Profile questionnaire", "Two Futures Â· Stay vs Move"],
     recommended: "Recommended", tierPremium: "Premium", perMonth: "/mo", premiumAlt: "or $299 â€” one-time relocation plan",
     promoNote: "Use code WELCOME for your first month at $4.99",
-    premF: ["Velvet Concierge Â· Kate & Max", "Banking Â· Real Estate Â· Credit", "Lifestyle Â· Events Â· KYC checklists", "8 jurisdictions, profile-aware"],
+    premF: ["Velvet Concierge Â· Kate, Jun & Emily", "Banking Â· Real Estate Â· Credit", "Lifestyle Â· Events Â· KYC checklists", "8 jurisdictions, profile-aware"],
     btnSub: "Subscribe", btnOnce: "$299 â€” one-time plan",
     tierPrivate: "Private", privatePrice: "By request", privateNote: "Inner circle", privF: ["Everything in Premium", "A real MFI advisor", "Deal & relocation support"], requestAccess: "Request access",
     pwReassure: "Two Futures stays free forever. Cancel anytime.",
@@ -63,7 +63,7 @@ const T = {
     cWelcomeA: "Given your profile", cWelcomeB: "I already know the details â€” no need to repeat anything. Where shall we begin?", cMoveInterest: "interest in",
     askPlaceholder: "Ask", cFooter: "Information, not advice. For KYC, documents are submitted directly to the bank or your MFI advisor.",
     nav: { future: "Design Your Future", concierge: "Concierge", banking: "Banking", realestate: "Real Estate", lifestyle: "Lifestyle", events: "Events", credit: "Credit", profile: "Profile" },
-    pmcFreeTitle: "MONTAUREO PREMIUM", pmcFreeSub: "Unlock Velvet Concierge â€” Kate and Max turn the scenario into a plan", pmcUnlock: "Unlock",
+    pmcFreeTitle: "MONTAUREO PREMIUM", pmcFreeSub: "Unlock Velvet Concierge â€” Kate, Jun and Emily turn the scenario into a plan", pmcUnlock: "Unlock",
     pmcPremTitle: "PREMIUM ACTIVE", pmcPremSub: "Want a real MFI advisor?", pmcToPrivate: "Upgrade to Private", pmcPrivTitle: "PRIVATE", pmcPrivSub: "A Monaco Finance International advisor will be in touch.",
     dom: { null: ["Velvet Concierge", "Banking, real estate, lifestyle, events, relocation â€” ask anything."], Banking: ["Banking", "Where and how to open an account â€” pros and cons by bank."], RealEstate: ["Real Estate", "Where to buy property, with price guidance."], Lifestyle: ["Lifestyle", "Where to dine, private service, seasonal trends."], Events: ["Events", "International forums, fairs, private events."], Credit: ["Credit", "Credit and Lombard â€” where and on what terms."] },
     partnerBankingTitle: "Manage everything in one place", partnerBankingDesc: "monaco-finance.com is our free client portal â€” track all your accounts, Lombard lines and more.", partnerBankingCta: "Explore monaco-finance.com",
@@ -109,11 +109,11 @@ const T = {
     fcTitle: "Future Confidence", fcSub: "Ã€ quel point cet avenir correspond Ã  vos prioritÃ©s",
     discPrefix: "* Estimation illustrative selon les hypothÃ¨ses indiquÃ©es", scenariosBoth: "les deux avenirs sont des scÃ©narios, pas une prÃ©vision par pays.", discDefault: "Ceci n'est pas un conseil financier, juridique ou fiscal ; confirmez avec un conseiller.",
     pwEyebrow: "Montaureo Concierge", pwReady: "Votre avenir est prÃªt.", pwVip: "Votre concierge VIP", pwUnlock: "DÃ©bloquez votre concierge IA personnel.",
-    pwBodyA: "Kate et Max vous aideront Ã  transformer ce scÃ©nario", pwBodyB: "en un vrai plan : banque, immobilier, crÃ©dit, relocation.",
+    pwBodyA: "Kate, Jun et Emily vous aideront Ã  transformer ce scÃ©nario", pwBodyB: "en un vrai plan : banque, immobilier, crÃ©dit, relocation.",
     tierFree: "Free", tierFreeNow: "Plan actuel", tierFreeActive: "Actif", freeF: ["Accueil et connexion", "Questionnaire de profil", "Two Futures Â· Rester ou Partir"],
     recommended: "RecommandÃ©", tierPremium: "Premium", perMonth: "/mois", premiumAlt: "ou $299 â€” plan de relocation unique",
     promoNote: "Utilisez le code WELCOME pour votre premier mois Ã  $4.99",
-    premF: ["Velvet Concierge Â· Kate & Max", "Banque Â· Immobilier Â· CrÃ©dit", "Art de vivre Â· Ã‰vÃ©nements Â· Checklists KYC", "8 juridictions, profil pris en compte"],
+    premF: ["Velvet Concierge Â· Kate, Jun & Emily", "Banque Â· Immobilier Â· CrÃ©dit", "Art de vivre Â· Ã‰vÃ©nements Â· Checklists KYC", "8 juridictions, profil pris en compte"],
     btnSub: "S'abonner", btnOnce: "$299 â€” plan unique",
     tierPrivate: "Private", privatePrice: "Sur demande", privateNote: "Cercle privÃ©", privF: ["Tout le Premium", "Un vrai conseiller MFI", "Accompagnement transactions & relocation"], requestAccess: "Demander l'accÃ¨s",
     pwReassure: "Two Futures reste gratuit pour toujours. Annulable Ã  tout moment.",
@@ -122,7 +122,7 @@ const T = {
     cWelcomeA: "Au vu de votre profil", cWelcomeB: "je connais dÃ©jÃ  les dÃ©tails â€” inutile de rÃ©pÃ©ter. Par oÃ¹ commenÃ§ons-nous ?", cMoveInterest: "intÃ©rÃªt pour",
     askPlaceholder: "Demandez Ã ", cFooter: "Information, pas un conseil. Pour le KYC, les documents se soumettent directement Ã  la banque ou Ã  votre conseiller MFI.",
     nav: { future: "Design Your Future", concierge: "Concierge", banking: "Banque", realestate: "Immobilier", lifestyle: "Art de vivre", events: "Ã‰vÃ©nements", credit: "CrÃ©dit", profile: "Profil" },
-    pmcFreeTitle: "MONTAUREO PREMIUM", pmcFreeSub: "DÃ©bloquez Velvet Concierge â€” Kate et Max transforment le scÃ©nario en plan", pmcUnlock: "DÃ©bloquer",
+    pmcFreeTitle: "MONTAUREO PREMIUM", pmcFreeSub: "DÃ©bloquez Velvet Concierge â€” Kate, Jun et Emily transforment le scÃ©nario en plan", pmcUnlock: "DÃ©bloquer",
     pmcPremTitle: "PREMIUM ACTIF", pmcPremSub: "Vous voulez un vrai conseiller MFI ?", pmcToPrivate: "Passer Ã  Private", pmcPrivTitle: "PRIVATE", pmcPrivSub: "Un conseiller Monaco Finance International vous contactera.",
     dom: { null: ["Velvet Concierge", "Banque, immobilier, art de vivre, Ã©vÃ©nements, relocation â€” demandez tout."], Banking: ["Banque", "OÃ¹ et comment ouvrir un compte â€” avantages et inconvÃ©nients par banque."], RealEstate: ["Immobilier", "OÃ¹ acheter, avec une estimation de prix."], Lifestyle: ["Art de vivre", "OÃ¹ dÃ®ner, service privÃ©, tendances de saison."], Events: ["Ã‰vÃ©nements", "Forums internationaux, foires, Ã©vÃ©nements privÃ©s."], Credit: ["CrÃ©dit", "CrÃ©dit et Lombard â€” oÃ¹ et Ã  quelles conditions."] },
     partnerBankingTitle: "Tout centraliser en un lieu", partnerBankingDesc: "monaco-finance.com est notre portail client gratuit â€” suivez tous vos comptes, lignes Lombard et plus.", partnerBankingCta: "DÃ©couvrir monaco-finance.com",
@@ -143,7 +143,7 @@ const T = {
     quote: "Ð‘ÑƒÐ´ÑƒÑ‰ÐµÐµ Ð½Ðµ Ð½Ð°Ñ…Ð¾Ð´ÑÑ‚. Ð•Ð³Ð¾ Ð¿Ñ€Ð¾ÐµÐºÑ‚Ð¸Ñ€ÑƒÑŽÑ‚.", h1a: "Ð¡Ð¿Ñ€Ð¾ÐµÐºÑ‚Ð¸Ñ€ÑƒÐ¹Ñ‚Ðµ", h1b: "ÑÐ²Ð¾Ñ‘ Ð±ÑƒÐ´ÑƒÑ‰ÐµÐµ",
     sub: "Montaureo â€” Ð˜Ð˜-Ð¿Ð»Ð°Ñ‚Ñ„Ð¾Ñ€Ð¼Ð° Ð´Ð»Ñ Ñ€ÐµÑˆÐµÐ½Ð¸Ð¹, ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ðµ Ð¼ÐµÐ½ÑÑŽÑ‚ Ð¶Ð¸Ð·Ð½ÑŒ: Ñ€ÐµÐ·Ð¸Ð´ÐµÐ½Ñ‚ÑÑ‚Ð²Ð¾, ÐºÐ°Ð¿Ð¸Ñ‚Ð°Ð», Ð½Ð°ÑÐ»ÐµÐ´Ð¸Ðµ.",
     vp: [["Ð—Ð°Ñ‰Ð¸Ñ‚Ð¸Ñ‚ÑŒ ÐºÐ°Ð¿Ð¸Ñ‚Ð°Ð»", "ÐžÐ¿Ñ‚Ð¸Ð¼Ð¸Ð·Ð°Ñ†Ð¸Ñ Ñ„Ð¸Ð½Ð°Ð½ÑÐ¾Ð²Ð¾Ð³Ð¾ Ð±ÑƒÐ´ÑƒÑ‰ÐµÐ³Ð¾"], ["ÐŸÐ¾Ð´Ð½ÑÑ‚ÑŒ ÐºÐ°Ñ‡ÐµÑÑ‚Ð²Ð¾ Ð¶Ð¸Ð·Ð½Ð¸", "Ð”Ð¾ÑÑ‚ÑƒÐ¿ Ðº Ð»ÑƒÑ‡ÑˆÐ¸Ð¼ Ð²Ð¾Ð·Ð¼Ð¾Ð¶Ð½Ð¾ÑÑ‚ÑÐ¼ Ð¼Ð¸Ñ€Ð°"], ["ÐžÐ±ÐµÐ·Ð¾Ð¿Ð°ÑÐ¸Ñ‚ÑŒ ÑÐµÐ¼ÑŒÑŽ", "ÐÐ°Ð´Ñ‘Ð¶Ð½Ð¾Ðµ Ð¸ Ð¿Ñ€Ð¾Ñ†Ð²ÐµÑ‚Ð°ÑŽÑ‰ÐµÐµ Ð½Ð°ÑÐ»ÐµÐ´Ð¸Ðµ"]],
-    beginTitle: "ÐÐ°Ñ‡Ð½Ð¸Ñ‚Ðµ Ð¿ÑƒÑ‚ÑŒ", beginSub: "Ð¡ ÑÑÐ½Ð¾ÑÑ‚Ð¸. Ð˜ ÑƒÐ²ÐµÑ€ÐµÐ½Ð½Ñ‹Ð¼ ÑˆÐ°Ð³Ð¾Ð¼.",
+    beginTitle: "ÐÐ°Ñ‡Ð½Ð¸Ñ‚Ðµ Ð¿ÑƒÑ‚ÑŒ", beginSub: "Ð¡ ÑÑÐ½Ð¾ÑÑ‚ÑŒÑŽ. Ð˜ ÑƒÐ²ÐµÑ€ÐµÐ½Ð½Ñ‹Ð¼ ÑˆÐ°Ð³Ð¾Ð¼.",
     startFree: "ÐÐ°Ñ‡Ð°Ñ‚ÑŒ Ð±ÐµÑÐ¿Ð»Ð°Ñ‚Ð½Ð¾ â€” Ð±ÐµÐ· Ð°ÐºÐºÐ°ÑƒÐ½Ñ‚Ð°",
     sec: [["Ð‘Ð°Ð½ÐºÐ¾Ð²ÑÐºÐ°Ñ Ð·Ð°Ñ‰Ð¸Ñ‚Ð°", "256-Ð±Ð¸Ñ‚Ð½Ð¾Ðµ ÑˆÐ¸Ñ„Ñ€Ð¾Ð²Ð°Ð½Ð¸Ðµ"], ["Ð”Ð°Ð½Ð½Ñ‹Ðµ Ð¿Ñ€Ð¸Ð²Ð°Ñ‚Ð½Ñ‹", "ÐÐµ Ð¿ÐµÑ€ÐµÐ´Ð°Ñ‘Ð¼ Ñ‚Ñ€ÐµÑ‚ÑŒÐ¸Ð¼ Ð»Ð¸Ñ†Ð°Ð¼"]],
     whoTitle: "ÐšÑ‚Ð¾ Ð²Ñ‹?", whatTitle: "Ð§Ñ‚Ð¾ Ð²Ð°Ð¼ Ð²Ð°Ð¶Ð½Ð¾?", step: "Ð¨Ð°Ð³", of: "Ð¸Ð·",
@@ -167,11 +167,11 @@ const T = {
     fcTitle: "Future Confidence", fcSub: "ÐÐ°ÑÐºÐ¾Ð»ÑŒÐºÐ¾ ÑÑ‚Ð¾ Ð±ÑƒÐ´ÑƒÑ‰ÐµÐµ Ð¾Ñ‚Ð²ÐµÑ‡Ð°ÐµÑ‚ Ð²Ð°ÑˆÐ¸Ð¼ Ð¿Ñ€Ð¸Ð¾Ñ€Ð¸Ñ‚ÐµÑ‚Ð°Ð¼",
     discPrefix: "* Ð˜Ð»Ð»ÑŽÑÑ‚Ñ€Ð°Ñ‚Ð¸Ð²Ð½Ð°Ñ Ð¾Ñ†ÐµÐ½ÐºÐ° Ð¿Ñ€Ð¸ Ð·Ð°Ð´Ð°Ð½Ð½Ñ‹Ñ… Ð´Ð¾Ð¿ÑƒÑ‰ÐµÐ½Ð¸ÑÑ…", scenariosBoth: "Ð¾Ð±Ð° Ð±ÑƒÐ´ÑƒÑ‰Ð¸Ñ… â€” ÑÑ†ÐµÐ½Ð°Ñ€Ð¸Ð¸, Ð½Ðµ Ð¿Ñ€Ð¾Ð³Ð½Ð¾Ð· Ð¿Ð¾ ÑÑ‚Ñ€Ð°Ð½Ðµ.", discDefault: "Ð­Ñ‚Ð¾ Ð½Ðµ Ñ„Ð¸Ð½Ð°Ð½ÑÐ¾Ð²Ð°Ñ, ÑŽÑ€Ð¸Ð´Ð¸Ñ‡ÐµÑÐºÐ°Ñ Ð¸Ð»Ð¸ Ð½Ð°Ð»Ð¾Ð³Ð¾Ð²Ð°Ñ ÐºÐ¾Ð½ÑÑƒÐ»ÑŒÑ‚Ð°Ñ†Ð¸Ñ; Ð¿Ð¾Ð´Ñ‚Ð²ÐµÑ€Ð´Ð¸Ñ‚Ðµ Ñƒ ÑÐ¾Ð²ÐµÑ‚Ð½Ð¸ÐºÐ°.",
     pwEyebrow: "Montaureo Concierge", pwReady: "Ð’Ð°ÑˆÐµ Ð±ÑƒÐ´ÑƒÑ‰ÐµÐµ Ð³Ð¾Ñ‚Ð¾Ð²Ð¾.", pwVip: "Ð’Ð°Ñˆ VIP-ÐºÐ¾Ð½ÑÑŒÐµÑ€Ð¶", pwUnlock: "ÐžÑ‚ÐºÑ€Ð¾Ð¹Ñ‚Ðµ Ð»Ð¸Ñ‡Ð½Ð¾Ð³Ð¾ Ð˜Ð˜-ÐºÐ¾Ð½ÑÑŒÐµÑ€Ð¶Ð°.",
-    pwBodyA: "Kate Ð¸ Max Ð¿Ð¾Ð¼Ð¾Ð³ÑƒÑ‚ Ð¿Ñ€ÐµÐ²Ñ€Ð°Ñ‚Ð¸Ñ‚ÑŒ ÑÑ‚Ð¾Ñ‚ ÑÑ†ÐµÐ½Ð°Ñ€Ð¸Ð¹", pwBodyB: "Ð² Ñ€ÐµÐ°Ð»ÑŒÐ½Ñ‹Ð¹ Ð¿Ð»Ð°Ð½: Ð±Ð°Ð½ÐºÐ¸, Ð½ÐµÐ´Ð²Ð¸Ð¶Ð¸Ð¼Ð¾ÑÑ‚ÑŒ, ÐºÑ€ÐµÐ´Ð¸Ñ‚, Ñ€ÐµÐ»Ð¾ÐºÐ°Ñ†Ð¸Ñ.",
+    pwBodyA: "Kate, Jun Ð¸ Emily Ð¿Ð¾Ð¼Ð¾Ð³ÑƒÑ‚ Ð¿Ñ€ÐµÐ²Ñ€Ð°Ñ‚Ð¸Ñ‚ÑŒ ÑÑ‚Ð¾Ñ‚ ÑÑ†ÐµÐ½Ð°Ñ€Ð¸Ð¹", pwBodyB: "Ð² Ñ€ÐµÐ°Ð»ÑŒÐ½Ñ‹Ð¹ Ð¿Ð»Ð°Ð½: Ð±Ð°Ð½ÐºÐ¸, Ð½ÐµÐ´Ð²Ð¸Ð¶Ð¸Ð¼Ð¾ÑÑ‚ÑŒ, ÐºÑ€ÐµÐ´Ð¸Ñ‚, Ñ€ÐµÐ»Ð¾ÐºÐ°Ñ†Ð¸Ñ.",
     tierFree: "Free", tierFreeNow: "Ð¢ÐµÐºÑƒÑ‰Ð¸Ð¹ Ð¿Ð»Ð°Ð½", tierFreeActive: "ÐÐºÑ‚Ð¸Ð²ÐµÐ½", freeF: ["Landing Ð¸ Ð²Ñ…Ð¾Ð´", "ÐÐ½ÐºÐµÑ‚Ð° Ð¿Ñ€Ð¾Ñ„Ð¸Ð»Ñ", "Two Futures Â· Stay vs Move"],
     recommended: "Ð ÐµÐºÐ¾Ð¼ÐµÐ½Ð´ÑƒÐµÐ¼", tierPremium: "Premium", perMonth: "/Ð¼ÐµÑ", premiumAlt: "Ð¸Ð»Ð¸ $299 â€” Ñ€Ð°Ð·Ð¾Ð²Ñ‹Ð¹ relocation plan",
     promoNote: "ÐŸÑ€Ð¾Ð¼Ð¾ÐºÐ¾Ð´ WELCOME â€” Ð¿ÐµÑ€Ð²Ñ‹Ð¹ Ð¼ÐµÑÑÑ† Ð·Ð° $4.99",
-    premF: ["Velvet Concierge Â· Kate Ð¸ Max", "Banking Â· Real Estate Â· Credit", "Lifestyle Â· Events Â· KYC-Ñ‡ÐµÐºÐ»Ð¸ÑÑ‚Ñ‹", "8 ÑŽÑ€Ð¸ÑÐ´Ð¸ÐºÑ†Ð¸Ð¹, Ð¿Ñ€Ð¾Ñ„Ð¸Ð»ÑŒ ÑƒÑ‡Ñ‚Ñ‘Ð½"],
+    premF: ["Velvet Concierge Â· Kate, Jun Ð¸ Emily", "Banking Â· Real Estate Â· Credit", "Lifestyle Â· Events Â· KYC-Ñ‡ÐµÐºÐ»Ð¸ÑÑ‚Ñ‹", "8 ÑŽÑ€Ð¸ÑÐ´Ð¸ÐºÑ†Ð¸Ð¹, Ð¿Ñ€Ð¾Ñ„Ð¸Ð»ÑŒ ÑƒÑ‡Ñ‚Ñ‘Ð½"],
     btnSub: "ÐžÑ„Ð¾Ñ€Ð¼Ð¸Ñ‚ÑŒ Ð¿Ð¾Ð´Ð¿Ð¸ÑÐºÑƒ", btnOnce: "$299 â€” Ñ€Ð°Ð·Ð¾Ð²Ñ‹Ð¹ Ð¿Ð»Ð°Ð½",
     tierPrivate: "Private", privatePrice: "ÐŸÐ¾ Ð·Ð°Ð¿Ñ€Ð¾ÑÑƒ", privateNote: "Ð—Ð°ÐºÑ€Ñ‹Ñ‚Ñ‹Ð¹ ÐºÑ€ÑƒÐ³", privF: ["Ð’ÑÑ‘ Ð¸Ð· Premium", "Ð ÐµÐ°Ð»ÑŒÐ½Ñ‹Ð¹ ÑÐ¾Ð²ÐµÑ‚Ð½Ð¸Ðº MFI", "Ð¡Ð¾Ð¿Ñ€Ð¾Ð²Ð¾Ð¶Ð´ÐµÐ½Ð¸Ðµ ÑÐ´ÐµÐ»Ð¾Ðº Ð¸ Ñ€ÐµÐ»Ð¾ÐºÐ°Ñ†Ð¸Ð¸"], requestAccess: "Ð—Ð°Ð¿Ñ€Ð¾ÑÐ¸Ñ‚ÑŒ Ð´Ð¾ÑÑ‚ÑƒÐ¿",
     pwReassure: "Two Futures Ð¾ÑÑ‚Ð°Ñ‘Ñ‚ÑÑ Ð±ÐµÑÐ¿Ð»Ð°Ñ‚Ð½Ñ‹Ð¼ Ð½Ð°Ð²ÑÐµÐ³Ð´Ð°. ÐžÑ‚Ð¼ÐµÐ½Ð° Ð² Ð»ÑŽÐ±Ð¾Ð¹ Ð¼Ð¾Ð¼ÐµÐ½Ñ‚.",
@@ -180,7 +180,7 @@ const T = {
     cWelcomeA: "Ð¡ ÑƒÑ‡Ñ‘Ñ‚Ð¾Ð¼ Ð²Ð°ÑˆÐµÐ³Ð¾ Ð¿Ñ€Ð¾Ñ„Ð¸Ð»Ñ", cWelcomeB: "Ñ ÑƒÐ¶Ðµ Ð² ÐºÑƒÑ€ÑÐµ Ð´ÐµÑ‚Ð°Ð»ÐµÐ¹ â€” Ð¿Ð¾Ð²Ñ‚Ð¾Ñ€ÑÑ‚ÑŒ Ð½Ð¸Ñ‡ÐµÐ³Ð¾ Ð½Ðµ Ð½ÑƒÐ¶Ð½Ð¾. Ð¡ Ñ‡ÐµÐ³Ð¾ Ð½Ð°Ñ‡Ð½Ñ‘Ð¼?", cMoveInterest: "Ð¸Ð½Ñ‚ÐµÑ€ÐµÑ Ðº",
     askPlaceholder: "Ð¡Ð¿Ñ€Ð¾ÑÐ¸Ñ‚Ðµ", cFooter: "Ð˜Ð½Ñ„Ð¾Ñ€Ð¼Ð°Ñ†Ð¸Ñ, Ð½Ðµ ÐºÐ¾Ð½ÑÑƒÐ»ÑŒÑ‚Ð°Ñ†Ð¸Ñ. ÐŸÐ¾ KYC Ð´Ð¾ÐºÑƒÐ¼ÐµÐ½Ñ‚Ñ‹ Ð¿Ð¾Ð´Ð°ÑŽÑ‚ÑÑ Ð½Ð°Ð¿Ñ€ÑÐ¼ÑƒÑŽ Ð² Ð±Ð°Ð½Ðº Ð¸Ð»Ð¸ ÑÐ¾Ð²ÐµÑ‚Ð½Ð¸ÐºÑƒ MFI.",
     nav: { future: "Design Your Future", concierge: "Concierge", banking: "Banking", realestate: "Real Estate", lifestyle: "Lifestyle", events: "Events", credit: "Credit", profile: "Profile" },
-    pmcFreeTitle: "MONTAUREO PREMIUM", pmcFreeSub: "ÐžÑ‚ÐºÑ€Ð¾Ð¹Ñ‚Ðµ Velvet Concierge â€” Kate Ð¸ Max Ð¿Ñ€ÐµÐ²Ñ€Ð°Ñ‚ÑÑ‚ ÑÑ†ÐµÐ½Ð°Ñ€Ð¸Ð¹ Ð² Ð¿Ð»Ð°Ð½", pmcUnlock: "Ð Ð°Ð·Ð±Ð»Ð¾ÐºÐ¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒ",
+    pmcFreeTitle: "MONTAUREO PREMIUM", pmcFreeSub: "ÐžÑ‚ÐºÑ€Ð¾Ð¹Ñ‚Ðµ Velvet Concierge â€” Kate, Jun Ð¸ Emily Ð¿Ñ€ÐµÐ²Ñ€Ð°Ñ‚ÑÑ‚ ÑÑ†ÐµÐ½Ð°Ñ€Ð¸Ð¹ Ð² Ð¿Ð»Ð°Ð½", pmcUnlock: "Ð Ð°Ð·Ð±Ð»Ð¾ÐºÐ¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒ",
     pmcPremTitle: "PREMIUM ÐÐšÐ¢Ð˜Ð’Ð•Ð", pmcPremSub: "Ð¥Ð¾Ñ‚Ð¸Ñ‚Ðµ Ñ€ÐµÐ°Ð»ÑŒÐ½Ð¾Ð³Ð¾ ÑÐ¾Ð²ÐµÑ‚Ð½Ð¸ÐºÐ° MFI?", pmcToPrivate: "ÐŸÐµÑ€ÐµÐ¹Ñ‚Ð¸ Ð½Ð° Private", pmcPrivTitle: "PRIVATE", pmcPrivSub: "Ð¡Ð¾Ð²ÐµÑ‚Ð½Ð¸Ðº Monaco Finance International ÑÐ²ÑÐ¶ÐµÑ‚ÑÑ Ñ Ð²Ð°Ð¼Ð¸.",
     dom: { null: ["Velvet Concierge", "Ð‘Ð°Ð½ÐºÐ¸, Ð½ÐµÐ´Ð²Ð¸Ð¶Ð¸Ð¼Ð¾ÑÑ‚ÑŒ, lifestyle, ÑÐ¾Ð±Ñ‹Ñ‚Ð¸Ñ, Ñ€ÐµÐ»Ð¾ÐºÐ°Ñ†Ð¸Ñ â€” ÑÐ¿Ñ€Ð¾ÑÐ¸Ñ‚Ðµ Ñ‡Ñ‚Ð¾ ÑƒÐ³Ð¾Ð´Ð½Ð¾."], Banking: ["Banking", "Ð“Ð´Ðµ Ð¸ ÐºÐ°Ðº Ð¾Ñ‚ÐºÑ€Ñ‹Ñ‚ÑŒ ÑÑ‡Ñ‘Ñ‚ â€” Ð¿Ð»ÑŽÑÑ‹ Ð¸ Ð¼Ð¸Ð½ÑƒÑÑ‹ Ð¿Ð¾ Ð±Ð°Ð½ÐºÐ°Ð¼."], RealEstate: ["Real Estate", "Ð“Ð´Ðµ Ð¿Ð¾ÐºÑƒÐ¿Ð°Ñ‚ÑŒ Ð½ÐµÐ´Ð²Ð¸Ð¶Ð¸Ð¼Ð¾ÑÑ‚ÑŒ, Ñ Ð¿Ñ€Ð¸ÐºÐ¸Ð´ÐºÐ¾Ð¹ Ð¿Ð¾ Ñ†ÐµÐ½Ðµ."], Lifestyle: ["Lifestyle", "Ð“Ð´Ðµ Ð¿Ð¾ÑƒÐ¶Ð¸Ð½Ð°Ñ‚ÑŒ, Ñ‡Ð°ÑÑ‚Ð½Ñ‹Ð¹ ÑÐµÑ€Ð²Ð¸Ñ, Ñ‚Ñ€ÐµÐ½Ð´Ñ‹ ÑÐµÐ·Ð¾Ð½Ð°."], Events: ["Events", "ÐœÐµÐ¶Ð´ÑƒÐ½Ð°Ñ€Ð¾Ð´Ð½Ñ‹Ðµ Ñ„Ð¾Ñ€ÑƒÐ¼Ñ‹, ÑÑ€Ð¼Ð°Ñ€ÐºÐ¸, Ð·Ð°ÐºÑ€Ñ‹Ñ‚Ñ‹Ðµ Ð¼ÐµÑ€Ð¾Ð¿Ñ€Ð¸ÑÑ‚Ð¸Ñ."], Credit: ["Credit", "ÐšÑ€ÐµÐ´Ð¸Ñ‚ Ð¸ Lombard â€” Ð³Ð´Ðµ Ð¸ Ð¿Ð¾Ð´ ÐºÐ°ÐºÐ¸Ðµ ÑƒÑÐ»Ð¾Ð²Ð¸Ñ."] },
     partnerBankingTitle: "Ð’ÑÑ‘ Ð² Ð¾Ð´Ð½Ð¾Ð¼ Ð¼ÐµÑÑ‚Ðµ", partnerBankingDesc: "monaco-finance.com â€” Ð½Ð°Ñˆ Ð±ÐµÑÐ¿Ð»Ð°Ñ‚Ð½Ñ‹Ð¹ ÐºÐ»Ð¸ÐµÐ½Ñ‚ÑÐºÐ¸Ð¹ Ð¿Ð¾Ñ€Ñ‚Ð°Ð»: Ð²ÑÐµ ÑÑ‡ÐµÑ‚Ð°, Lombard-Ð»Ð¸Ð½Ð¸Ð¸ Ð¸ Ð¼Ð½Ð¾Ð³Ð¾Ðµ Ð´Ñ€ÑƒÐ³Ð¾Ðµ.", partnerBankingCta: "ÐŸÐµÑ€ÐµÐ¹Ñ‚Ð¸ Ð½Ð° monaco-finance.com",
@@ -265,46 +265,99 @@ FORMAT â€” return ONLY clean JSON, no markdown:
  "card": null | {"title":"...","rows":[{"primary":"...","secondary":"...","meta":"...","accent":true|false}]}}
 Use a card for lists, comparisons and checklists (3-5 rows); otherwise card=null.`;
 
+/* ===================== PERSONA â†’ MODEL MAPPING ===================== */
+const PERSONA_MODEL = {
+  Kate: "claude",
+  Jun: "qwen-plus",
+  Emily: "mistral-medium-2508",
+};
+const PERSONAS = ["Kate", "Jun", "Emily"];
+
 /* ===================== HELPERS ===================== */
 const buildProfileText = (form, matters) => {
   const v = T.en.v;
   return `age ${v[form.age]}, total wealth ${v[form.capital]}, liquid assets ${v[form.liquid]}, income ${v[form.income]}/yr, ${v[form.family]}, citizenship ${v[form.citizen]}, currently lives in ${v[form.from]}, priorities: ${(matters || []).map((m) => v[m]).join(", ") || "family & life"}`;
 };
 
-async function designFuture(profile, langName) {
+async function designFuture(profile, langName, model = "claude") {
   const langLine = `\n\nRespond entirely in ${langName}. All JSON string values must be written in ${langName}.`;
   try {
-    const r = await fetch("/api/future", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ profile, lang: langName }) });
+    const r = await fetch("/api/future", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ profile, lang: langName, model }) });
     if (r.ok) { const d = await r.json(); if (d && (d.move || d.scene)) return d; }
     throw new Error("no-backend");
   } catch {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 2048, system: FUTURE_SYSTEM + langLine, messages: [{ role: "user", content: profile }] }),
-    });
-    if (!res.ok) throw new Error("api");
-    const data = await res.json();
-    const raw = data.content.filter((b) => b.type === "text").map((b) => b.text).join("\n").trim();
-    return JSON.parse(raw.replace(/```json|```/g, "").trim());
+    // Fallback: direct calls (dev/preview only â€” real traffic should always hit /api/future)
+    if (model === "qwen-plus") {
+      const res = await fetch("https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ model: "qwen-plus", max_tokens: 2048, messages: [{ role: "system", content: FUTURE_SYSTEM + langLine }, { role: "user", content: profile }] }),
+      });
+      if (!res.ok) throw new Error("api");
+      const data = await res.json();
+      const raw = data.choices[0].message.content.trim();
+      return JSON.parse(raw.replace(/```json|```/g, "").trim());
+    } else if (model === "mistral-medium-2508") {
+      const res = await fetch("https://api.mistral.ai/v1/chat/completions", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ model: "mistral-medium-2508", max_tokens: 2048, messages: [{ role: "system", content: FUTURE_SYSTEM + langLine }, { role: "user", content: profile }] }),
+      });
+      if (!res.ok) throw new Error("api");
+      const data = await res.json();
+      const raw = data.choices[0].message.content.trim();
+      return JSON.parse(raw.replace(/```json|```/g, "").trim());
+    } else {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 2048, system: FUTURE_SYSTEM + langLine, messages: [{ role: "user", content: profile }] }),
+      });
+      if (!res.ok) throw new Error("api");
+      const data = await res.json();
+      const raw = data.content.filter((b) => b.type === "text").map((b) => b.text).join("\n").trim();
+      return JSON.parse(raw.replace(/```json|```/g, "").trim());
+    }
   }
 }
 
 async function askConcierge({ profileText, persona, focus, moveCountry, messages, langName }) {
-  const dynamic = `Client profile: ${profileText}.${moveCountry ? ` The client is considering moving to ${moveCountry}.` : ""}\nService persona: ${persona} (${persona === "Kate" ? "warm, attentive" : "direct, to the point"}).${focus ? `\nCurrent focus: ${focus} â€” act as this agent.` : ""}\nDefault response language: ${langName}, unless the client's last message is clearly in another language.`;
+  const model = PERSONA_MODEL[persona] || "claude";
+  const personaTone = persona === "Kate" ? "warm, attentive" : persona === "Jun" ? "fast, direct, to the point" : "sharp, analytical, structured";
+  const dynamic = `Client profile: ${profileText}.${moveCountry ? ` The client is considering moving to ${moveCountry}.` : ""}\nService persona: ${persona} (${personaTone}).${focus ? `\nCurrent focus: ${focus} â€” act as this agent.` : ""}\nDefault response language: ${langName}, unless the client's last message is clearly in another language.`;
   try {
-    const r = await fetch("/api/concierge", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ profileText, persona, focus, moveCountry, messages, lang: langName }) });
+    const r = await fetch("/api/concierge", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ profileText, persona, focus, moveCountry, messages, lang: langName, model }) });
     if (r.ok) { const d = await r.json(); if (d && d.text) return d; }
     throw new Error("no-backend");
   } catch {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 1024, system: CONCIERGE_SYSTEM + "\n\n" + dynamic, messages }),
-    });
-    if (!res.ok) throw new Error("api");
-    const data = await res.json();
-    const raw = data.content.filter((b) => b.type === "text").map((b) => b.text).join("\n").trim();
-    try { return JSON.parse(raw.replace(/```json|```/g, "").trim()); }
-    catch { return { agent: "Velvet", text: raw, card: null }; }
+    if (model === "qwen-plus") {
+      const res = await fetch("https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ model: "qwen-plus", max_tokens: 1024, messages: [{ role: "system", content: CONCIERGE_SYSTEM + "\n\n" + dynamic }, ...messages] }),
+      });
+      if (!res.ok) throw new Error("api");
+      const data = await res.json();
+      const raw = data.choices[0].message.content.trim();
+      try { return JSON.parse(raw.replace(/```json|```/g, "").trim()); }
+      catch { return { agent: "Velvet", text: raw, card: null }; }
+    } else if (model === "mistral-medium-2508") {
+      const res = await fetch("https://api.mistral.ai/v1/chat/completions", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ model: "mistral-medium-2508", max_tokens: 1024, messages: [{ role: "system", content: CONCIERGE_SYSTEM + "\n\n" + dynamic }, ...messages] }),
+      });
+      if (!res.ok) throw new Error("api");
+      const data = await res.json();
+      const raw = data.choices[0].message.content.trim();
+      try { return JSON.parse(raw.replace(/```json|```/g, "").trim()); }
+      catch { return { agent: "Velvet", text: raw, card: null }; }
+    } else {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 1024, system: CONCIERGE_SYSTEM + "\n\n" + dynamic, messages }),
+      });
+      if (!res.ok) throw new Error("api");
+      const data = await res.json();
+      const raw = data.content.filter((b) => b.type === "text").map((b) => b.text).join("\n").trim();
+      try { return JSON.parse(raw.replace(/```json|```/g, "").trim()); }
+      catch { return { agent: "Velvet", text: raw, card: null }; }
+    }
   }
 }
 
@@ -939,7 +992,7 @@ export default function MontaureoPlatform() {
                     <div style={{ fontSize: 13, color: C.mist, marginTop: 4, maxWidth: 460 }}>{domSub}</div>
                   </div>
                   <div style={{ display: "flex", border: `1px solid ${C.line}`, borderRadius: 99, overflow: "hidden" }}>
-                    {["Kate", "Max"].map((p) => { const on = persona === p; return (
+                    {PERSONAS.map((p) => { const on = persona === p; return (
                       <button key={p} onClick={() => setPersona(p)} style={{ cursor: "pointer", border: "none", padding: "7px 16px", fontSize: 13, fontWeight: 600, color: on ? "#1A1408" : C.mist, background: on ? `linear-gradient(140deg, ${C.goldHi}, ${C.gold})` : "transparent" }}>{p}</button>
                     ); })}
                   </div>
