@@ -4,7 +4,8 @@
 // но если последнее сообщение клиента на другом языке — отвечаем на нём.
 // KV: Vercel → Storage → Marketplace → Upstash → Redis → Connect to Project,
 // затем  npm i @upstash/redis  и redeploy.
-// Body: { profileText, persona, focus, moveCountry, messages, lang, clientId, isPaid }.
+// Body: { profileText, persona, focus, moveCountry, messages, lang, clientId, isPaid, model }.
+// persona → model: Kate → claude | Jun → qwen-plus | Emily → mistral-medium-2508
 // =====================================================================
 
 import { Redis } from "@upstash/redis";
@@ -17,6 +18,13 @@ const redis = (process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL
   : null;
 
 const FREE_DAILY_LIMIT = Number(process.env.CONCIERGE_FREE_DAILY_LIMIT || 20);
+
+// Fallback: derive model from persona if the frontend didn't send one explicitly.
+const PERSONA_MODEL = {
+  Kate: "claude",
+  Jun: "qwen-plus",
+  Emily: "mistral-medium-2508",
+};
 
 async function consumeQuota(clientId, limit) {
   if (!clientId) return { ok: true, left: limit };
@@ -71,9 +79,92 @@ FORMAT — return ONLY clean JSON, no markdown:
  "card": null | {"title":"...","rows":[{"primary":"...","secondary":"...","meta":"...","accent":true|false}]}}
 Use a card for lists, comparisons and checklists (3-5 rows); otherwise card=null.`;
 
+function personaTone(persona) {
+  if (persona === "Kate") return "warm, attentive";
+  if (persona === "Jun") return "fast, direct, to the point";
+  if (persona === "Emily") return "sharp, analytical, structured";
+  return "direct, to the point";
+}
+
+function extractParsed(raw) {
+  try { return JSON.parse(raw.replace(/```json|```/g, "").trim()); }
+  catch { return { agent: "Velvet", text: raw, card: null }; }
+}
+
+async function callClaude(dynamic, messages, isPaid) {
+  const r = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-api-key": process.env.ANTHROPIC_API_KEY,
+      "anthropic-version": "2023-06-01",
+    },
+    body: JSON.stringify({
+      model: isPaid ? "claude-sonnet-4-6" : "claude-haiku-4-5-20251001",
+      max_tokens: 1024,
+      system: [
+        { type: "text", text: SYSTEM, cache_control: { type: "ephemeral" } }, // кешируется
+        { type: "text", text: dynamic },                                     // профиль/персона/фокус/язык
+      ],
+      messages: messages.map((m) => ({ role: m.role, content: m.content })),
+    }),
+  });
+  if (!r.ok) { console.error("anthropic", r.status, await r.text().catch(() => "")); throw new Error("model_error"); }
+  const data = await r.json();
+  const raw = (data.content || []).filter((b) => b.type === "text").map((b) => b.text).join("\n").trim();
+  return extractParsed(raw);
+}
+
+async function callQwen(dynamic, messages) {
+  const r = await fetch("https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "Authorization": `Bearer ${process.env.DASHSCOPE_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: "qwen-plus",
+      max_tokens: 1024,
+      messages: [
+        { role: "system", content: SYSTEM + "\n\n" + dynamic },
+        ...messages.map((m) => ({ role: m.role, content: m.content })),
+      ],
+    }),
+  });
+  if (!r.ok) { console.error("qwen", r.status, await r.text().catch(() => "")); throw new Error("model_error"); }
+  const data = await r.json();
+  const raw = (data.choices?.[0]?.message?.content || "").trim();
+  return extractParsed(raw);
+}
+
+async function callMistral(dynamic, messages) {
+  const r = await fetch("https://api.mistral.ai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "Authorization": `Bearer ${process.env.MISTRAL_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: "mistral-medium-2508",
+      max_tokens: 1024,
+      messages: [
+        { role: "system", content: SYSTEM + "\n\n" + dynamic },
+        ...messages.map((m) => ({ role: m.role, content: m.content })),
+      ],
+    }),
+  });
+  if (!r.ok) { console.error("mistral", r.status, await r.text().catch(() => "")); throw new Error("model_error"); }
+  const data = await r.json();
+  const raw = (data.choices?.[0]?.message?.content || "").trim();
+  return extractParsed(raw);
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "method_not_allowed" });
-  const { profileText, persona = "Kate", focus = null, moveCountry = null, messages, clientId, isPaid = false, lang = "English" } = req.body || {};
+  const {
+    profileText, persona = "Kate", focus = null, moveCountry = null,
+    messages, clientId, isPaid = false, lang = "English", model,
+  } = req.body || {};
   if (!Array.isArray(messages) || !messages.length) return res.status(400).json({ error: "bad_request" });
 
   if (!isPaid) {
@@ -81,35 +172,18 @@ export default async function handler(req, res) {
     if (!quota.ok) return res.status(429).json({ error: "limit_reached", requestsLeft: 0 });
   }
 
-  const dynamic = `Client profile: ${profileText || "not provided"}.${moveCountry ? ` The client is considering moving to ${moveCountry}.` : ""}\nService persona: ${persona} (${persona === "Kate" ? "warm, attentive" : "direct, to the point"}).${focus ? `\nCurrent focus: ${focus} — act as this agent.` : ""}\nDefault response language: ${lang}, unless the client's last message is clearly in another language.`;
+  const resolvedModel = model || PERSONA_MODEL[persona] || "claude";
+  const dynamic = `Client profile: ${profileText || "not provided"}.${moveCountry ? ` The client is considering moving to ${moveCountry}.` : ""}\nService persona: ${persona} (${personaTone(persona)}).${focus ? `\nCurrent focus: ${focus} — act as this agent.` : ""}\nDefault response language: ${lang}, unless the client's last message is clearly in another language.`;
 
   try {
-    const r = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-api-key": process.env.ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: isPaid ? "claude-sonnet-4-6" : "claude-haiku-4-5-20251001",
-        max_tokens: 1024,
-        system: [
-          { type: "text", text: SYSTEM, cache_control: { type: "ephemeral" } }, // кешируется
-          { type: "text", text: dynamic },                                       // профиль/персона/фокус/язык
-        ],
-        messages: messages.map((m) => ({ role: m.role, content: m.content })),
-      }),
-    });
-    if (!r.ok) { console.error("anthropic", r.status, await r.text().catch(() => "")); return res.status(502).json({ error: "model_error" }); }
-    const data = await r.json();
-    const raw = (data.content || []).filter((b) => b.type === "text").map((b) => b.text).join("\n").trim();
     let parsed;
-    try { parsed = JSON.parse(raw.replace(/```json|```/g, "").trim()); }
-    catch { parsed = { agent: "Velvet", text: raw, card: null }; }
+    if (resolvedModel === "qwen-plus") parsed = await callQwen(dynamic, messages);
+    else if (resolvedModel === "mistral-medium-2508") parsed = await callMistral(dynamic, messages);
+    else parsed = await callClaude(dynamic, messages, isPaid);
     return res.status(200).json(parsed);
   } catch (e) {
     console.error(e);
+    if (e.message === "model_error") return res.status(502).json({ error: "model_error" });
     return res.status(500).json({ error: "server_error" });
   }
 }
