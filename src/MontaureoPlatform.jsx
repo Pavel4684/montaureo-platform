@@ -73,6 +73,7 @@ const T = {
     authCheckEmail: "Check your email to confirm your account, then sign in.",
     signingIn: "Signing in…", signingUp: "Creating account…",
     signOut: "Sign out",
+    newChat: "New chat",
 };
 
 /* ===================== KNOWLEDGE + PROMPTS ===================== */
@@ -445,6 +446,21 @@ export default function MontaureoPlatform() {
 
   const enter = () => { setAuthed(true); setSection("future"); setFutureState("form"); setStep(1); };
 
+  // ---- Switching topics (Banking, Legal, etc.) starts a fresh conversation instead of
+  // continuing the old one — this also unblocks the input if a previous reply was still pending. ----
+  const switchSection = (key) => {
+    setChat([]);
+    setChatInput("");
+    setChatBusy(false);
+    setSection(key);
+  };
+
+  const startNewChat = () => {
+    setChat([]);
+    setChatInput("");
+    setChatBusy(false);
+  };
+
   const runFuture = async () => {
     setFutureState("loading");
     const profile = `Profile: ${buildProfileText(form, matters)}. Build Stay vs Move to 2036.`;
@@ -618,7 +634,7 @@ export default function MontaureoPlatform() {
               const on = section === key;
               const gated = (key === "concierge" || key in FOCUS) && plan === "free";
               return (
-                <button key={key} className="nav-item" onClick={() => setSection(key)} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 11, padding: "10px 13px", borderRadius: 11, border: on ? `1px solid ${C.line}` : "1px solid transparent", background: on ? "rgba(198,163,90,0.08)" : "transparent", color: on ? C.snow : C.mist, fontSize: 13.5, textAlign: "left", transition: "background .15s" }}>
+                <button key={key} className="nav-item" onClick={() => switchSection(key)} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 11, padding: "10px 13px", borderRadius: 11, border: on ? `1px solid ${C.line}` : "1px solid transparent", background: on ? "rgba(198,163,90,0.08)" : "transparent", color: on ? C.snow : C.mist, fontSize: 13.5, textAlign: "left", transition: "background .15s" }}>
                   <Icon size={16} color={on ? C.gold : C.mist} /> <span style={{ flex: 1 }}>{t.nav[key]}</span>
                   {gated && <Lock size={12} color={C.faint} />}
                 </button>
@@ -888,17 +904,20 @@ export default function MontaureoPlatform() {
                     <div style={{ fontSize: 11, letterSpacing: ".24em", textTransform: "uppercase", color: C.gold }}>{domTitle}</div>
                     <div style={{ fontSize: 13, color: C.mist, marginTop: 4, maxWidth: 460 }}>{domSub}</div>
                   </div>
-                  <div style={{ display: "flex", border: `1px solid ${C.line}`, borderRadius: 99, overflow: "hidden" }}>
-                    {PERSONAS.map((p) => { const on = persona === p; return (
-                      <button key={p} onClick={() => setPersona(p)} style={{ cursor: "pointer", border: "none", padding: "7px 16px", fontSize: 13, fontWeight: 600, color: on ? "#1A1408" : C.mist, background: on ? `linear-gradient(140deg, ${C.goldHi}, ${C.gold})` : "transparent" }}>{p}</button>
-                    ); })}
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                    <div style={{ display: "flex", border: `1px solid ${C.line}`, borderRadius: 99, overflow: "hidden" }}>
+                      {PERSONAS.map((p) => { const on = persona === p; return (
+                        <button key={p} onClick={() => setPersona(p)} style={{ cursor: "pointer", border: "none", padding: "7px 16px", fontSize: 13, fontWeight: 600, color: on ? "#1A1408" : C.mist, background: on ? `linear-gradient(140deg, ${C.goldHi}, ${C.gold})` : "transparent" }}>{p}</button>
+                      ); })}
+                    </div>
+                    <button onClick={startNewChat} style={{ cursor: "pointer", border: `1px solid ${C.line}`, background: "transparent", color: C.mist, borderRadius: 99, padding: "7px 14px", fontSize: 12.5, whiteSpace: "nowrap" }}>{t.newChat}</button>
                   </div>
                 </div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginTop: 12 }}>
                   {[["concierge", Sparkles], ["banking", Landmark], ["realestate", Building2], ["legal", Scale], ["lifestyle", Heart], ["events", Calendar], ["credit", CreditCard]].map(([key, Icon]) => {
                     const on = section === key;
                     return (
-                      <button key={key} onClick={() => setSection(key)} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6, border: `1px solid ${on ? C.gold : C.line}`, background: on ? "rgba(198,163,90,0.14)" : "transparent", color: on ? C.snow : C.mist, padding: "7px 13px", borderRadius: 99, fontSize: 12.5, fontWeight: on ? 600 : 400 }}>
+                      <button key={key} onClick={() => switchSection(key)} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6, border: `1px solid ${on ? C.gold : C.line}`, background: on ? "rgba(198,163,90,0.14)" : "transparent", color: on ? C.snow : C.mist, padding: "7px 13px", borderRadius: 99, fontSize: 12.5, fontWeight: on ? 600 : 400 }}>
                         <Icon size={13} color={on ? C.gold : C.mist} /> {t.nav[key]}
                       </button>
                     );
