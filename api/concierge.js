@@ -86,9 +86,15 @@ function personaTone(persona) {
   return "direct, to the point";
 }
 
+// If the model's reply gets cut off mid-JSON (token limit) or is otherwise malformed,
+// JSON.parse throws — in that case we never show the raw, half-finished JSON to the
+// client. We log it for diagnostics and return a short, friendly retry message instead.
 function extractParsed(raw) {
   try { return JSON.parse(raw.replace(/```json|```/g, "").trim()); }
-  catch { return { agent: "Velvet", text: raw, card: null }; }
+  catch {
+    console.error("concierge JSON parse failed, raw output:", raw);
+    return { agent: "Velvet", text: "Let me pull that together properly — could you ask me again?", card: null };
+  }
 }
 
 async function callClaude(dynamic, messages, isPaid) {
@@ -101,7 +107,7 @@ async function callClaude(dynamic, messages, isPaid) {
     },
     body: JSON.stringify({
       model: isPaid ? "claude-sonnet-4-6" : "claude-haiku-4-5-20251001",
-      max_tokens: 1024,
+      max_tokens: 2048,
       system: [
         { type: "text", text: SYSTEM, cache_control: { type: "ephemeral" } }, // кешируется
         { type: "text", text: dynamic },                                     // профиль/персона/фокус/язык
@@ -124,7 +130,7 @@ async function callQwen(dynamic, messages) {
     },
     body: JSON.stringify({
       model: "qwen-plus",
-      max_tokens: 1024,
+      max_tokens: 2048,
       messages: [
         { role: "system", content: SYSTEM + "\n\n" + dynamic },
         ...messages.map((m) => ({ role: m.role, content: m.content })),
@@ -146,7 +152,7 @@ async function callMistral(dynamic, messages) {
     },
     body: JSON.stringify({
       model: "mistral-medium-2508",
-      max_tokens: 1024,
+      max_tokens: 2048,
       messages: [
         { role: "system", content: SYSTEM + "\n\n" + dynamic },
         ...messages.map((m) => ({ role: m.role, content: m.content })),
