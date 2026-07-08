@@ -1211,6 +1211,8 @@ export default function MontaureoPlatform() {
           </div>
         </div>
       )}
-    </div>
-  );
-}
+      </div>
+    );
+  }
+  
+   
