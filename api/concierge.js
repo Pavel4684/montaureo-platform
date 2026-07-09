@@ -73,11 +73,12 @@ For account-opening questions, give a clear list of required documents (passport
 - direct them to submit documents directly to the bank or to their MFI advisor.
 You provide ONLY information about requirements; you do not process documents.
 
-FORMAT — return ONLY clean JSON, no markdown:
+FORMAT — return ONLY clean JSON, no markdown, no code fences, no text before or after the JSON object:
 {"agent":"Banking|Credit|RealEstate|Lifestyle|Events|KYC|Wealth",
  "text":"1-3 sentence answer",
  "card": null | {"title":"...","rows":[{"primary":"...","secondary":"...","meta":"...","accent":true|false}]}}
-Use a card for lists, comparisons and checklists (3-5 rows); otherwise card=null.`;
+Use a card for lists, comparisons and checklists (3-5 rows); otherwise card=null.
+Do not add any commentary, offers, or follow-up text outside the JSON object — everything you want to say to the client must be inside the "text" field.`;
 
 function personaTone(persona) {
   if (persona === "Kate") return "warm, attentive";
@@ -86,12 +87,40 @@ function personaTone(persona) {
   return "direct, to the point";
 }
 
-// If the model's reply gets cut off mid-JSON (token limit) or is otherwise malformed,
-// JSON.parse throws — in that case we never show the raw, half-finished JSON to the
-// client. We log it for diagnostics and return a short, friendly retry message instead.
+// The model is instructed to return ONLY a JSON object, but in practice it may still:
+//   (a) wrap the JSON in a ```json ... ``` fence,
+//   (b) add prose before or after the fenced/raw JSON (e.g. a follow-up offer),
+//   (c) get cut off mid-object if it hits the token limit.
+// We handle (a) and (b) by extracting just the JSON payload before parsing.
+// (c) will still fail to parse — that's expected, and we fall back gracefully
+// rather than ever showing the client raw or partially-broken JSON.
 function extractParsed(raw) {
-  try { return JSON.parse(raw.replace(/```json|```/g, "").trim()); }
-  catch {
+  try {
+    let jsonStr = raw;
+
+    // Case (a)/(b): a fenced code block — take only what's inside the fence,
+    // ignoring anything the model added before or after it.
+    const fenceMatch = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
+    if (fenceMatch) {
+      jsonStr = fenceMatch[1];
+    } else {
+      // No fence: assume the JSON object is somewhere in the text and extract
+      // from the first "{" to the last "}", trimming any leading/trailing prose.
+      const start = raw.indexOf("{");
+      const end = raw.lastIndexOf("}");
+      if (start !== -1 && end !== -1 && end > start) {
+        jsonStr = raw.slice(start, end + 1);
+      }
+    }
+
+    const parsed = JSON.parse(jsonStr.trim());
+    // Basic shape check — if the model returned valid JSON that isn't our
+    // expected shape at all, treat it the same as a parse failure.
+    if (typeof parsed !== "object" || parsed === null || typeof parsed.text !== "string") {
+      throw new Error("unexpected_shape");
+    }
+    return parsed;
+  } catch {
     console.error("concierge JSON parse failed, raw output:", raw);
     return { agent: "Velvet", text: "Let me pull that together properly — could you ask me again?", card: null };
   }
