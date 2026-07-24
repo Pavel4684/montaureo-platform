@@ -1,5 +1,6 @@
 import React, { useState, useId, useRef, useEffect } from "react";
 import { ArrowRight, RotateCcw, Sparkles, MapPin, ShieldCheck, Mountain, Users, Mail, Lock, Plane, Compass, Landmark, Building2, Heart, Calendar, CreditCard, User, Send, Crown, LogOut, X, Scale } from "lucide-react";
+import { trackCtaClick, trackFutureRun, trackFutureResult, trackSectionView, trackPersonaSelect, trackFirstMessage, trackMessageSent, trackBeginCheckout, trackPurchase, trackLoginSuccess, trackLeadOpen, trackGenerateLead, trackOutbound } from "./analytics";
 
 /* =====================================================================
    MONTAUREO — единая платформа (мультиязычная)
@@ -18,11 +19,11 @@ const C = {
 const T = {
     v: { a30: "30–40", a40: "40–50", a50: "50–60", a60: "60+", c1: "€500K–2M", c2: "€2–5M", c3: "€5–15M", c4: "€15–50M", c5: "€50–100M", c6: "€100M+", i1: "< €200K", i2: "€200–500K", i3: "€500K–1M", i4: "€1M+", l1: "< €500K", l2: "€500K–2M", l3: "€2–10M", l4: "€10–50M", l5: "€50M+", fSingle: "Single", fCouple: "Couple", fKids: "Family with children", zEU: "EU", zUK: "UK", zNA: "US/Canada", zOther: "Other", pMC: "Monaco", pCH: "Switzerland", pAE: "UAE", pLU: "Luxembourg", pLI: "Liechtenstein", pAD: "Andorra", pSG: "Singapore", pFR: "France", pUK: "United Kingdom", pDE: "Germany", pOther: "Other", kids: "Children", safety: "Safety", business: "Business", sea: "Sea", taxes: "Taxes", climate: "Climate" },
     f: { age: "Age", capital: "Capital", liquid: "Liquid assets", income: "Income / year", family: "Family", citizen: "Citizenship", from: "Currently living" },
-    quote: "The future is not found. It is designed.", h1a: "Design Your", h1b: "Future",
-    sub: "Montaureo is an AI platform for life-changing decisions: residency, wealth, legacy.",
+    quote: "The future is not found. It is designed.", h1a: "Where will your capital", h1b: "be worth more?",
+    sub: "Here — or somewhere else? Answer 7 questions and AI builds two versions of your 2036: Stay vs Move, with tax, capital and lifestyle. Free · 60 seconds · no signup.",
     vp: [["Protect Your Wealth", "Optimize your financial future"], ["Elevate Your Life", "Access the world's best opportunities"], ["Secure Your Family", "A safe and prosperous legacy"]],
-    beginTitle: "Begin Your Journey", beginSub: "Begin with clarity. Move with confidence.",
-    startFree: "Start free — no account needed",
+    beginTitle: "Two Futures. One Choice.", beginSub: "See yours in 60 seconds.",
+    startFree: "Show me my two futures",
     sec: [["Bank-Level Security", "256-bit encryption"], ["Your Data is Private", "Never shared with third parties"]],
     whoTitle: "Who are you?", whatTitle: "What matters to you?", step: "Step", of: "of",
     next: "Next", back: "Back", showTwo: "Show me two futures", drawing: "Montaureo is drawing two futures…",
@@ -326,6 +327,7 @@ const MATTER_KEYS = ["kids", "safety", "business", "sea", "taxes", "climate"];
 /* ===================== APP ===================== */
 export default function MontaureoPlatform() {
   const [authed, setAuthed] = useState(false); // local "entered the app" flag — no login required for this
+  const [heroCta, setHeroCta] = useState(false); // CTA over the hero video reveals near the end (with fallbacks)
 
   // ---- Access is keyed by email only: no password, no Supabase.
   // A Stripe webhook writes {plan, expiresAt} to Redis for the paying email;
@@ -368,6 +370,9 @@ export default function MontaureoPlatform() {
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [chat, chatBusy, section]);
 
+  // If autoplay is blocked (battery saver etc.), reveal the hero CTA anyway.
+  useEffect(() => { const id = setTimeout(() => setHeroCta(true), 9000); return () => clearTimeout(id); }, []);
+
   useEffect(() => {
     try {
       const params = new URLSearchParams(window.location.search);
@@ -393,6 +398,7 @@ export default function MontaureoPlatform() {
         setPlan(d.plan || "premium");
         setAccessEmail(email.trim().toLowerCase());
         try { window.localStorage.setItem("montaureo_email", email.trim().toLowerCase()); } catch {}
+        if (!silent) trackLoginSuccess();
       } else {
         setPlan("free");
         if (!silent) setAccessErr("We couldn't find an active subscription for that email.");
@@ -431,6 +437,7 @@ export default function MontaureoPlatform() {
           try { window.localStorage.setItem("montaureo_email", d.email); } catch {}
           setAuthed(true);
           setSection("concierge");
+          trackPurchase(d.plan || "premium");
         }
       } catch {
         // silent — user can still unlock manually via email field
@@ -444,7 +451,7 @@ export default function MontaureoPlatform() {
     })();
   }, []);
 
-  const enter = () => { setAuthed(true); setSection("future"); setFutureState("form"); setStep(1); };
+  const enter = () => { trackCtaClick("start_free"); setAuthed(true); setSection("future"); setFutureState("form"); setStep(1); };
 
   // ---- Switching topics (Banking, Legal, etc.) starts a fresh conversation instead of
   // continuing the old one — this also unblocks the input if a previous reply was still pending. ----
@@ -453,6 +460,7 @@ export default function MontaureoPlatform() {
     setChatInput("");
     setChatBusy(false);
     setSection(key);
+    trackSectionView(key);
   };
 
   const startNewChat = () => {
@@ -462,15 +470,18 @@ export default function MontaureoPlatform() {
   };
 
   const runFuture = async () => {
+    trackFutureRun();
     setFutureState("loading");
     const profile = `Profile: ${buildProfileText(form, matters)}. Build Stay vs Move to 2036.`;
-    try { const r = await designFuture(profile, "English"); setFutureResult(r); setFutureState("result"); }
+    try { const r = await designFuture(profile, "English"); setFutureResult(r); setFutureState("result"); trackFutureResult(r?.move?.country); }
     catch { setFutureState("error"); }
   };
 
   const sendChat = async (text) => {
     const content = (text ?? chatInput).trim();
     if (!content || chatBusy) return;
+    trackFirstMessage(persona);
+    trackMessageSent(persona);
     const next = [...chat, { role: "user", content }];
     setChat(next); setChatInput(""); setChatBusy(true);
     try {
@@ -483,6 +494,7 @@ export default function MontaureoPlatform() {
   };
 
   const openLead = () => {
+    trackLeadOpen();
     setLead((l) => ({ ...l, goal: l.goal || t.leadGoals[0], time: l.time || t.leadTimeOpts[3] }));
     setLeadErr(""); setLeadSent(false); setLeadOpen(true);
   };
@@ -509,6 +521,7 @@ export default function MontaureoPlatform() {
         return;
       }
       setLeadSending(false); setLeadSent(true);
+      trackGenerateLead(lead.goal);
     } catch {
       setLeadSending(false);
       setLeadErr(t.leadConnError);
@@ -522,6 +535,7 @@ export default function MontaureoPlatform() {
   // Stripe collects the client's email itself; the webhook then activates access for that email,
   // so there is nothing to sign in to beforehand.
   const requestPaidAccess = (stripeUrl) => {
+    trackBeginCheckout();
     window.location.href = stripeUrl;
   };
 
@@ -566,7 +580,7 @@ export default function MontaureoPlatform() {
         .nav-item{white-space:nowrap}
         .mt-premium{display:none!important}
         .mt-landing{grid-template-columns:1fr!important;padding-top:24px!important}
-        .mt-globewrap{order:-1!important}
+        .mt-globewrap{order:2!important}
       }
     `}</style>
   );
@@ -576,40 +590,28 @@ export default function MontaureoPlatform() {
     return (
       <div style={{ background: C.void, minHeight: "100%", width: "100%", color: C.snow, fontFamily: "Inter, sans-serif" }}>
         {STYLE}
-        <div style={{ position: "absolute", top: 22, left: 30, display: "flex", alignItems: "center", gap: 11, zIndex: 5 }}><SummitMark size={28} /><Wordmark size={13} /></div>
-        <div className="mt-landing" style={{ minHeight: "100vh", maxWidth: 1180, margin: "0 auto", display: "grid", gridTemplateColumns: "1.05fr 1fr", alignItems: "center", gap: 30, padding: "80px 36px 36px", position: "relative" }}>
-          <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "radial-gradient(50% 36% at 30% 30%, rgba(198,163,90,0.10), transparent 70%)" }} />
-          <div className="mt-globewrap fade" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative" }}>
-            <SpinningGlobe />
-            <div style={{ alignSelf: "flex-start", marginTop: 24, maxWidth: 420 }}>
-              <div style={{ width: 26, height: 1, background: C.gold, marginBottom: 12 }} />
-              <div style={{ fontFamily: "'Playfair Display',serif", fontStyle: "italic", fontSize: 19, lineHeight: 1.5, color: "#D9D8D2" }}>{t.quote}</div>
-              <div style={{ fontSize: 10.5, letterSpacing: ".22em", textTransform: "uppercase", color: C.gold, marginTop: 12 }}>— Montaureo</div>
-            </div>
+        <div style={{ position: "relative", minHeight: "100svh", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+          <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 2, background: "radial-gradient(70% 45% at 50% 15%, rgba(198,163,90,0.08), transparent 70%)" }} />
+          <video
+            autoPlay muted playsInline preload="auto"
+            src="/hero.mp4" poster="/hero-poster.jpg"
+            onClick={() => setHeroCta(true)}
+            onTimeUpdate={(e) => { if (!heroCta && e.currentTarget.currentTime >= 8.4) setHeroCta(true); }}
+            onEnded={() => setHeroCta(true)}
+            onError={() => setHeroCta(true)}
+            style={{ width: "100%", maxWidth: 620, height: "100svh", objectFit: "cover", display: "block", background: C.void }}
+          />
+          <div style={{ position: "absolute", top: 22, left: 0, right: 0, zIndex: 3, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, pointerEvents: "none" }}>
+            <SummitMark size={26} /><Wordmark size={12} />
           </div>
-          <div className="fade" style={{ maxWidth: 440, justifySelf: "center", width: "100%", position: "relative" }}>
-            <h1 style={{ fontFamily: "'Playfair Display',serif", fontWeight: 600, fontSize: "clamp(34px, 5vw, 56px)", lineHeight: 1.02, margin: 0, color: C.snow }}>
-              {t.h1a}<br /><span style={{ background: `linear-gradient(180deg, ${C.goldHi}, ${C.gold})`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>{t.h1b}</span>
-            </h1>
-            <p style={{ fontSize: 15.5, lineHeight: 1.55, color: C.mist, margin: "18px 0 24px" }}>{t.sub}</p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 26 }}>
-              {[ShieldCheck, Mountain, Users].map((Icon, i) => (
-                <div key={i} style={{ display: "flex", gap: 13, alignItems: "flex-start" }}>
-                  <Icon size={20} color={C.gold} style={{ marginTop: 2, flexShrink: 0 }} />
-                  <div><div style={{ fontSize: 15, fontWeight: 600, color: C.snow }}>{t.vp[i][0]}</div><div style={{ fontSize: 13, color: C.mist, marginTop: 1 }}>{t.vp[i][1]}</div></div>
-                </div>
-              ))}
+          <div style={{ position: "absolute", left: 0, right: 0, bottom: "7svh", zIndex: 4, display: "flex", flexDirection: "column", alignItems: "center", gap: 14, padding: "0 24px", opacity: heroCta ? 1 : 0, transform: heroCta ? "none" : "translateY(14px)", transition: "opacity .8s ease, transform .8s ease", pointerEvents: heroCta ? "auto" : "none" }}>
+            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(27px,7vw,42px)", textAlign: "center", lineHeight: 1.12, color: C.snow, textShadow: "0 2px 26px rgba(0,0,0,0.85)" }}>
+              Two futures. <span style={{ background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>One choice.</span>
             </div>
-            <div style={{ border: `1px solid ${C.line}`, borderRadius: 18, padding: 22, background: `linear-gradient(180deg, ${C.panelHi}, ${C.panel})` }}>
-              <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 22, color: C.snow, marginBottom: 2 }}>{t.beginTitle}</div>
-              <div style={{ fontSize: 13, color: C.mist, marginBottom: 18 }}>{t.beginSub}</div>
-              <Btn onClick={enter}>{t.startFree} <ArrowRight size={18} strokeWidth={2.4} /></Btn>
-            </div>
-            <div style={{ display: "flex", gap: 26, marginTop: 18, flexWrap: "wrap" }}>
-              {[Lock, ShieldCheck].map((Icon, i) => (
-                <div key={i} style={{ display: "flex", gap: 9, alignItems: "center" }}><Icon size={15} color={C.gold} /><div><div style={{ fontSize: 12.5, color: C.snow }}>{t.sec[i][0]}</div><div style={{ fontSize: 11, color: C.faint }}>{t.sec[i][1]}</div></div></div>
-              ))}
-            </div>
+            <button onClick={enter} className="mt-cta" style={{ cursor: "pointer", border: "none", borderRadius: 99, padding: "16px 32px", fontSize: 15.5, fontWeight: 600, fontFamily: "Inter, sans-serif", color: "#1A1408", background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})`, display: "flex", alignItems: "center", gap: 9, boxShadow: "0 10px 40px rgba(198,163,90,0.35)" }}>
+              {t.startFree} <ArrowRight size={18} strokeWidth={2.4} />
+            </button>
+            <div style={{ fontSize: 11.5, letterSpacing: ".12em", color: "#C9C8C2", textShadow: "0 1px 14px rgba(0,0,0,0.85)" }}>FREE · 60 SECONDS · NO SIGNUP</div>
           </div>
         </div>
       </div>
@@ -646,7 +648,7 @@ export default function MontaureoPlatform() {
             {plan === "free" && (<>
               <div style={{ fontSize: 12, letterSpacing: ".12em", color: C.gold, fontWeight: 600 }}>{t.pmcFreeTitle}</div>
               <div style={{ fontSize: 11.5, color: C.mist, margin: "6px 0 12px", lineHeight: 1.45 }}>{t.pmcFreeSub}</div>
-              <button onClick={() => setSection("concierge")} className="mt-cta" style={{ width: "100%", cursor: "pointer", border: "none", borderRadius: 11, padding: "10px", fontSize: 13, fontWeight: 600, color: "#1A1408", background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})` }}>{t.pmcUnlock}</button>
+              <button onClick={() => { trackCtaClick("unlock_sidebar"); setSection("concierge"); }} className="mt-cta" style={{ width: "100%", cursor: "pointer", border: "none", borderRadius: 11, padding: "10px", fontSize: 13, fontWeight: 600, color: "#1A1408", background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})` }}>{t.pmcUnlock}</button>
             </>)}
             {plan === "premium" && (<>
               <div style={{ fontSize: 12, letterSpacing: ".12em", color: C.gold, fontWeight: 600 }}>{t.pmcPremTitle}</div>
@@ -790,7 +792,7 @@ export default function MontaureoPlatform() {
                     </div>
                   )}
                   <div className="mt-up" style={{ maxWidth: 600, margin: "20px auto 0" }}>
-                    <Btn onClick={() => setSection("concierge")}>{t.showPath} <ArrowRight size={18} strokeWidth={2.4} /></Btn>
+                    <Btn onClick={() => { trackCtaClick("show_my_path"); setSection("concierge"); }}>{t.showPath} <ArrowRight size={18} strokeWidth={2.4} /></Btn>
                     <div style={{ fontSize: 11.5, color: C.mist, textAlign: "center", marginTop: 10 }}>{t.showPathSub}</div>
                     <button
                       onClick={openLead}
@@ -907,7 +909,7 @@ export default function MontaureoPlatform() {
                   <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                     <div style={{ display: "flex", border: `1px solid ${C.line}`, borderRadius: 99, overflow: "hidden" }}>
                       {PERSONAS.map((p) => { const on = persona === p; return (
-                        <button key={p} onClick={() => setPersona(p)} style={{ cursor: "pointer", border: "none", padding: "7px 16px", fontSize: 13, fontWeight: 600, color: on ? "#1A1408" : C.mist, background: on ? `linear-gradient(140deg, ${C.goldHi}, ${C.gold})` : "transparent" }}>{p}</button>
+                        <button key={p} onClick={() => { setPersona(p); trackPersonaSelect(p); }} style={{ cursor: "pointer", border: "none", padding: "7px 16px", fontSize: 13, fontWeight: 600, color: on ? "#1A1408" : C.mist, background: on ? `linear-gradient(140deg, ${C.goldHi}, ${C.gold})` : "transparent" }}>{p}</button>
                       ); })}
                     </div>
                     <button onClick={startNewChat} style={{ cursor: "pointer", border: `1px solid ${C.line}`, background: "transparent", color: C.mist, borderRadius: 99, padding: "7px 14px", fontSize: 12.5, whiteSpace: "nowrap" }}>{t.newChat}</button>
@@ -930,7 +932,7 @@ export default function MontaureoPlatform() {
                   <div className="mt-up" style={{ alignSelf: "flex-start", maxWidth: 560, width: "100%", border: `1px solid rgba(198,163,90,0.35)`, borderRadius: 16, padding: "16px 18px", background: "linear-gradient(180deg, rgba(198,163,90,0.08), rgba(16,17,23,0.5))" }}>
                     <div style={{ fontSize: 13.5, fontWeight: 600, color: C.goldHi, marginBottom: 4 }}>{t.partnerBankingTitle}</div>
                     <div style={{ fontSize: 12.5, color: C.mist, lineHeight: 1.5, marginBottom: 12 }}>{t.partnerBankingDesc}</div>
-                    <a href="https://monaco-finance.com" target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 7, textDecoration: "none", border: `1px solid ${C.gold}`, borderRadius: 99, padding: "9px 16px", fontSize: 12.5, fontWeight: 600, color: C.goldHi }}>
+                    <a href="https://monaco-finance.com" target="_blank" rel="noopener noreferrer" onClick={() => trackOutbound("monaco-finance.com")} style={{ display: "inline-flex", alignItems: "center", gap: 7, textDecoration: "none", border: `1px solid ${C.gold}`, borderRadius: 99, padding: "9px 16px", fontSize: 12.5, fontWeight: 600, color: C.goldHi }}>
                       {t.partnerBankingCta} <ArrowRight size={13} strokeWidth={2.4} />
                     </a>
                   </div>
