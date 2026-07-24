@@ -605,9 +605,6 @@ export default function MontaureoPlatform() {
             <SummitMark size={26} /><Wordmark size={12} />
           </div>
           <div style={{ position: "absolute", left: 0, right: 0, bottom: "7svh", zIndex: 4, display: "flex", flexDirection: "column", alignItems: "center", gap: 14, padding: "0 24px", opacity: heroCta ? 1 : 0, transform: heroCta ? "none" : "translateY(14px)", transition: "opacity .8s ease, transform .8s ease", pointerEvents: heroCta ? "auto" : "none" }}>
-            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(27px,7vw,42px)", textAlign: "center", lineHeight: 1.12, color: C.snow, textShadow: "0 2px 26px rgba(0,0,0,0.85)" }}>
-              Two futures. <span style={{ background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>One choice.</span>
-            </div>
             <button onClick={enter} className="mt-cta" style={{ cursor: "pointer", border: "none", borderRadius: 99, padding: "16px 32px", fontSize: 15.5, fontWeight: 600, fontFamily: "Inter, sans-serif", color: "#1A1408", background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})`, display: "flex", alignItems: "center", gap: 9, boxShadow: "0 10px 40px rgba(198,163,90,0.35)" }}>
               {t.startFree} <ArrowRight size={18} strokeWidth={2.4} />
             </button>
