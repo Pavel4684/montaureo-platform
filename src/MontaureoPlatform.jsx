@@ -788,6 +788,24 @@ export default function MontaureoPlatform() {
                       </div>
                     </div>
                   )}
+                  {/* ---------- INTRO VIDEO — bridge between the free scenario and the paywall ---------- */}
+                  <div className="mt-up" style={{ maxWidth: 600, margin: "22px auto 0" }}>
+                    <div style={{ fontSize: 10.5, letterSpacing: ".26em", textTransform: "uppercase", color: C.gold, textAlign: "center", marginBottom: 12 }}>
+                      This was the question
+                    </div>
+                    <video
+                      src="/montaureo-intro.mp4"
+                      poster="/montaureo-poster.jpg"
+                      controls
+                      playsInline
+                      preload="none"
+                      style={{ width: "100%", borderRadius: 16, border: `1px solid ${C.line}`, display: "block" }}
+                    />
+                    <div style={{ fontSize: 12.5, color: C.mist, textAlign: "center", marginTop: 10, lineHeight: 1.5 }}>
+                      Kate, Jun and Emily work your specific case — banking, legal, real estate.
+                    </div>
+                  </div>
+
                   <div className="mt-up" style={{ maxWidth: 600, margin: "20px auto 0" }}>
                     <Btn onClick={() => { trackCtaClick("show_my_path"); setSection("concierge"); }}>{t.showPath} <ArrowRight size={18} strokeWidth={2.4} /></Btn>
                     <div style={{ fontSize: 11.5, color: C.mist, textAlign: "center", marginTop: 10 }}>{t.showPathSub}</div>
