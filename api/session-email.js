@@ -6,8 +6,18 @@
 // client's email so the frontend can auto-unlock without asking again.
 // =====================================================================
 
+import crypto from "crypto";
 import Stripe from "stripe";
 import { Redis } from "@upstash/redis";
+
+// Signed access token (same format as api/check-access.js). The browser keeps it and
+// sends it to api/concierge.js, which verifies it — an email alone is not proof of payment.
+function signAccessToken(email) {
+  const secret = process.env.ACCESS_TOKEN_SECRET;
+  if (!secret) return null;
+  const payload = Buffer.from(JSON.stringify({ e: email, x: Date.now() + 30 * 864e5 })).toString("base64url");
+  return `${payload}.${crypto.createHmac("sha256", secret).update(payload).digest("base64url")}`;
+}
 
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
 
@@ -52,7 +62,8 @@ export default async function handler(req, res) {
       await redis.set(accessKey(normalizedEmail), { plan: "premium", expiresAt });
     }
 
-    return res.status(200).json({ active: true, email: normalizedEmail, plan: "premium", expiresAt });
+    const token = signAccessToken(normalizedEmail);
+    return res.status(200).json({ active: true, email: normalizedEmail, plan: "premium", expiresAt, ...(token ? { token } : {}) });
   } catch (err) {
     console.error("session-email error:", err);
     return res.status(500).json({ error: "server_error" });

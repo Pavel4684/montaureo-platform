@@ -7,6 +7,7 @@
 // model: "claude" (Kate) | "qwen-plus" (Jun) | "mistral-medium-2508" (Emily)
 // =====================================================================
 
+import crypto from "crypto";
 import { Redis } from "@upstash/redis";
 
 const redis = (process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL)
@@ -18,15 +19,34 @@ const redis = (process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL
 
 const FREE_DAILY_LIMIT = Number(process.env.FUTURE_FREE_DAILY_LIMIT || 5);
 
-async function consumeQuota(clientId, limit) {
-  if (!clientId) return { ok: true, left: limit };
-  if (!redis) { console.warn("Upstash не настроен — лимит не применяется"); return { ok: true, left: limit }; }
-  const day = new Date().toISOString().slice(0, 10);
-  const key = `quota:future:${clientId}:${day}`;
+
+// Храним не сам IP, а его хэш (GDPR) — страховка к clientId: очистка браузера лимит не сбрасывает.
+function ipKey(req) {
+  const xf = req.headers["x-forwarded-for"];
+  const ip = String(Array.isArray(xf) ? xf[0] : xf || req.socket?.remoteAddress || "").split(",")[0].trim();
+  return ip ? crypto.createHash("sha256").update(ip + (process.env.IP_SALT || "montaureo")).digest("hex").slice(0, 32) : null;
+}
+
+async function hit(key, limit) {
   const used = await redis.incr(key);
   if (used === 1) await redis.expire(key, 60 * 60 * 26);
-  if (used > limit) return { ok: false, left: 0 };
-  return { ok: true, left: limit - used };
+  return used <= limit;
+}
+
+// Дневной лимит: по clientId и по IP (с запасом ×4 — семья или офис за одним адресом).
+// Раньше без clientId лимита не было вовсе, а фронт clientId не отправлял.
+async function consumeQuota(req, clientId, limit) {
+  if (!redis) { console.warn("Upstash не настроен — лимит не применяется"); return true; }
+  const day = new Date().toISOString().slice(0, 10);
+  const ip = ipKey(req);
+  try {
+    const okClient = clientId ? await hit(`quota:future:c:${String(clientId).slice(0, 64)}:${day}`, limit) : true;
+    const okIp = ip ? await hit(`quota:future:ip:${ip}:${day}`, limit * 4) : true;
+    return okClient && okIp;
+  } catch (e) {
+    console.error("quota: Redis недоступен — запрос пропущен без лимита", e);
+    return true;
+  }
 }
 
 const KB = `
@@ -40,6 +60,8 @@ High tax (where people leave from): France, Germany, UK, Canada, Scandinavia.
 
 const JLOGIC = `Jurisdiction coverage is OPEN — consider ANY relevant jurisdiction worldwide; the knowledge above is a starting set, not a limit. Match the destination to the client's CITIZENSHIP and constraints, never one-size-fits-all:
 - French nationals: Monaco does NOT remove French income tax (the 1963 France–Monaco treaty taxes French citizens resident in Monaco as if French residents) — never propose Monaco to them.
+- Leaving France can trigger the French exit tax on substantial shareholdings — flag it as a point for the advisor.
+- US citizens: the US taxes its citizens on worldwide income wherever they live — a move alone does not remove US tax; say so clearly.
 - Wants to stay in the EU: consider Italy (lump-sum flat tax), Portugal, Greece, Cyprus, Malta.
 - Open to leaving the EU: consider 0%/territorial or more exotic options (UAE, Costa Rica, Caribbean, Singapore/Hong Kong).
 MFI has the deepest expertise and relationships in Monaco, UAE, Qatar, Singapore, Luxembourg, Switzerland, Liechtenstein and Andorra — give these priority when they genuinely fit, but never force them.
@@ -147,11 +169,14 @@ async function callMistral(profile, langLine) {
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "method_not_allowed" });
-  const { profile, clientId, lang = "English", model = "claude" } = req.body || {};
-  if (!profile || typeof profile !== "string") return res.status(400).json({ error: "bad_request" });
+  const body = req.body || {};
+  const { profile, clientId } = body;
+  if (!profile || typeof profile !== "string" || profile.length > 2000) return res.status(400).json({ error: "bad_request" });
+  // В промпт попадают только значения из белых списков.
+  const lang = ["English", "French", "Russian"].includes(body.lang) ? body.lang : "English";
+  const model = ["claude", "qwen-plus", "mistral-medium-2508"].includes(body.model) ? body.model : "claude";
 
-  const quota = await consumeQuota(clientId, FREE_DAILY_LIMIT);
-  if (!quota.ok) return res.status(429).json({ error: "limit_reached", requestsLeft: 0 });
+  if (!(await consumeQuota(req, clientId, FREE_DAILY_LIMIT))) return res.status(429).json({ error: "limit_reached", requestsLeft: 0 });
 
   const langLine = `\n\nRespond entirely in ${lang}. All JSON string values must be written in ${lang}.`;
 
