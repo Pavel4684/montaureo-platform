@@ -4,10 +4,15 @@
 // но если последнее сообщение клиента на другом языке — отвечаем на нём.
 // KV: Vercel → Storage → Marketplace → Upstash → Redis → Connect to Project,
 // затем  npm i @upstash/redis  и redeploy.
-// Body: { profileText, persona, focus, moveCountry, messages, lang, clientId, isPaid, model }.
+// Body: { profileText, persona, focus, moveCountry, messages, lang, clientId, model, accessToken, email }.
+// ДОСТУП ПРОВЕРЯЕТСЯ ЗДЕСЬ, НА СЕРВЕРЕ: подписанный токен (ACCESS_TOKEN_SECRET) + действующая
+// запись access:<email> в Redis, которую пишут Stripe webhook и session-email.
+// Поле isPaid от браузера больше не принимается. Без оплаты — 402 payment_required.
+// Пока ACCESS_TOKEN_SECRET не задан, оплата проверяется по email (слабее, но уже на сервере).
 // persona → model: Kate → claude | Jun → qwen-plus | Emily → mistral-medium-2508
 // =====================================================================
 
+import crypto from "crypto";
 import { Redis } from "@upstash/redis";
 
 const redis = (process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL)
@@ -17,7 +22,10 @@ const redis = (process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL
     })
   : null;
 
-const FREE_DAILY_LIMIT = Number(process.env.CONCIERGE_FREE_DAILY_LIMIT || 20);
+// Потолок для платного клиента — защита от злоупотребления, а не тариф.
+const PAID_DAILY_LIMIT = Number(process.env.CONCIERGE_PAID_DAILY_LIMIT || 300);
+const MAX_MESSAGES = 20;     // в модель уходят только последние 20 реплик
+const MAX_MSG_CHARS = 4000;  // и каждая не длиннее 4000 символов
 
 // Fallback: derive model from persona if the frontend didn't send one explicitly.
 const PERSONA_MODEL = {
@@ -26,15 +34,45 @@ const PERSONA_MODEL = {
   Emily: "mistral-medium-2508",
 };
 
-async function consumeQuota(clientId, limit) {
-  if (!clientId) return { ok: true, left: limit };
-  if (!redis) { console.warn("Upstash не настроен — лимит не применяется"); return { ok: true, left: limit }; }
-  const day = new Date().toISOString().slice(0, 10);
-  const key = `quota:concierge:${clientId}:${day}`;
-  const used = await redis.incr(key);
-  if (used === 1) await redis.expire(key, 60 * 60 * 26);
-  if (used > limit) return { ok: false, left: 0 };
-  return { ok: true, left: limit - used };
+// ---------- Проверка доступа ----------
+function verifyAccessToken(token) {
+  const secret = process.env.ACCESS_TOKEN_SECRET;
+  if (!secret || typeof token !== "string") return null;
+  const [payload, sig] = token.split(".");
+  if (!payload || !sig) return null;
+  const expected = crypto.createHmac("sha256", secret).update(payload).digest("base64url");
+  if (expected.length !== sig.length || !crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(sig))) return null;
+  try {
+    const data = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
+    return data.e && data.x > Date.now() ? String(data.e).toLowerCase() : null;
+  } catch { return null; }
+}
+
+// Возвращает email платного клиента или null.
+async function paidEmail(body) {
+  if (!redis) return null;
+  let email = verifyAccessToken(body.accessToken);
+  // Переходный режим: пока секрет не задан, принимаем email (как check-access сегодня).
+  if (!email && !process.env.ACCESS_TOKEN_SECRET && typeof body.email === "string" && body.email.includes("@")) {
+    email = body.email.trim().toLowerCase();
+  }
+  if (!email) return null;
+  try {
+    const record = await redis.get(`access:${email}`);
+    return record && Number(record.expiresAt || 0) > Date.now() ? email : null;
+  } catch (e) {
+    console.error("access check: Redis недоступен", e);
+    return null;
+  }
+}
+
+async function underPaidLimit(email) {
+  try {
+    const key = `quota:concierge:paid:${email}:${new Date().toISOString().slice(0, 10)}`;
+    const used = await redis.incr(key);
+    if (used === 1) await redis.expire(key, 60 * 60 * 26);
+    return used <= PAID_DAILY_LIMIT;
+  } catch { return true; }
 }
 
 const KB = `
@@ -48,6 +86,8 @@ High tax (where people leave from): France, Germany, UK, Canada, Scandinavia.
 
 const JLOGIC = `Jurisdiction coverage is OPEN — consider ANY relevant jurisdiction worldwide; the knowledge above is a starting set, not a limit. Match the destination to the client's CITIZENSHIP and constraints, never one-size-fits-all:
 - French nationals: Monaco does NOT remove French income tax (the 1963 France–Monaco treaty taxes French citizens resident in Monaco as if French residents) — never propose Monaco to them.
+- Leaving France can trigger the French exit tax on substantial shareholdings — flag it as a point for the advisor.
+- US citizens: the US taxes its citizens on worldwide income wherever they live — a move alone does not remove US tax; say so clearly.
 - Wants to stay in the EU: consider Italy (lump-sum flat tax), Portugal, Greece, Cyprus, Malta.
 - Open to leaving the EU: consider 0%/territorial or more exotic options (UAE, Costa Rica, Caribbean, Singapore/Hong Kong).
 MFI has the deepest expertise and relationships in Monaco, UAE, Qatar, Singapore, Luxembourg, Switzerland, Liechtenstein and Andorra — give these priority when they genuinely fit, but never force them.`;
@@ -62,7 +102,7 @@ ${JLOGIC}
 Agents (pick the right one): Banking, Credit, RealEstate, Lifestyle, Events, KYC, Wealth.
 
 THE CLIENT PROFILE IS ALREADY KNOWN (see the dynamic block).
-NEVER re-ask anything already in the profile (total wealth, liquid assets, family, country, goals, interests).
+NEVER re-ask anything already in the profile (total wealth, liquid assets, family, citizenship, country, goals, interests).
 Rely on the profile and get to the point — e.g. "Given your profile…".
 When discussing credit, Lombard lending, or banking account thresholds, reference the client's LIQUID assets specifically, not total wealth — total wealth may include illiquid real estate or business equity that cannot be pledged, deposited, or drawn against.
 
@@ -141,7 +181,7 @@ async function callClaude(dynamic, messages, isPaid) {
         { type: "text", text: SYSTEM, cache_control: { type: "ephemeral" } }, // кешируется
         { type: "text", text: dynamic },                                     // профиль/персона/фокус/язык
       ],
-      messages: messages.map((m) => ({ role: m.role, content: m.content })),
+      messages,
     }),
   });
   if (!r.ok) { console.error("anthropic", r.status, await r.text().catch(() => "")); throw new Error("model_error"); }
@@ -196,18 +236,30 @@ async function callMistral(dynamic, messages) {
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "method_not_allowed" });
-  const {
-    profileText, persona = "Kate", focus = null, moveCountry = null,
-    messages, clientId, isPaid = false, lang = "English", model,
-  } = req.body || {};
-  if (!Array.isArray(messages) || !messages.length) return res.status(400).json({ error: "bad_request" });
+  const body = req.body || {};
 
-  if (!isPaid) {
-    const quota = await consumeQuota(clientId, FREE_DAILY_LIMIT);
-    if (!quota.ok) return res.status(429).json({ error: "limit_reached", requestsLeft: 0 });
-  }
+  // 1) Консьерж — платная услуга: проверяем оплату сами, а не верим браузеру.
+  const email = await paidEmail(body);
+  if (!email) return res.status(402).json({ error: "payment_required" });
+  if (!(await underPaidLimit(email))) return res.status(429).json({ error: "limit_reached" });
+  const isPaid = true;
 
-  const resolvedModel = model || PERSONA_MODEL[persona] || "claude";
+  // 2) История: только реплики user/assistant, последние 20, каждая ≤ 4000 символов, начиная с клиента.
+  const messages = Array.isArray(body.messages)
+    ? body.messages.filter((m) => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
+        .slice(-MAX_MESSAGES).map((m) => ({ role: m.role, content: m.content.slice(0, MAX_MSG_CHARS) }))
+    : [];
+  while (messages.length && messages[0].role !== "user") messages.shift();
+  if (!messages.length) return res.status(400).json({ error: "bad_request" });
+
+  // 3) Всё, что попадает в промпт, — из белых списков или обрезано.
+  const clip = (v, n) => (typeof v === "string" ? v.slice(0, n) : "");
+  const persona = PERSONA_MODEL[body.persona] ? body.persona : "Kate";
+  const focus = ["Banking", "RealEstate", "Lifestyle", "Events", "Credit", "Legal"].includes(body.focus) ? body.focus : null;
+  const lang = ["English", "French", "Russian"].includes(body.lang) ? body.lang : "English";
+  const profileText = clip(body.profileText, 1500);
+  const moveCountry = clip(body.moveCountry, 60);
+  const resolvedModel = Object.values(PERSONA_MODEL).includes(body.model) ? body.model : PERSONA_MODEL[persona];
   const dynamic = `Client profile: ${profileText || "not provided"}.${moveCountry ? ` The client is considering moving to ${moveCountry}.` : ""}\nService persona: ${persona} (${personaTone(persona)}).${focus ? `\nCurrent focus: ${focus} — act as this agent.` : ""}\nDefault response language: ${lang}, unless the client's last message is clearly in another language.`;
 
   try {
