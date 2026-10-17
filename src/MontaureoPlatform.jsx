@@ -17,13 +17,16 @@ const C = {
 
 /* ===================== COPY (English only — AI still replies in the client's own language) ===================== */
 const T = {
-    v: { a30: "30–40", a40: "40–50", a50: "50–60", a60: "60+", c1: "€500K–2M", c2: "€2–5M", c3: "€5–15M", c4: "€15–50M", c5: "€50–100M", c6: "€100M+", i1: "< €200K", i2: "€200–500K", i3: "€500K–1M", i4: "€1M+", l1: "< €500K", l2: "€500K–2M", l3: "€2–10M", l4: "€10–50M", l5: "€50M+", fSingle: "Single", fCouple: "Couple", fKids: "Family with children", zEU: "EU", zUK: "UK", zNA: "US/Canada", zOther: "Other", pMC: "Monaco", pCH: "Switzerland", pAE: "UAE", pLU: "Luxembourg", pLI: "Liechtenstein", pAD: "Andorra", pSG: "Singapore", pFR: "France", pUK: "United Kingdom", pDE: "Germany", pOther: "Other", kids: "Children", safety: "Safety", business: "Business", sea: "Sea", taxes: "Taxes", climate: "Climate" },
+    v: { a30: "30–40", a40: "40–50", a50: "50–60", a60: "60+", c1: "€500K–2M", c2: "€2–5M", c3: "€5–15M", c4: "€15–50M", c5: "€50–100M", c6: "€100M+", i1: "< €200K", i2: "€200–500K", i3: "€500K–1M", i4: "€1M+", l1: "< €500K", l2: "€500K–2M", l3: "€2–10M", l4: "€10–50M", l5: "€50M+", fSingle: "Single", fCouple: "Couple", fKids: "Family with children", zFR: "France", zEU: "Other EU", zUK: "UK", zNA: "US/Canada", zOther: "Other", pMC: "Monaco", pCH: "Switzerland", pAE: "UAE", pLU: "Luxembourg", pLI: "Liechtenstein", pAD: "Andorra", pSG: "Singapore", pFR: "France", pUK: "United Kingdom", pDE: "Germany", pOther: "Other", kids: "Children", safety: "Safety", business: "Business", sea: "Sea", taxes: "Taxes", climate: "Climate" },
     f: { age: "Age", capital: "Capital", liquid: "Liquid assets", income: "Income / year", family: "Family", citizen: "Citizenship", from: "Currently living" },
     quote: "The future is not found. It is designed.", h1a: "Where will your capital", h1b: "be worth more?",
     sub: "Here — or somewhere else? Answer 7 questions and AI builds two versions of your 2036: Stay vs Move, with tax, capital and lifestyle. Free · 60 seconds · no signup.",
     vp: [["Protect Your Wealth", "Optimize your financial future"], ["Elevate Your Life", "Access the world's best opportunities"], ["Secure Your Family", "A safe and prosperous legacy"]],
     beginTitle: "Two Futures. One Choice.", beginSub: "See yours in 60 seconds.",
     startFree: "Show me my two futures",
+    heroTitle: "Design your future.",
+    heroSub: "Compare how staying or moving could shape your wealth, lifestyle and family's future — tax, banking and real estate in one view.",
+    heroTrust: "By Monaco Finance International LP",
     sec: [["Bank-Level Security", "256-bit encryption"], ["Your Data is Private", "Never shared with third parties"]],
     whoTitle: "Who are you?", whatTitle: "What matters to you?", step: "Step", of: "of",
     next: "Next", back: "Back", showTwo: "Show me two futures", drawing: "Montaureo is drawing two futures…",
@@ -155,15 +158,33 @@ const PERSONAS = ["Kate", "Jun", "Emily"];
 
 /* ===================== HELPERS ===================== */
 const buildProfileText = (form, matters) => {
-  const v = T.v;
-  return `age ${v[form.age]}, total wealth ${v[form.capital]}, liquid assets ${v[form.liquid]}, income ${v[form.income]}/yr, ${v[form.family]}, citizenship ${v[form.citizen]}, currently lives in ${v[form.from]}, priorities: ${(matters || []).map((m) => v[m]).join(", ") || "family & life"}`;
+  const v = (k) => (form[k] ? T.v[form[k]] : "not specified");
+  return `age ${v("age")}, total wealth ${v("capital")}, liquid assets ${v("liquid")}, income ${v("income")}/yr, ${v("family")}, citizenship ${v("citizen")}, currently lives in ${v("from")}, priorities: ${(matters || []).map((m) => T.v[m]).join(", ") || "family & life"}`;
 };
+
+// Stable anonymous id for the server's daily free limits (Upstash).
+function getClientId() {
+  try {
+    let id = window.localStorage.getItem("montaureo_cid");
+    if (!id) {
+      id = window.crypto?.randomUUID ? window.crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      window.localStorage.setItem("montaureo_cid", id);
+    }
+    return id;
+  } catch { return `anon-${Math.random().toString(36).slice(2)}`; }
+}
+const CLIENT_ID = typeof window !== "undefined" ? getClientId() : "ssr";
+
+// The server answered on purpose (limit reached / payment required) — never fall back to direct calls.
+function apiError(code) { const e = new Error(code); e.code = code; return e; }
 
 async function designFuture(profile, langName, model = "claude") {
   const langLine = `\n\nRespond entirely in ${langName}. All JSON string values must be written in ${langName}.`;
+  let r = null;
+  try { r = await fetch("/api/future", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ profile, lang: langName, model, clientId: CLIENT_ID }) }); } catch { /* no backend (preview) */ }
+  if (r && r.status === 429) throw apiError("limit");
   try {
-    const r = await fetch("/api/future", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ profile, lang: langName, model }) });
-    if (r.ok) { const d = await r.json(); if (d && (d.move || d.scene)) return d; }
+    if (r && r.ok) { const d = await r.json(); if (d && (d.move || d.scene)) return d; }
     throw new Error("no-backend");
   } catch {
     // Fallback: direct calls (dev/preview only — real traffic should always hit /api/future)
@@ -198,13 +219,16 @@ async function designFuture(profile, langName, model = "claude") {
   }
 }
 
-async function askConcierge({ profileText, persona, focus, moveCountry, messages, langName }) {
+async function askConcierge({ profileText, persona, focus, moveCountry, messages, langName, accessToken, email }) {
   const model = PERSONA_MODEL[persona] || "claude";
   const personaTone = persona === "Kate" ? "warm, attentive" : persona === "Jun" ? "fast, direct, to the point" : "sharp, analytical, structured";
   const dynamic = `Client profile: ${profileText}.${moveCountry ? ` The client is considering moving to ${moveCountry}.` : ""}\nService persona: ${persona} (${personaTone}).${focus ? `\nCurrent focus: ${focus} — act as this agent.` : ""}\nDefault response language: ${langName}, unless the client's last message is clearly in another language.`;
+  let r = null;
+  try { r = await fetch("/api/concierge", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ profileText, persona, focus, moveCountry, messages, lang: langName, model, clientId: CLIENT_ID, accessToken, email }) }); } catch { /* no backend (preview) */ }
+  if (r && r.status === 402) throw apiError("payment_required");
+  if (r && r.status === 429) throw apiError("limit");
   try {
-    const r = await fetch("/api/concierge", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ profileText, persona, focus, moveCountry, messages, lang: langName, model }) });
-    if (r.ok) { const d = await r.json(); if (d && d.text) return d; }
+    if (r && r.ok) { const d = await r.json(); if (d && d.text) return d; }
     throw new Error("no-backend");
   } catch {
     if (model === "qwen-plus") {
@@ -321,13 +345,14 @@ function ChatCard({ card }) {
 /* ===================== CONFIG ===================== */
 const SECTIONS = [["future", Compass], ["concierge", Sparkles], ["banking", Landmark], ["realestate", Building2], ["legal", Scale], ["lifestyle", Heart], ["events", Calendar], ["credit", CreditCard], ["profile", User]];
 const FOCUS = { banking: "Banking", realestate: "RealEstate", legal: "Legal", lifestyle: "Lifestyle", events: "Events", credit: "Credit" };
-const FIELDS = [["age", ["a30", "a40", "a50", "a60"]], ["capital", ["c1", "c2", "c3", "c4", "c5", "c6"]], ["liquid", ["l1", "l2", "l3", "l4", "l5"]], ["income", ["i1", "i2", "i3", "i4"]], ["family", ["fSingle", "fCouple", "fKids"]], ["citizen", ["zEU", "zUK", "zNA", "zOther"]], ["from", ["pOther", "pMC", "pCH", "pAE", "pLU", "pLI", "pAD", "pSG", "pFR", "pUK", "pDE"]]];
+const FIELDS = [["age", ["a30", "a40", "a50", "a60"]], ["capital", ["c1", "c2", "c3", "c4", "c5", "c6"]], ["liquid", ["l1", "l2", "l3", "l4", "l5"]], ["income", ["i1", "i2", "i3", "i4"]], ["family", ["fSingle", "fCouple", "fKids"]], ["citizen", ["zFR", "zEU", "zUK", "zNA", "zOther"]], ["from", ["pOther", "pMC", "pCH", "pAE", "pLU", "pLI", "pAD", "pSG", "pFR", "pUK", "pDE"]]];
 const MATTER_KEYS = ["kids", "safety", "business", "sea", "taxes", "climate"];
 
 /* ===================== APP ===================== */
 export default function MontaureoPlatform() {
   const [authed, setAuthed] = useState(false); // local "entered the app" flag — no login required for this
-  const [heroCta, setHeroCta] = useState(false); // CTA over the hero video reveals near the end (with fallbacks)
+  // Landing video: horizontal for wide screens, vertical for phones (chosen once on load).
+  const [heroPortrait] = useState(() => { try { return window.matchMedia("(max-aspect-ratio: 4/5)").matches; } catch { return false; } });
 
   // ---- Access is keyed by email only: no password, no Supabase.
   // A Stripe webhook writes {plan, expiresAt} to Redis for the paying email;
@@ -338,13 +363,16 @@ export default function MontaureoPlatform() {
   const [accessInput, setAccessInput] = useState("");
   const [accessChecking, setAccessChecking] = useState(false);
   const [accessErr, setAccessErr] = useState("");
+  const [accessNote, setAccessNote] = useState("");
+  const [accessToken, setAccessToken] = useState("");
 
   const [section, setSection] = useState("future");
-  const [form, setForm] = useState({ age: "a50", capital: "c4", liquid: "l3", income: "i3", family: "fKids", citizen: "zEU", from: "pOther" });
+  const [form, setForm] = useState({ age: "a50", capital: "c4", liquid: "l3", income: "i3", family: "fKids", citizen: null, from: "pOther" });
   const [matters, setMatters] = useState(["kids", "sea"]);
   const [step, setStep] = useState(1);
   const [futureState, setFutureState] = useState("form");
   const [futureResult, setFutureResult] = useState(null);
+  const [futureErr, setFutureErr] = useState(null); // null | "limit" | "error"
   const [persona, setPersona] = useState("Kate");
   const [chat, setChat] = useState([]);
   const [chatInput, setChatInput] = useState("");
@@ -370,8 +398,6 @@ export default function MontaureoPlatform() {
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [chat, chatBusy, section]);
 
-  // If autoplay is blocked (battery saver etc.), reveal the hero CTA anyway.
-  useEffect(() => { const id = setTimeout(() => setHeroCta(true), 9000); return () => clearTimeout(id); }, []);
 
   useEffect(() => {
     try {
@@ -387,34 +413,67 @@ export default function MontaureoPlatform() {
     }
   }, []);
 
-  // ---- Check a client's access by email only (no password). Returns { active, plan }. ----
-  const checkAccess = async (email, { silent } = {}) => {
-    if (!email || !email.trim()) return;
-    if (!silent) { setAccessChecking(true); setAccessErr(""); }
+  // ---- Remember a verified access (signed token from the server + email) ----
+  const rememberAccess = (email, token, planName) => {
+    setPlan(planName || "premium");
+    if (email) { setAccessEmail(email); setAccessInput(email); }
+    if (token) setAccessToken(token);
     try {
-      const r = await fetch("/api/check-access", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email.trim().toLowerCase() }) });
+      if (email) window.localStorage.setItem("montaureo_email", email);
+      if (token) window.localStorage.setItem("montaureo_token", token);
+    } catch {}
+  };
+
+  // ---- Check access. With a signed token: verified on the server. With an email:
+  // either a sign-in link is emailed (secure mode) or, until that is configured, access
+  // is checked by email as before. Returns nothing; updates plan/state. ----
+  const checkAccess = async (email, { silent, token } = {}) => {
+    if (!token && (!email || !email.trim())) return;
+    if (!silent) { setAccessChecking(true); setAccessErr(""); setAccessNote(""); }
+    const body = token ? { token } : { email: email.trim().toLowerCase(), silent: Boolean(silent) };
+    try {
+      const r = await fetch("/api/check-access", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const d = await r.json().catch(() => ({}));
       if (r.ok && d && d.active) {
-        setPlan(d.plan || "premium");
-        setAccessEmail(email.trim().toLowerCase());
-        try { window.localStorage.setItem("montaureo_email", email.trim().toLowerCase()); } catch {}
+        rememberAccess(d.email || (email || "").trim().toLowerCase(), d.token || token, d.plan);
         if (!silent) trackLoginSuccess();
-      } else {
-        setPlan("free");
-        if (!silent) setAccessErr("We couldn't find an active subscription for that email.");
+        return true;
       }
+      if (r.ok && d && d.sent) {
+        if (!silent) setAccessNote("If this email has an active subscription, a sign-in link is on its way. Check your inbox.");
+        return false;
+      }
+      if (token) { try { window.localStorage.removeItem("montaureo_token"); } catch {} setAccessToken(""); }
+      setPlan("free");
+      if (!silent) setAccessErr("We couldn't find an active subscription for that email.");
     } catch {
       if (!silent) setAccessErr("Connection error — please try again.");
     } finally {
       if (!silent) setAccessChecking(false);
     }
+    return false;
   };
 
-  // ---- On load, silently check whether a remembered email already has active access ----
+  // ---- On load: a sign-in link (?access=...), else a remembered token, else a remembered email ----
   useEffect(() => {
-    let remembered = "";
-    try { remembered = window.localStorage.getItem("montaureo_email") || ""; } catch {}
-    if (remembered) { setAccessInput(remembered); checkAccess(remembered, { silent: true }); }
+    let linkToken = "", savedToken = "", savedEmail = "";
+    try {
+      const url = new URL(window.location.href);
+      linkToken = url.searchParams.get("access") || "";
+      if (linkToken) { url.searchParams.delete("access"); window.history.replaceState({}, "", url.toString()); }
+      savedToken = window.localStorage.getItem("montaureo_token") || "";
+      savedEmail = window.localStorage.getItem("montaureo_email") || "";
+    } catch {}
+    if (savedEmail) setAccessInput(savedEmail);
+    if (linkToken) {
+      checkAccess("", { token: linkToken, silent: true }).then((ok) => {
+        if (ok) { setAuthed(true); setSection("concierge"); trackLoginSuccess(); }
+      });
+    } else if (savedToken) {
+      checkAccess("", { token: savedToken, silent: true });
+    } else if (savedEmail) {
+      checkAccess(savedEmail, { silent: true });
+    }
   }, []);
 
   // ---- Just returned from Stripe Checkout? Confirm the session and unlock immediately. ----
@@ -431,10 +490,7 @@ export default function MontaureoPlatform() {
         const r = await fetch(`/api/session-email?session_id=${encodeURIComponent(sessionId)}`);
         const d = await r.json().catch(() => ({}));
         if (r.ok && d && d.active && d.email) {
-          setPlan(d.plan || "premium");
-          setAccessEmail(d.email);
-          setAccessInput(d.email);
-          try { window.localStorage.setItem("montaureo_email", d.email); } catch {}
+          rememberAccess(d.email, d.token, d.plan);
           setAuthed(true);
           setSection("concierge");
           trackPurchase(d.plan || "premium");
@@ -474,7 +530,7 @@ export default function MontaureoPlatform() {
     setFutureState("loading");
     const profile = `Profile: ${buildProfileText(form, matters)}. Build Stay vs Move to 2036.`;
     try { const r = await designFuture(profile, "English"); setFutureResult(r); setFutureState("result"); trackFutureResult(r?.move?.country); }
-    catch { setFutureState("error"); }
+    catch (e) { setFutureErr(e?.code === "limit" ? "limit" : "error"); setFutureState("error"); }
   };
 
   const sendChat = async (text) => {
@@ -486,10 +542,12 @@ export default function MontaureoPlatform() {
     setChat(next); setChatInput(""); setChatBusy(true);
     try {
       const apiMsgs = next.map((m) => ({ role: m.role, content: m.content }));
-      const r = await askConcierge({ profileText: buildProfileText(form, matters), persona, focus, moveCountry: futureResult?.move?.country, messages: apiMsgs, langName: "English" });
+      const r = await askConcierge({ profileText: buildProfileText(form, matters), persona, focus, moveCountry: futureResult?.move?.country, messages: apiMsgs, langName: "English", accessToken, email: accessEmail });
       setChat([...next, { role: "assistant", content: r.text || "…", card: r.card || null, agent: r.agent }]);
-    } catch {
-      setChat([...next, { role: "assistant", content: "…", card: null }]);
+    } catch (e) {
+      if (e?.code === "payment_required") { setPlan("free"); setChat(next.slice(0, -1)); return; } // server says access ended → paywall
+      const msg = e?.code === "limit" ? "Today's message limit is reached. Please come back tomorrow." : "…";
+      setChat([...next, { role: "assistant", content: msg, card: null }]);
     } finally { setChatBusy(false); }
   };
 
@@ -543,7 +601,8 @@ export default function MontaureoPlatform() {
     setPlan("free");
     setAccessEmail("");
     setAccessInput("");
-    try { window.localStorage.removeItem("montaureo_email"); } catch {}
+    setAccessToken("");
+    try { window.localStorage.removeItem("montaureo_email"); window.localStorage.removeItem("montaureo_token"); } catch {}
   };
 
   const Chips = ({ fieldKey, opts }) => (
@@ -582,6 +641,24 @@ export default function MontaureoPlatform() {
         .mt-landing{grid-template-columns:1fr!important;padding-top:24px!important}
         .mt-globewrap{order:2!important}
       }
+      .mt-hero-shade{background:linear-gradient(0deg, rgba(7,7,8,.94) 0%, rgba(7,7,8,.78) 22%, rgba(7,7,8,.25) 40%, transparent 55%)}
+      .mt-hero-dock{display:flex;align-items:flex-end;justify-content:space-between;gap:40px;padding:0 6vw 7svh}
+      .mt-hero-copy{max-width:640px}
+      .mt-hero-title{font-size:clamp(40px,4.4vw,64px)}
+      .mt-hero-sub{font-size:17px;max-width:560px}
+      .mt-hero-actions{display:flex;flex-direction:column;align-items:center;gap:12px;flex-shrink:0}
+      @media (max-aspect-ratio: 4/5), (max-width: 760px){
+        .mt-hero-shade{background:linear-gradient(0deg, rgba(7,7,8,.96) 0%, rgba(7,7,8,.85) 26%, rgba(7,7,8,.3) 40%, transparent 52%)}
+        .mt-hero-dock{flex-direction:column;align-items:stretch;gap:18px;padding:0 20px 5svh}
+        .mt-hero-title{font-size:34px}
+        .mt-hero-sub{font-size:14.5px}
+        .mt-hero-actions{align-items:stretch}
+        .mt-hero-actions>div{text-align:center}
+      }
+      @media (max-aspect-ratio: 4/5) and (max-height: 720px){
+        .mt-hero-sub{display:none}
+        .mt-hero-title{font-size:30px}
+      }
     `}</style>
   );
 
@@ -590,25 +667,32 @@ export default function MontaureoPlatform() {
     return (
       <div style={{ background: C.void, minHeight: "100%", width: "100%", color: C.snow, fontFamily: "Inter, sans-serif" }}>
         {STYLE}
-        <div style={{ position: "relative", minHeight: "100svh", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-          <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 2, background: "radial-gradient(70% 45% at 50% 15%, rgba(198,163,90,0.08), transparent 70%)" }} />
+        <div className="mt-hero" style={{ position: "relative", height: "100svh", minHeight: 560, overflow: "hidden", background: C.void }}>
           <video
+            key={heroPortrait ? "v" : "h"}
             autoPlay muted playsInline preload="auto"
-            src="/hero.mp4" poster="/hero-poster.jpg"
-            onClick={() => setHeroCta(true)}
-            onTimeUpdate={(e) => { if (!heroCta && e.currentTarget.currentTime >= 8.4) setHeroCta(true); }}
-            onEnded={() => setHeroCta(true)}
-            onError={() => setHeroCta(true)}
-            style={{ width: "100%", maxWidth: 620, height: "100svh", objectFit: "cover", display: "block", background: C.void }}
+            src={heroPortrait ? "/hero-9x16.mp4" : "/hero-16x9.mp4"}
+            poster={heroPortrait ? "/hero-9x16-poster.jpg" : "/hero-16x9-poster.jpg"}
+            aria-hidden="true"
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
           />
+          {/* readable text over any frame */}
+          <div className="mt-hero-shade" style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 2 }} />
           <div style={{ position: "absolute", top: 22, left: 0, right: 0, zIndex: 3, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, pointerEvents: "none" }}>
             <SummitMark size={26} /><Wordmark size={12} />
           </div>
-          <div style={{ position: "absolute", left: 0, right: 0, bottom: "7svh", zIndex: 4, display: "flex", flexDirection: "column", alignItems: "center", gap: 14, padding: "0 24px", opacity: heroCta ? 1 : 0, transform: heroCta ? "none" : "translateY(14px)", transition: "opacity .8s ease, transform .8s ease", pointerEvents: heroCta ? "auto" : "none" }}>
-            <button onClick={enter} className="mt-cta" style={{ cursor: "pointer", border: "none", borderRadius: 99, padding: "16px 32px", fontSize: 15.5, fontWeight: 600, fontFamily: "Inter, sans-serif", color: "#1A1408", background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})`, display: "flex", alignItems: "center", gap: 9, boxShadow: "0 10px 40px rgba(198,163,90,0.35)" }}>
-              {t.startFree} <ArrowRight size={18} strokeWidth={2.4} />
-            </button>
-            <div style={{ fontSize: 11.5, letterSpacing: ".12em", color: "#C9C8C2", textShadow: "0 1px 14px rgba(0,0,0,0.85)" }}>FREE · 60 SECONDS · NO SIGNUP</div>
+          <div className="mt-hero-dock" style={{ position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 4 }}>
+            <div className="mt-hero-copy">
+              <h1 style={{ fontFamily: "'Playfair Display',serif", fontWeight: 600, margin: 0, color: C.snow, lineHeight: 1.05, textShadow: "0 2px 24px rgba(0,0,0,0.6)" }} className="mt-hero-title">{t.heroTitle}</h1>
+              <p className="mt-hero-sub" style={{ margin: "12px 0 0", color: "#D9D8D2", lineHeight: 1.5, textShadow: "0 1px 14px rgba(0,0,0,0.8)" }}>{t.heroSub}</p>
+            </div>
+            <div className="mt-hero-actions">
+              <button onClick={enter} className="mt-cta" style={{ cursor: "pointer", border: "none", borderRadius: 99, padding: "16px 30px", fontSize: 15.5, fontWeight: 600, fontFamily: "Inter, sans-serif", color: "#1A1408", background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})`, display: "flex", alignItems: "center", justifyContent: "center", gap: 9, boxShadow: "0 10px 40px rgba(198,163,90,0.35)" }}>
+                {t.startFree} <ArrowRight size={18} strokeWidth={2.4} />
+              </button>
+              <div style={{ fontSize: 11.5, letterSpacing: ".12em", color: "#C9C8C2", textShadow: "0 1px 14px rgba(0,0,0,0.85)" }}>FREE · 60 SECONDS · NO SIGNUP</div>
+              <div style={{ fontSize: 11.5, color: C.mist, letterSpacing: ".04em" }}>{t.heroTrust}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -686,7 +770,8 @@ export default function MontaureoPlatform() {
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 17, marginTop: 20 }}>
                     {FIELDS.map(([k, opts]) => <Chips key={k} fieldKey={k} opts={opts} />)}
-                    <Btn onClick={() => setStep(2)}>{t.next} <ArrowRight size={18} strokeWidth={2.4} /></Btn>
+                    {!form.citizen && <div style={{ fontSize: 12.5, color: C.mist, textAlign: "center" }}>Choose your citizenship to continue — it decides which countries make sense for you.</div>}
+                    <Btn disabled={!form.citizen} onClick={() => setStep(2)}>{t.next} <ArrowRight size={18} strokeWidth={2.4} /></Btn>
                   </div>
                 </div>
               )}
@@ -723,8 +808,10 @@ export default function MontaureoPlatform() {
               {futureState === "error" && (
                 <div style={{ minHeight: "50vh", display: "grid", placeItems: "center", padding: 22, position: "relative" }}>
                   <div style={{ textAlign: "center", maxWidth: 320 }}>
-                    <div style={{ color: C.mist, fontSize: 14, marginBottom: 14 }}>{t.errBuild}</div>
-                    <Btn onClick={() => setFutureState("form")}>{t.backToQ}</Btn>
+                    <div role="alert" style={{ color: C.mist, fontSize: 14, marginBottom: 14, lineHeight: 1.5 }}>{futureErr === "limit" ? "You've reached today's free limit for Two Futures. Come back tomorrow — or speak with an advisor now." : t.errBuild}</div>
+                    {futureErr === "limit"
+                      ? <Btn onClick={openLead}>{t.requestAccess} <ArrowRight size={18} strokeWidth={2.4} /></Btn>
+                      : <Btn onClick={() => setFutureState("form")}>{t.backToQ}</Btn>}
                   </div>
                 </div>
               )}
@@ -908,6 +995,7 @@ export default function MontaureoPlatform() {
                   </button>
                 </div>
                 {accessErr && <div style={{ fontSize: 12, color: "#E08A8A", marginTop: 8 }}>{accessErr}</div>}
+                {accessNote && <div role="status" style={{ fontSize: 12, color: C.goldHi, marginTop: 8, lineHeight: 1.5 }}>{accessNote}</div>}
               </div>
             </div>
           )}
