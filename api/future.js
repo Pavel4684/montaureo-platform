@@ -72,7 +72,7 @@ Knowledge (current 2026):${KB}
 
 The client thinks not "where to move" but "what do I lose if I stay". Build TWO FUTURES to 2036:
 - STAY — the client stays in the current country;
-- MOVE — the client moves to the ONE best country for their profile.
+- MOVE — the client moves to the ONE best country for their profile. HARD RULE: if the client's citizenship is France, the MOVE country must NOT be Monaco (unless the client explicitly asks to compare with Monaco).
 Compare them and show the difference. Warm, personal, honest tone.
 
 ${JLOGIC}
@@ -80,6 +80,11 @@ ${JLOGIC}
 The client profile includes both total wealth and liquid assets — use liquid assets when discussing what capital is realistically deployable (relocation costs, lump-sum tax regime minimums, real estate purchasing power), and total wealth only for overall positioning.
 
 First — a cinematic scene of the MOVE future: NOT the country first, but a MOMENT of life (morning, children, school, airport, capital preserved vs the STAY scenario, weather). 4-6 short second-person sentences. The country is revealed in a separate field, not in the text.
+CALCULATION BASE — always the same, so every run and every comparison is comparable:
+- starting portfolio = midpoint of the LIQUID assets band (e.g. €2–10M → €6M); annual income = midpoint of the income band (€1M+ → €1.2M);
+- portfolio return 6%/yr (2.5% income + 3.5% growth); family spending €400K/yr; horizon 2026–2036; the portfolio is not sold;
+- only the tax rules change between STAY and MOVE. Put these numbers in "assumptions".
+- If the profile gives a previous calculation base or a fixed STAY result, reuse them exactly.
 INCOME: the profile states the client's MAIN income source (salary, business, dividends/investments or mixed). Tax treatment differs by source — model it accordingly. If it is "not specified", state the assumption you made in "assumptions".
 COMPARISON REQUEST: if the profile says the client wants to compare with a specific MOVE destination, use EXACTLY that country as MOVE. If it brings little or no benefit for this citizenship (e.g. Monaco for a French national), say so honestly in "why" and "difference".
 WHY: give 3 short reasons why the MOVE country fits THIS client (citizenship, priorities, income source, liquid assets) — concrete, no slogans.
@@ -99,7 +104,12 @@ Return ONLY clean JSON, no markdown:
  "difference":["€X.XM saved","hours/yr saved","lower tax exposure","safer"],
  "assumptions":"1 line of assumptions",
  "disclaimer":"1 line: illustrative, not advice, confirm with an advisor"}
-Keep values short.`;
+STRICT LENGTH (the result is read on a phone):
+- tax: max 10 words; school: max 6 words; climate: max 6 words.
+- capital2036: ONE figure like "€24.5M" — never a range, never a sentence.
+- why: 3 items, max 18 words each. fitNote: max 20 words. difference: 4 items, max 10 words each.
+- country names: plain names only ("UAE", "Malta"), no parentheses or city names.
+- alternatives: plain country names only, never the STAY or MOVE country.`
 
 function extractJson(raw) {
   const cleaned = raw.replace(/```json|```/g, "").trim();
@@ -117,6 +127,7 @@ async function callClaude(profile, langLine) {
     body: JSON.stringify({
       model: "claude-sonnet-4-6",
       max_tokens: 2048,
+      temperature: 0.2,
       system: [
         { type: "text", text: SYSTEM, cache_control: { type: "ephemeral" } }, // кешируется
         { type: "text", text: langLine },                                    // язык ответа
@@ -140,6 +151,7 @@ async function callQwen(profile, langLine) {
     body: JSON.stringify({
       model: "qwen-plus",
       max_tokens: 2048,
+      temperature: 0.2,
       messages: [
         { role: "system", content: SYSTEM + langLine },
         { role: "user", content: profile },
@@ -162,6 +174,7 @@ async function callMistral(profile, langLine) {
     body: JSON.stringify({
       model: "mistral-medium-2508",
       max_tokens: 2048,
+      temperature: 0.2,
       messages: [
         { role: "system", content: SYSTEM + langLine },
         { role: "user", content: profile },
@@ -192,6 +205,21 @@ export default async function handler(req, res) {
     if (model === "qwen-plus") parsed = await callQwen(profile, langLine);
     else if (model === "mistral-medium-2508") parsed = await callMistral(profile, langLine);
     else parsed = await callClaude(profile, langLine);
+
+    // Guard: French nationals gain nothing tax-wise in Monaco (1963 treaty). If the model still picked it
+    // without being asked to compare with Monaco, ask once more with an explicit correction.
+    const isFrench = /citizenship France/i.test(profile);
+    const askedMonaco = /compare with this MOVE destination:\s*Monaco/i.test(profile);
+    const pickedMonaco = (p) => /monaco/i.test(String(p?.move?.country || p?.scene?.country || ""));
+    if (isFrench && !askedMonaco && pickedMonaco(parsed)) {
+      const fix = profile + " IMPORTANT: the client is a French national — Monaco is NOT allowed as the MOVE country. Choose the best other country.";
+      try {
+        const again = model === "qwen-plus" ? await callQwen(fix, langLine) : model === "mistral-medium-2508" ? await callMistral(fix, langLine) : await callClaude(fix, langLine);
+        if (!pickedMonaco(again)) parsed = again;
+      } catch (e) { console.error("monaco guard retry", e); }
+    }
+    // Tidy fields the UI shows as buttons.
+    if (Array.isArray(parsed.alternatives)) parsed.alternatives = parsed.alternatives.map((x) => String(x).replace(/\s*\(.*?\)\s*/g, " ").trim()).filter(Boolean).slice(0, 3);
     return res.status(200).json(parsed);
   } catch (e) {
     console.error(e);
