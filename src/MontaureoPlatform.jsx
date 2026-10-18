@@ -17,8 +17,8 @@ const C = {
 
 /* ===================== COPY (English only — AI still replies in the client's own language) ===================== */
 const T = {
-    v: { a30: "30–40", a40: "40–50", a50: "50–60", a60: "60+", c1: "€500K–2M", c2: "€2–5M", c3: "€5–15M", c4: "€15–50M", c5: "€50–100M", c6: "€100M+", i1: "< €200K", i2: "€200–500K", i3: "€500K–1M", i4: "€1M+", l1: "< €500K", l2: "€500K–2M", l3: "€2–10M", l4: "€10–50M", l5: "€50M+", fSingle: "Single", fCouple: "Couple", fKids: "Family with children", zFR: "France", zEU: "Other EU", zUK: "UK", zNA: "US/Canada", zOther: "Other", pMC: "Monaco", pCH: "Switzerland", pAE: "UAE", pLU: "Luxembourg", pLI: "Liechtenstein", pAD: "Andorra", pSG: "Singapore", pFR: "France", pUK: "United Kingdom", pDE: "Germany", pOther: "Other", kids: "Children", safety: "Safety", business: "Business", sea: "Sea", taxes: "Taxes", climate: "Climate" },
-    f: { age: "Age", capital: "Capital", liquid: "Liquid assets", income: "Income / year", family: "Family", citizen: "Citizenship", from: "Currently living" },
+    v: { a30: "30–40", a40: "40–50", a50: "50–60", a60: "60+", c1: "€500K–2M", c2: "€2–5M", c3: "€5–15M", c4: "€15–50M", c5: "€50–100M", c6: "€100M+", i1: "< €200K", i2: "€200–500K", i3: "€500K–1M", i4: "€1M+", s1: "Salary", s2: "Business / company", s3: "Dividends & investments", s4: "Mixed", l1: "< €500K", l2: "€500K–2M", l3: "€2–10M", l4: "€10–50M", l5: "€50M+", fSingle: "Single", fCouple: "Couple", fKids: "Family with children", zFR: "France", zEU: "Other EU", zUK: "UK", zNA: "US/Canada", zOther: "Other", pMC: "Monaco", pCH: "Switzerland", pAE: "UAE", pLU: "Luxembourg", pLI: "Liechtenstein", pAD: "Andorra", pSG: "Singapore", pFR: "France", pUK: "United Kingdom", pDE: "Germany", pOther: "Other", kids: "Children", safety: "Safety", business: "Business", sea: "Sea", taxes: "Taxes", climate: "Climate" },
+    f: { age: "Age", capital: "Capital", liquid: "Liquid assets", income: "Income / year", src: "Main source of income", family: "Family", citizen: "Citizenship", from: "Currently living" },
     quote: "The future is not found. It is designed.", h1a: "Where will your capital", h1b: "be worth more?",
     sub: "Here — or somewhere else? Answer 7 questions and AI builds two versions of your 2036: Stay vs Move, with tax, capital and lifestyle. Free · 60 seconds · no signup.",
     vp: [["Protect Your Wealth", "Optimize your financial future"], ["Elevate Your Life", "Access the world's best opportunities"], ["Secure Your Family", "A safe and prosperous legacy"]],
@@ -27,7 +27,7 @@ const T = {
     heroTitle: "Design your future.",
     heroSub: "Compare how staying or moving could shape your wealth, lifestyle and family's future — tax, banking and real estate in one view.",
     heroTrust: "By Monaco Finance International LP",
-    heroHow: "How the example is calculated",
+    heroHow: "See an example result",
     sec: [["Bank-Level Security", "256-bit encryption"], ["Your Data is Private", "Never shared with third parties"]],
     whoTitle: "Who are you?", whatTitle: "What matters to you?", step: "Step", of: "of",
     next: "Next", back: "Back", showTwo: "Show me two futures", drawing: "Montaureo is drawing two futures…",
@@ -47,7 +47,11 @@ const T = {
     leadConnError: "Connection error. Please try again or contact us directly.",
     leadConfirmTitle: "Your request has been received.", leadConfirmBody: "A private advisor will contact you shortly.",
     leadContinue: "Continue to Concierge", leadClose: "Close",
-    fcTitle: "Future Confidence", fcSub: "How well this future matches your priorities",
+    fcTitle: "Fit with your priorities", fcSub: "How well this destination matches what you selected. A judgement, not a probability.",
+    whyTitle: "Why", compareTitle: "Compare with another country", compareNote: "Each comparison builds a new scenario and uses one of today's free runs.",
+    loadSub: "Usually 20–40 seconds — both futures are built for your exact profile.",
+    loadSteps: ["Reading your profile", "Matching countries to your citizenship", "Modelling your capital to 2036 — stay vs move", "Writing your 2036"],
+    sampleEyebrow: "Example of what you get", sampleNote: "Illustrative example. Your answers use your own profile.",
     discPrefix: "* Illustrative estimate under the stated assumptions", scenariosBoth: "both futures are scenarios, not a country forecast.", discDefault: "This is not financial, legal or tax advice; confirm with an advisor.",
     pwEyebrow: "Montaureo Concierge", pwReady: "Your future is ready.", pwVip: "Your VIP concierge", pwUnlock: "Unlock your personal AI concierge.",
     pwBodyA: "Kate, Jun and Emily will help you turn this scenario", pwBodyB: "into a real plan: banking, real estate, credit, relocation.",
@@ -108,13 +112,20 @@ Compare them and show the difference. Warm, personal, honest tone.
 ${JLOGIC}
 
 First — a cinematic scene of the MOVE future: NOT the country first, but a MOMENT of life (morning, children, school, airport, capital preserved vs the STAY scenario, weather). 4-6 short second-person sentences. The country is revealed in a separate field, not in the text.
-Future Confidence — an integer 0-100: how well the MOVE scenario matches the client's PRIORITIES.
+INCOME: the profile states the client's MAIN income source (salary, business, dividends/investments or mixed). Tax treatment differs by source — model it accordingly. If it is "not specified", state the assumption you made in "assumptions".
+COMPARISON REQUEST: if the profile says the client wants to compare with a specific MOVE destination, use EXACTLY that country as MOVE. If it brings little or no benefit for this citizenship (e.g. Monaco for a French national), say so honestly in "why" and "difference".
+WHY: give 3 short reasons why the MOVE country fits THIS client (citizenship, priorities, income source, liquid assets) — concrete, no slogans.
+ALTERNATIVES: 2 other countries worth comparing for this profile (never the STAY or MOVE country).
+Fit score — an integer 0-100: how well the MOVE scenario matches the priorities the client selected. It is a judgement, not a probability; explain it in one line in "fitNote".
 
 All amounts are illustrative estimates under assumptions, not a verdict on a country and not advice.
 
 Return ONLY clean JSON, no markdown:
 {"scene":{"month":"<Month 2036>","lines":["…","…","…","…","…"],"country":"<MOVE country>"},
- "confidence":94,
+ "confidence":82,
+ "fitNote":"1 line: what drives the fit score up or down",
+ "why":["reason 1","reason 2","reason 3"],
+ "alternatives":["<country>","<country>"],
  "stay":{"country":"<current country>","tax":"short","capital2036":"€X.XM","school":"short","climate":"short"},
  "move":{"country":"<MOVE country>","tax":"short","capital2036":"€X.XM","school":"short","climate":"short"},
  "difference":["€X.XM saved","hours/yr saved","lower tax exposure","safer"],
@@ -149,6 +160,17 @@ FORMAT — return ONLY clean JSON, no markdown:
  "card": null | {"title":"...","rows":[{"primary":"...","secondary":"...","meta":"...","accent":true|false}]}}
 Use a card for lists, comparisons and checklists (3-5 rows); otherwise card=null.`;
 
+/* ===================== PAYWALL SAMPLES (shown before paying, per section) ===================== */
+const SAMPLES = {
+  null: { q: "Compare Monaco and the UAE for my family.", a: "Both remove personal income tax for most nationalities. For a family with children, the real trade-offs are schooling, climate and travel time to Europe.", rows: [["Monaco", "0% income tax (not for French nationals) · residence needs a home in Monaco and proof of means · 30 min from Nice airport"], ["UAE", "0% personal income tax · long-term visa through property or investment · 6–7 h flights to most of Europe"], ["Next step", "A document checklist for the option you choose"]] },
+  Banking: { q: "Where should I open a private bank account in Monaco?", a: "With €2–10M of liquid assets you are within the usual entry range of Monaco private banks. Three kinds of bank fit different needs:", rows: [["Swiss-group private bank", "Entry often from €1–3M · strong Lombard lending"], ["French-group bank", "Broad day-to-day services · detailed source-of-funds review"], ["Boutique Monegasque bank", "One personal banker · flexible with holding structures"]] },
+  RealEstate: { q: "Should we rent or buy in Monaco for the first two years?", a: "Most relocating families rent first: a lease is the fastest way to meet the residence requirement while you learn the neighbourhoods.", rows: [["Rent", "Fastest route to a residence card"], ["Buy", "Resale prices are among the highest in the world — often above €50,000 per m²"], ["Shortlist", "Districts compared by school run, sea view and parking"]] },
+  Legal: { q: "What do I need for a Monaco residence card?", a: "The application rests on three things: where you live, how you support yourself, and a clean record.", rows: [["Accommodation", "A lease or title deed in Monaco"], ["Financial means", "Usually shown with a deposit at a Monaco bank"], ["Record", "Criminal record extract from your current country"]] },
+  Credit: { q: "What Lombard loan could I get against my portfolio?", a: "Banks lend against the value of your portfolio. The advance rate depends on what it holds — diversified portfolios get the most.", rows: [["Bonds and funds", "Highest advance rates"], ["Diversified equities", "Moderate advance rates"], ["Single stocks", "Lower, decided case by case"]] },
+  Lifestyle: { q: "Where should we spend the summer season on the Riviera?", a: "For a family with children who love the sea, three things to arrange early:", rows: [["Beach clubs", "Family-friendly options from Monaco to Saint-Jean-Cap-Ferrat"], ["Summer camps", "Sailing and tennis programmes fill up by spring"], ["Private staff", "Chef, driver and nanny on seasonal contracts"]] },
+  Events: { q: "What should we not miss in Monaco this year?", a: "The calendar fills quickly; hospitality for the big weekends sells out months ahead.", rows: [["Rolex Monte-Carlo Masters", "Tennis · April"], ["Monaco Grand Prix", "Formula 1 · late May or June"], ["Monaco Yacht Show", "September"]] },
+};
+
 /* ===================== PERSONA → MODEL MAPPING ===================== */
 const PERSONA_MODEL = {
   Kate: "claude",
@@ -160,7 +182,7 @@ const PERSONAS = ["Kate", "Jun", "Emily"];
 /* ===================== HELPERS ===================== */
 const buildProfileText = (form, matters) => {
   const v = (k) => (form[k] ? T.v[form[k]] : "not specified");
-  return `age ${v("age")}, total wealth ${v("capital")}, liquid assets ${v("liquid")}, income ${v("income")}/yr, ${v("family")}, citizenship ${v("citizen")}, currently lives in ${v("from")}, priorities: ${(matters || []).map((m) => T.v[m]).join(", ") || "family & life"}`;
+  return `age ${v("age")}, total wealth ${v("capital")}, liquid assets ${v("liquid")}, income ${v("income")}/yr, main income source ${v("src")}, ${v("family")}, citizenship ${v("citizen")}, currently lives in ${v("from")}, priorities: ${(matters || []).map((m) => T.v[m]).join(", ") || "family & life"}`;
 };
 
 // Stable anonymous id for the server's daily free limits (Upstash).
@@ -346,7 +368,7 @@ function ChatCard({ card }) {
 /* ===================== CONFIG ===================== */
 const SECTIONS = [["future", Compass], ["concierge", Sparkles], ["banking", Landmark], ["realestate", Building2], ["legal", Scale], ["lifestyle", Heart], ["events", Calendar], ["credit", CreditCard], ["profile", User]];
 const FOCUS = { banking: "Banking", realestate: "RealEstate", legal: "Legal", lifestyle: "Lifestyle", events: "Events", credit: "Credit" };
-const FIELDS = [["age", ["a30", "a40", "a50", "a60"]], ["capital", ["c1", "c2", "c3", "c4", "c5", "c6"]], ["liquid", ["l1", "l2", "l3", "l4", "l5"]], ["income", ["i1", "i2", "i3", "i4"]], ["family", ["fSingle", "fCouple", "fKids"]], ["citizen", ["zFR", "zEU", "zUK", "zNA", "zOther"]], ["from", ["pOther", "pMC", "pCH", "pAE", "pLU", "pLI", "pAD", "pSG", "pFR", "pUK", "pDE"]]];
+const FIELDS = [["age", ["a30", "a40", "a50", "a60"]], ["capital", ["c1", "c2", "c3", "c4", "c5", "c6"]], ["liquid", ["l1", "l2", "l3", "l4", "l5"]], ["income", ["i1", "i2", "i3", "i4"]], ["src", ["s1", "s2", "s3", "s4"]], ["family", ["fSingle", "fCouple", "fKids"]], ["citizen", ["zFR", "zEU", "zUK", "zNA", "zOther"]], ["from", ["pOther", "pMC", "pCH", "pAE", "pLU", "pLI", "pAD", "pSG", "pFR", "pUK", "pDE"]]];
 const MATTER_KEYS = ["kids", "safety", "business", "sea", "taxes", "climate"];
 
 /* ===================== APP ===================== */
@@ -368,7 +390,7 @@ export default function MontaureoPlatform() {
   const [accessToken, setAccessToken] = useState("");
 
   const [section, setSection] = useState("future");
-  const [form, setForm] = useState({ age: "a50", capital: "c4", liquid: "l3", income: "i3", family: "fKids", citizen: null, from: "pOther" });
+  const [form, setForm] = useState({ age: "a50", capital: "c4", liquid: "l3", income: "i3", src: null, family: "fKids", citizen: null, from: "pOther" });
   const [matters, setMatters] = useState(["kids", "sea"]);
   const [step, setStep] = useState(1);
   const [futureState, setFutureState] = useState("form");
@@ -384,6 +406,7 @@ export default function MontaureoPlatform() {
   const [leadSending, setLeadSending] = useState(false);
   const [leadErr, setLeadErr] = useState("");
   const [lead, setLead] = useState({ name: "", email: "", phone: "", time: "", goal: "", consent: false });
+  const [loadSec, setLoadSec] = useState(0);
   const utmRef = useRef(null);
   const endRef = useRef(null);
 
@@ -526,10 +549,20 @@ export default function MontaureoPlatform() {
     setChatBusy(false);
   };
 
-  const runFuture = async () => {
+  // Elapsed seconds while the scenario is being built (drives the progress bar).
+  useEffect(() => {
+    if (futureState !== "loading") return;
+    setLoadSec(0);
+    const id = setInterval(() => setLoadSec((s) => s + 1), 1000);
+    return () => clearInterval(id);
+  }, [futureState]);
+
+  const runFuture = async (compareWith) => {
     trackFutureRun();
     setFutureState("loading");
-    const profile = `Profile: ${buildProfileText(form, matters)}. Build Stay vs Move to 2036.`;
+    const cmp = typeof compareWith === "string" ? compareWith.replace(/[^\p{L} .'-]/gu, "").trim().slice(0, 40) : "";
+    if (cmp) trackCtaClick("compare_country");
+    const profile = `Profile: ${buildProfileText(form, matters)}.${cmp ? ` The client wants to compare with this MOVE destination: ${cmp}. Use ${cmp} as the MOVE country.` : ""} Build Stay vs Move to 2036.`;
     try { const r = await designFuture(profile, "English"); setFutureResult(r); setFutureState("result"); trackFutureResult(r?.move?.country); }
     catch (e) { setFutureErr(e?.code === "limit" ? "limit" : "error"); setFutureState("error"); }
   };
@@ -805,7 +838,7 @@ export default function MontaureoPlatform() {
                   </div>
                   <div style={{ display: "flex", gap: 10, marginTop: 22 }}>
                     <button onClick={() => setStep(1)} style={{ cursor: "pointer", border: `1px solid ${C.line}`, background: "transparent", color: C.mist, borderRadius: 14, padding: "15px 18px", fontSize: 14 }}>{t.back}</button>
-                    <div style={{ flex: 1 }}><Btn onClick={runFuture}>{t.showTwo} <ArrowRight size={18} strokeWidth={2.4} /></Btn></div>
+                    <div style={{ flex: 1 }}><Btn onClick={() => runFuture()}>{t.showTwo} <ArrowRight size={18} strokeWidth={2.4} /></Btn></div>
                   </div>
                 </div>
               )}
@@ -817,6 +850,19 @@ export default function MontaureoPlatform() {
                     <div style={{ animation: "pulse 1.5s ease-in-out infinite" }}><SummitMark size={56} /></div>
                   </div>
                   <div style={{ fontSize: 12.5, letterSpacing: ".2em", textTransform: "uppercase", color: C.gold }}>{t.drawing}</div>
+                  <div style={{ width: "min(340px, 86vw)" }} role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(95 * (1 - Math.exp(-loadSec / 14)))}>
+                    <div style={{ height: 4, borderRadius: 4, background: "rgba(255,255,255,0.07)", overflow: "hidden" }}>
+                      <div style={{ height: "100%", width: `${95 * (1 - Math.exp(-loadSec / 14))}%`, background: `linear-gradient(90deg, ${C.gold}, ${C.goldHi})`, transition: "width 1s linear" }} />
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 7, marginTop: 16 }}>
+                      {t.loadSteps.map((label, i) => { const at = [0, 4, 10, 18][i]; const next = [4, 10, 18, Infinity][i]; const done = loadSec >= next; const active = loadSec >= at && !done; return (
+                        <div key={label} style={{ display: "flex", alignItems: "center", gap: 9, fontSize: 13, color: done ? C.mist : active ? C.snow : C.faint, transition: "color .3s" }}>
+                          <span style={{ width: 14, textAlign: "center", color: done ? C.green : C.gold }}>{done ? "✓" : active ? "•" : "·"}</span>{label}
+                        </div>
+                      ); })}
+                    </div>
+                    <div style={{ fontSize: 12, color: C.mist, marginTop: 14, lineHeight: 1.5 }}>{t.loadSub}</div>
+                  </div>
                 </div>
               )}
 
@@ -860,9 +906,31 @@ export default function MontaureoPlatform() {
                         </svg>
                         <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", fontSize: 16, fontWeight: 700, color: C.snow }}>{futureResult.confidence}<span style={{ fontSize: 9, color: C.faint }}>%</span></div>
                       </div>
-                      <div><div style={{ fontSize: 11, letterSpacing: ".18em", textTransform: "uppercase", color: C.gold }}>{t.fcTitle}</div><div style={{ fontSize: 12.5, color: C.mist, marginTop: 3, lineHeight: 1.4 }}>{t.fcSub}</div></div>
+                      <div><div style={{ fontSize: 11, letterSpacing: ".18em", textTransform: "uppercase", color: C.gold }}>{t.fcTitle}</div><div style={{ fontSize: 12.5, color: C.mist, marginTop: 3, lineHeight: 1.4 }}>{futureResult.fitNote ? `${futureResult.fitNote} ` : ""}{t.fcSub}{matters.length ? ` You selected: ${matters.map((m) => v(m)).join(", ")}.` : ""}</div></div>
                     </div>
                   )}
+                  {Array.isArray(futureResult.why) && futureResult.why.length > 0 && (
+                    <div className="mt-up" style={{ maxWidth: 600, margin: "16px auto 0", border: `1px solid ${C.line}`, borderRadius: 16, padding: "16px 18px", background: `linear-gradient(180deg, ${C.panelHi}, ${C.panel})` }}>
+                      <div style={{ fontSize: 10.5, letterSpacing: ".22em", textTransform: "uppercase", color: C.gold, marginBottom: 10 }}>{t.whyTitle} {futureResult.move?.country || futureResult.scene?.country}</div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                        {futureResult.why.slice(0, 4).map((w, i) => (<div key={i} style={{ display: "flex", gap: 9, fontSize: 14, color: "#D9D8D2", lineHeight: 1.45 }}><span style={{ color: C.gold, flexShrink: 0 }}>{i + 1}.</span><span>{w}</span></div>))}
+                      </div>
+                    </div>
+                  )}
+                  {(() => {
+                    const cur = [futureResult.move?.country, futureResult.stay?.country].filter(Boolean).map((x) => String(x).toLowerCase());
+                    const opts = [...(Array.isArray(futureResult.alternatives) ? futureResult.alternatives : []), ...(form.citizen === "zFR" ? [] : ["Monaco"]), "UAE", "Switzerland"]
+                      .map((x) => String(x).trim()).filter((x, i, a) => x && x.length <= 40 && !cur.includes(x.toLowerCase()) && !(form.citizen === "zFR" && /monaco/i.test(x)) && a.findIndex((y) => y.toLowerCase() === x.toLowerCase()) === i).slice(0, 4);
+                    return opts.length > 0 && (
+                      <div className="mt-up" style={{ maxWidth: 600, margin: "12px auto 0", border: `1px solid ${C.line}`, borderRadius: 16, padding: "14px 18px" }}>
+                        <div style={{ fontSize: 10.5, letterSpacing: ".22em", textTransform: "uppercase", color: C.gold, marginBottom: 10 }}>{t.compareTitle}</div>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                          {opts.map((c) => (<button key={c} onClick={() => runFuture(c)} style={{ cursor: "pointer", border: `1px solid ${C.gold}`, background: "transparent", color: C.goldHi, padding: "9px 14px", borderRadius: 99, fontSize: 13, fontWeight: 500 }}>{futureResult.move?.country || "Move"} vs {c}</button>))}
+                        </div>
+                        <div style={{ fontSize: 11.5, color: C.faint, marginTop: 9 }}>{t.compareNote}</div>
+                      </div>
+                    );
+                  })()}
                   <div className="mt-up" style={{ maxWidth: 600, margin: "20px auto 0" }}>
                     <div style={{ textAlign: "center", fontSize: 10.5, letterSpacing: ".26em", textTransform: "uppercase", color: C.gold, marginBottom: 12 }}>{t.twoFutures}</div>
                     <div style={{ display: "flex", gap: 10, alignItems: "stretch" }}>
@@ -961,6 +1029,17 @@ export default function MontaureoPlatform() {
                   {t.pwBodyA}{futureResult?.move?.country ? ` (${futureResult.move.country})` : ""} {t.pwBodyB}
                 </p>
               </div>
+              {(() => { const sm = SAMPLES[focus] || SAMPLES.null; return (
+                <div style={{ maxWidth: 620, margin: "26px auto 0", border: `1px solid ${C.line}`, borderRadius: 18, padding: "18px 18px 16px", background: `linear-gradient(180deg, ${C.panelHi}, ${C.panel})`, position: "relative" }}>
+                  <div style={{ fontSize: 10.5, letterSpacing: ".24em", textTransform: "uppercase", color: C.gold, marginBottom: 12 }}>{t.sampleEyebrow} · {t.dom[focus]?.[0] || t.dom.null[0]}</div>
+                  <div style={{ display: "flex", justifyContent: "flex-end" }}><div style={{ maxWidth: "85%", background: "rgba(198,163,90,0.14)", border: `1px solid rgba(198,163,90,0.3)`, color: C.snow, borderRadius: "14px 14px 4px 14px", padding: "10px 13px", fontSize: 13.5, lineHeight: 1.45 }}>{sm.q}</div></div>
+                  <div style={{ marginTop: 10, color: "#D9D8D2", fontSize: 13.5, lineHeight: 1.55 }}>{sm.a}</div>
+                  <div style={{ marginTop: 10, border: `1px solid ${C.line}`, borderRadius: 12, overflow: "hidden" }}>
+                    {sm.rows.map(([p, s2], i) => (<div key={p} style={{ padding: "9px 12px", borderTop: i ? "1px solid rgba(255,255,255,0.05)" : "none" }}><div style={{ fontSize: 13, fontWeight: 600, color: C.goldHi }}>{p}</div><div style={{ fontSize: 12.5, color: C.mist, marginTop: 2, lineHeight: 1.45 }}>{s2}</div></div>))}
+                  </div>
+                  <div style={{ fontSize: 11, color: C.faint, marginTop: 10 }}>{t.sampleNote}</div>
+                </div>
+              ); })()}
               <div style={{ display: "flex", gap: 14, marginTop: 30, alignItems: "stretch", flexWrap: "wrap", justifyContent: "center", position: "relative" }}>
                 <div style={{ flex: "1 1 220px", maxWidth: 300, border: `1px solid ${C.line}`, borderRadius: 18, padding: "22px 20px", background: C.panel, display: "flex", flexDirection: "column" }}>
                   <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: C.faint }}>{t.tierFree}</div>
