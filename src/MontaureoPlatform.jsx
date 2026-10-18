@@ -50,6 +50,10 @@ const T = {
     fcTitle: "Fit with your priorities", fcSub: "How well this destination matches what you selected.", fcJudgement: "A judgement, not a probability.",
     whyTitle: "Why", compareTitle: "Compare with another destination", compareNote: "Same family, same assumptions — only the destination changes. You'll see both destinations side by side. Uses one of today's free runs.",
     h2hTitle: "Side by side · same assumptions",
+    calcTitle: "How these numbers are calculated", calcStart: "Start", calcIncome: "income", calcSpend: "spending", calcReturn: "portfolio return 6%/yr (2.5% income + 3.5% growth), reinvested.",
+    calcFormula: "Each year: capital + growth + portfolio income + your income − spending − tax. The same formula and the same inputs for every country — only the tax rules change.",
+    calcTax1: "Tax in year 1", calcTaxAll: "Tax over 10 years", calcEnd: "Capital in 2036",
+    calcWhyGap: "The gap in 2036 is the tax saved each year plus the growth that money earns once it stays invested.",
     loadSub: "Usually 20–40 seconds — both futures are built for your exact profile.",
     loadSteps: ["Reading your profile", "Matching countries to your citizenship", "Modelling your capital to 2036 — stay vs move", "Writing your 2036"],
     sampleEyebrow: "Example of what you get", sampleNote: "Illustrative example. Your answers use your own profile.",
@@ -212,10 +216,10 @@ const CLIENT_ID = typeof window !== "undefined" ? getClientId() : "ssr";
 // The server answered on purpose (limit reached / payment required) — never fall back to direct calls.
 function apiError(code) { const e = new Error(code); e.code = code; return e; }
 
-async function designFuture(profile, langName, model = "claude") {
+async function designFuture(profile, langName, model = "claude", extra = {}) {
   const langLine = `\n\nRespond entirely in ${langName}. All JSON string values must be written in ${langName}.`;
   let r = null;
-  try { r = await fetch("/api/future", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ profile, lang: langName, model, clientId: CLIENT_ID }) }); } catch { /* no backend (preview) */ }
+  try { r = await fetch("/api/future", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ profile, lang: langName, model, clientId: CLIENT_ID, ...extra }) }); } catch { /* no backend (preview) */ }
   if (r && r.status === 429) throw apiError("limit");
   try {
     if (r && r.ok) { const d = await r.json(); if (d && (d.move || d.scene)) return d; }
@@ -575,12 +579,11 @@ export default function MontaureoPlatform() {
     const cmp = typeof compareWith === "string" ? compareWith.replace(/[^\p{L} .'-]/gu, "").trim().slice(0, 40) : "";
     if (cmp) trackCtaClick("compare_country");
     const base = cmp && futureResult ? futureResult : null;
-    const clip = (x, n) => String(x || "").replace(/[\r\n]+/g, " ").slice(0, n);
-    const lock = base ? ` Keep exactly the same calculation base as the previous run: ${clip(base.assumptions, 260)}. The STAY scenario is unchanged (STAY capital2036 = ${clip(base.stay?.capital2036, 20)}).` : "";
-    const profile = `Profile: ${buildProfileText(form, matters)}.${cmp ? ` The client wants to compare with this MOVE destination: ${cmp}. Use ${cmp} as the MOVE country.` : ""}${lock} Build Stay vs Move to 2036.`;
+    const profile = `Profile: ${buildProfileText(form, matters)}.${cmp ? ` The client wants to compare with this MOVE destination: ${cmp}.` : ""} Build Stay vs Move to 2036.`;
+    // The server computes every amount from these inputs with one formula; the AI only chooses and explains.
+    const inputs = { liquid: form.liquid, income: form.income, src: form.src, citizen: form.citizen, from: form.from };
     try {
-      const r = await designFuture(profile, "English");
-      if (base && r) { r.stay = base.stay; if (!r.assumptions) r.assumptions = base.assumptions; } // STAY is the same family, same base — keep it identical
+      const r = await designFuture(profile, "English", "claude", { inputs, compare: cmp || undefined });
       setPrevResult(base); setFutureResult(r); setFutureState("result"); trackFutureResult(r?.move?.country);
     }
     catch (e) { setFutureErr(e?.code === "limit" ? "limit" : "error"); setFutureState("error"); }
@@ -1006,6 +1009,24 @@ export default function MontaureoPlatform() {
                       </div>
                     </div>
                   )}
+                  {futureResult.calc && (() => { const c = futureResult.calc; const m = (x) => `€${(Math.round(x * 10) / 10).toFixed(1)}M`; const k = (x) => (Math.abs(x) >= 1 ? m(x) : `€${Math.round(x * 1000)}K`); return (
+                    <details className="mt-up" style={{ maxWidth: 600, margin: "12px auto 0", border: `1px solid ${C.line}`, borderRadius: 16, padding: "12px 16px", background: C.panel }}>
+                      <summary style={{ cursor: "pointer", fontSize: 13.5, color: C.goldHi, fontWeight: 600 }}>{t.calcTitle}</summary>
+                      <div style={{ fontSize: 13, color: "#D9D8D2", lineHeight: 1.6, marginTop: 10 }}>
+                        <div>{t.calcStart} <b>{m(c.start)}</b> · {t.calcIncome} <b>{k(c.income)}</b>/yr · {t.calcSpend} <b>{k(c.spending)}</b>/yr · {t.calcReturn}</div>
+                        <div style={{ marginTop: 8, color: C.mist }}>{t.calcFormula}</div>
+                        <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 10, fontSize: 12.5, fontVariantNumeric: "tabular-nums" }}>
+                          <thead><tr>{["", c.stay.name, c.move.name].map((h, i) => <th key={i} style={{ textAlign: i ? "right" : "left", padding: "6px 4px", color: i === 2 ? C.goldHi : C.mist, fontWeight: 600, borderBottom: `1px solid ${C.line}` }}>{h}</th>)}</tr></thead>
+                          <tbody>
+                            {[[t.calcTax1, k(c.stay.taxFirstYear), k(c.move.taxFirstYear)], [t.calcTaxAll, m(c.stay.taxTotal), m(c.move.taxTotal)], [t.calcEnd, m(c.stay.end), m(c.move.end)]].map(([l, a, b]) => (
+                              <tr key={l}><td style={{ padding: "6px 4px", color: C.mist }}>{l}</td><td style={{ padding: "6px 4px", textAlign: "right" }}>{a}</td><td style={{ padding: "6px 4px", textAlign: "right", color: C.goldHi, fontWeight: 600 }}>{b}</td></tr>
+                            ))}
+                          </tbody>
+                        </table>
+                        <div style={{ marginTop: 8, color: C.mist, fontSize: 12 }}>{t.calcWhyGap}</div>
+                      </div>
+                    </details>
+                  ); })()}
                   {/* ---------- INTRO VIDEO — bridge between the free scenario and the paywall ---------- */}
                   <div className="mt-up" style={{ maxWidth: 600, margin: "22px auto 0" }}>
                     <div style={{ fontSize: 10.5, letterSpacing: ".26em", textTransform: "uppercase", color: C.gold, textAlign: "center", marginBottom: 12 }}>
