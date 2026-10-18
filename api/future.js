@@ -80,13 +80,20 @@ ${JLOGIC}
 The client profile includes both total wealth and liquid assets — use liquid assets when discussing what capital is realistically deployable (relocation costs, lump-sum tax regime minimums, real estate purchasing power), and total wealth only for overall positioning.
 
 First — a cinematic scene of the MOVE future: NOT the country first, but a MOMENT of life (morning, children, school, airport, capital preserved vs the STAY scenario, weather). 4-6 short second-person sentences. The country is revealed in a separate field, not in the text.
-Future Confidence — an integer 0-100: how well the MOVE scenario matches the client's PRIORITIES.
+INCOME: the profile states the client's MAIN income source (salary, business, dividends/investments or mixed). Tax treatment differs by source — model it accordingly. If it is "not specified", state the assumption you made in "assumptions".
+COMPARISON REQUEST: if the profile says the client wants to compare with a specific MOVE destination, use EXACTLY that country as MOVE. If it brings little or no benefit for this citizenship (e.g. Monaco for a French national), say so honestly in "why" and "difference".
+WHY: give 3 short reasons why the MOVE country fits THIS client (citizenship, priorities, income source, liquid assets) — concrete, no slogans.
+ALTERNATIVES: 2 other countries worth comparing for this profile (never the STAY or MOVE country).
+Fit score — an integer 0-100: how well the MOVE scenario matches the priorities the client selected. It is a judgement, not a probability; explain it in one line in "fitNote".
 
 All amounts are illustrative estimates under assumptions, not a verdict on a country and not advice.
 
 Return ONLY clean JSON, no markdown:
 {"scene":{"month":"<Month 2036>","lines":["…","…","…","…","…"],"country":"<MOVE country>"},
- "confidence":94,
+ "confidence":82,
+ "fitNote":"1 line: what drives the fit score up or down",
+ "why":["reason 1","reason 2","reason 3"],
+ "alternatives":["<country>","<country>"],
  "stay":{"country":"<current country>","tax":"short","capital2036":"€X.XM","school":"short","climate":"short"},
  "move":{"country":"<MOVE country>","tax":"short","capital2036":"€X.XM","school":"short","climate":"short"},
  "difference":["€X.XM saved","hours/yr saved","lower tax exposure","safer"],
