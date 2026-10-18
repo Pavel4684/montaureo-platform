@@ -27,6 +27,7 @@ const T = {
     heroTitle: "Design your future.",
     heroSub: "Compare how staying or moving could shape your wealth, lifestyle and family's future — tax, banking and real estate in one view.",
     heroTrust: "By Monaco Finance International LP",
+    heroHow: "How the example is calculated",
     sec: [["Bank-Level Security", "256-bit encryption"], ["Your Data is Private", "Never shared with third parties"]],
     whoTitle: "Who are you?", whatTitle: "What matters to you?", step: "Step", of: "of",
     next: "Next", back: "Back", showTwo: "Show me two futures", drawing: "Montaureo is drawing two futures…",
@@ -557,6 +558,19 @@ export default function MontaureoPlatform() {
     setLeadErr(""); setLeadSent(false); setLeadOpen(true);
   };
 
+  // Links from the "How it's calculated" page: /?start=1 opens the questionnaire, /?consult=1 the consultation form.
+  useEffect(() => {
+    try {
+      const url = new URL(window.location.href);
+      const start = url.searchParams.has("start"), consult = url.searchParams.has("consult");
+      if (!start && !consult) return;
+      url.searchParams.delete("start"); url.searchParams.delete("consult");
+      window.history.replaceState({}, "", url.toString());
+      if (start) enter();
+      else { setAuthed(true); openLead(); }
+    } catch {}
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const submitLead = async () => {
     if (!lead.name.trim() || !lead.email.trim()) { setLeadErr(t.leadRequired); return; }
     if (!lead.consent) { setLeadErr(t.leadConsentRequired); return; }
@@ -691,6 +705,7 @@ export default function MontaureoPlatform() {
                 {t.startFree} <ArrowRight size={18} strokeWidth={2.4} />
               </button>
               <div style={{ fontSize: 11.5, letterSpacing: ".12em", color: "#C9C8C2", textShadow: "0 1px 14px rgba(0,0,0,0.85)" }}>FREE · 60 SECONDS · NO SIGNUP</div>
+              <a href="/how-it-is-calculated.html" onClick={() => trackCtaClick("how_calculated")} style={{ fontSize: 12.5, color: C.goldHi, textDecoration: "underline", textUnderlineOffset: 3, textShadow: "0 1px 14px rgba(0,0,0,0.85)" }}>{t.heroHow}</a>
               <div style={{ fontSize: 11.5, color: C.mist, letterSpacing: ".04em" }}>{t.heroTrust}</div>
             </div>
           </div>
