@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2B6WV5EDKF"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-2B6WV5EDKF');</script>
+<title>How the example is calculated — Montaureo</title>
+<meta name="description" content="Stay in the UK or move to Monaco: the full calculation behind Montaureo's illustrative scenario — €26.4M vs €34.8M after 10 years.">
+<link rel="canonical" href="https://www.montaureo.com/how-it-is-calculated.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Montaureo">
+<meta property="og:url" content="https://www.montaureo.com/how-it-is-calculated.html">
+<meta property="og:title" content="UK or Monaco: the same family, ten years apart">
+<meta property="og:description" content="€26.4M vs €34.8M after 10 years. Every assumption, year by year.">
+<meta property="og:image" content="https://www.montaureo.com/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap">
+<style>
+:root{color-scheme:dark;--void:#070708;--card:#0F0F12;--line:#25252B;--gold:#C6A35A;--goldhi:#F2DCA0;--snow:#F1EFE8;--mist:#8A8A92;--uk:#9A9AA2}
+*{box-sizing:border-box;margin:0}
+body{margin:0;background:var(--void);color:var(--snow);font-family:Inter,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:860px;margin:0 auto;padding-block:28px 60px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:34px}
+.back{font-size:13px;color:var(--mist)}
+.wm{font-size:12px;letter-spacing:.3em;font-weight:300}.wm b{font-weight:300;color:var(--gold)}
+.eyebrow{font-size:11px;letter-spacing:.28em;color:var(--gold);text-transform:uppercase}
+h1{font-family:"Playfair Display",Georgia,serif;font-weight:600;font-size:clamp(30px,5vw,44px);line-height:1.1;margin:12px 0 12px}
+.lead{color:#CFCEC8;font-size:15.5px;line-height:1.6;max-width:620px}
+.nums{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:28px 0 12px}
+.n{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.n .t{font-size:10.5px;letter-spacing:.24em;color:var(--mist)}.n.m .t{color:var(--gold)}
+.n .c{font-size:14px;margin-top:4px;color:#CFCEC8}
+.n .v{font-size:clamp(30px,6vw,44px);font-weight:600;margin-top:10px;letter-spacing:-.02em}
+.n.m .v{color:var(--goldhi)} .n .s{font-size:12px;color:var(--mist);margin-top:2px}
+.diff{background:linear-gradient(135deg,rgba(198,163,90,.16),rgba(198,163,90,.04));border:1px solid rgba(198,163,90,.4);border-radius:16px;padding:16px 18px;display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.diff .v{font-size:30px;font-weight:600;color:var(--goldhi)}.diff .l{font-size:13.5px;color:#D9D8D2}
+section{margin-top:40px}
+h2{font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+svg text{font-family:Inter,Arial,sans-serif}
+.legend{display:flex;gap:18px;font-size:12.5px;color:#CFCEC8;margin-bottom:8px}
+.legend i{display:inline-block;width:18px;height:3px;border-radius:2px;vertical-align:middle;margin-right:7px}
+.bridge .row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+.bridge .row:last-child{border:0}
+.bridge .row span:last-child{font-variant-numeric:tabular-nums;font-weight:600}
+.bar{height:10px;border-radius:6px;background:var(--line);margin:4px 0 14px;overflow:hidden;display:flex}
+.bar b{display:block;height:100%}
+.as{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.a{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.a .k{font-size:12px;color:var(--mist)}.a .x{font-size:17px;font-weight:600;margin-top:4px}.a .h{font-size:12px;color:var(--mist);margin-top:3px;line-height:1.4}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}
+th{font-weight:500;color:var(--mist);font-size:11px;letter-spacing:.12em;text-transform:uppercase;text-align:right;padding:0 0 10px}
+th:first-child,td:first-child{text-align:left}
+td{text-align:right;padding:9px 0;border-top:1px solid var(--line)}
+td.m{color:var(--goldhi)} tr.last td{font-weight:600}
+details summary{cursor:pointer;color:var(--gold);font-size:14px;list-style:none}
+ul.notes{padding-left:18px;color:#CFCEC8;font-size:14px;line-height:1.65}
+ul.notes li{margin-bottom:6px}
+.cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:34px}
+a{text-decoration:none;color:inherit}
+.btn{border-radius:99px;padding:15px 24px;font-size:15px;font-weight:600;text-align:center;flex:1 1 220px}
+.btn.p{background:linear-gradient(140deg,var(--goldhi),var(--gold));color:#1A1408}
+.btn.s{border:1px solid var(--gold);color:var(--goldhi)}
+.foot{margin-top:28px;font-size:11.5px;color:#6E6E76;line-height:1.6}
+@media(max-width:560px){.a{padding:12px}.a .x{font-size:16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top"><a class="back" href="/">← Back</a><a class="wm" href="/">MONT<b>AUREO</b></a></div>
+<div class="eyebrow">Illustrative scenario · how it's calculated</div>
+<h1>Stay in the UK or move to Monaco: the same family, ten years apart.</h1>
+<p class="lead">One family, one starting portfolio, the same investments and the same lifestyle. The only thing that changes is where they are tax-resident. Every figure below can be recalculated from the assumptions on this page.</p>
+
+<div class="nums">
+ <div class="n"><div class="t">STAY</div><div class="c">United Kingdom</div><div class="v">€26.4M</div><div class="s">capital in 2036</div></div>
+ <div class="n m"><div class="t">MOVE</div><div class="c">Monaco</div><div class="v">€34.8M</div><div class="s">capital in 2036</div></div>
+</div>
+<div class="diff"><span class="v">+€8.4M</span><span class="l">more capital after 10 years in Monaco</span></div>
+
+<section><h2>Capital, year by year</h2><div class="card">
+<div class="legend"><span><i style="background:var(--goldhi)"></i>Monaco</span><span><i style="background:var(--uk)"></i>United Kingdom</span></div>
+<svg id="chart" viewBox="0 0 520 330" width="100%"></svg></div></section>
+
+<section><h2>Where the €8.4M comes from</h2><div class="card bridge">
+<div class="bar"><b style="width:76.5%;background:var(--gold)"></b><b style="width:23.5%;background:#7A6638"></b></div>
+<div class="row"><span>UK income tax paid over 10 years</span><span>€6.42M</span></div>
+<div class="row"><span>Lost growth on that tax (compounding)</span><span>€1.97M</span></div>
+<div class="row"><span style="color:var(--goldhi)">Difference in 2036</span><span style="color:var(--goldhi)">€8.39M</span></div>
+</div></section>
+
+<section><h2>Assumptions</h2><div class="as">
+ <div class="a"><div class="k">Starting portfolio (2026)</div><div class="x">€15M</div><div class="h">Liquid investments, same in both cases</div></div>
+ <div class="a"><div class="k">Portfolio return</div><div class="x">6% / year</div><div class="h">2.5% dividends &amp; interest + 3.5% growth</div></div>
+ <div class="a"><div class="k">Earned income</div><div class="x">€1M / year</div><div class="h">Salary or business income</div></div>
+ <div class="a"><div class="k">Family spending</div><div class="x">€400k / year</div><div class="h">Identical lifestyle in both countries</div></div>
+ <div class="a"><div class="k">UK tax</div><div class="x">41% · 44%</div><div class="h">Effective rate on portfolio income · on earned income (2026/27 rates)</div></div>
+ <div class="a"><div class="k">Monaco tax</div><div class="x">0%</div><div class="h">No personal income tax for residents (not for French nationals)</div></div>
+</div></section>
+
+<section><h2>Year-by-year table</h2><div class="card"><table>
+<thead><tr><th>Year</th><th>UK</th><th>UK tax</th><th>Monaco</th></tr></thead><tbody id="tb"></tbody></table></div></section>
+
+<section><h2>What this does not include</h2><ul class="notes">
+<li>Capital gains tax: the portfolio is not sold. If it were sold in 2036, UK CGT at 24% would widen the gap to about <b>€10.0M</b>.</li>
+<li>Inheritance tax, wealth taxes and the UK's post-departure rules, which depend on each family's history.</li>
+<li>Cost of living and property in Monaco, and the conditions to obtain residence there.</li>
+<li>Exchange rates and investment risk — returns are kept identical on purpose.</li>
+</ul></section>
+
+<div class="cta"><a class="btn p" href="/?start=1" onclick="gtag('event','cta_click',{cta_name:'calc_page_start'})">Calculate my own two futures →</a><a class="btn s" href="/?consult=1" onclick="gtag('event','cta_click',{cta_name:'calc_page_consult'})">Book a private consultation</a></div>
+<p class="foot">Illustrative scenario for information only, not tax or investment advice. Rates as of 2026/27; personal situations differ. By Monaco Finance International LP.</p>
+</div>
+<script>
+const uk=[15,15.906,16.858,17.856,18.905,20.005,21.16,22.373,23.646,24.983,26.385],
+mc=[15,16.5,18.09,19.775,21.562,23.456,25.463,27.591,29.846,32.237,34.771],
+tax=[0,.594,.603,.613,.623,.634,.645,.657,.669,.682,.696];
+const W=520,H=330,L=50,R=78,T=14,B=34,x=i=>L+i*(W-L-R)/10,y=v=>T+(1-(v-10)/30)*(H-T-B);
+let s='';[10,20,30,40].forEach(v=>{s+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="#25252B"/><text x="${L-10}" y="${y(v)+4}" fill="#8A8A92" font-size="14" text-anchor="end">€${v}M</text>`});
+[0,5,10].forEach(i=>s+=`<text x="${x(i)}" y="${H-12}" fill="#8A8A92" font-size="14" text-anchor="middle">${2026+i}</text>`);
+const pts=a=>a.map((v,i)=>`${x(i)},${y(v)}`).join(' ');
+s+=`<polygon points="${pts(mc)} ${uk.map((v,i)=>`${x(i)},${y(v)}`).reverse().join(' ')}" fill="rgba(198,163,90,.14)"/>`;
+s+=`<polyline points="${pts(uk)}" fill="none" stroke="#9A9AA2" stroke-width="3"/><polyline points="${pts(mc)}" fill="none" stroke="#F2DCA0" stroke-width="3"/>`;
+s+=`<circle cx="${x(10)}" cy="${y(34.771)}" r="5" fill="#F2DCA0"/><circle cx="${x(10)}" cy="${y(26.385)}" r="5" fill="#9A9AA2"/>`;
+s+=`<text x="${x(10)+10}" y="${y(34.771)+5}" fill="#F2DCA0" font-size="17" font-weight="600">€34.8M</text><text x="${x(10)+10}" y="${y(26.385)+5}" fill="#CFCFC8" font-size="17" font-weight="600">€26.4M</text>`;
+s+=`<text x="${x(7.3)}" y="${(y(28.1)+y(22.6))/2+6}" fill="#C6A35A" font-size="16" font-weight="600" text-anchor="middle">+€8.4M</text>`;
+document.getElementById('chart').innerHTML=s;
+let r='';for(let i=1;i<=10;i++)r+=`<tr${i==10?' class="last"':''}><td>${2026+i}</td><td>€${uk[i].toFixed(1)}M</td><td>€${(tax[i]*1000).toFixed(0)}k</td><td class="m">€${mc[i].toFixed(1)}M</td></tr>`;
+document.getElementById('tb').innerHTML=r;
+</script>
+
+</body>
+</html>
