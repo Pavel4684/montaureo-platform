@@ -1043,7 +1043,7 @@ export default function MontaureoPlatform() {
                 <div style={{ fontFamily: "'Playfair Display',serif", fontStyle: "italic", fontSize: "clamp(18px,3vw,24px)", color: C.goldHi, marginBottom: 12 }}>{t.pwUnlock}</div>
                 <div style={{ fontSize: "clamp(30px,6vw,48px)", fontWeight: 700, color: C.goldHi, margin: "14px 0 4px" }}>$4.99 <span style={{ fontSize: 18 }}>first month</span></div>
                 <div style={{ color: C.snow, fontSize: 14, marginBottom: 10 }}>Use code <strong>WELCOME</strong> at checkout · then $49/month · cancel anytime</div>
-                <button onClick={() => requestPaidAccess("https://buy.stripe.com/28E7sM6tncD23NIadk6Vq00")} className="mt-cta" style={{ cursor: "pointer", border: "none", borderRadius: 12, padding: "15px 24px", margin: "8px 0", fontSize: 16, fontWeight: 700, color: "#1A1408", background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})` }}>Get Premium - $4.99 first month →</button>
+                <button onClick={() => requestPaidAccess("https://buy.stripe.com/28E7sM6tncD23NIadk6Vq00?prefilled_promo_code=WELCOME")} className="mt-cta" style={{ cursor: "pointer", border: "none", borderRadius: 12, padding: "15px 24px", margin: "8px 0", fontSize: 16, fontWeight: 700, color: "#1A1408", background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})` }}>Get Premium - $4.99 first month →</button>
                 <div style={{ fontSize: 12.5, color: C.goldHi, margin: "0 auto 16px", maxWidth: 540 }}>{t.promoNote}</div>
                 <p style={{ fontSize: 15, color: C.mist, maxWidth: 540, margin: "0 auto", lineHeight: 1.55 }}>
                   {t.pwBodyA}{futureResult?.move?.country ? ` (${futureResult.move.country})` : ""} {t.pwBodyB}
@@ -1079,7 +1079,7 @@ export default function MontaureoPlatform() {
                   <div style={{ display: "flex", flexDirection: "column", gap: 9, fontSize: 13, color: "#E6E5DE", flex: 1 }}>
                     {t.premF.map((x) => <div key={x} style={{ display: "flex", gap: 8, alignItems: "center" }}><Sparkles size={14} color={C.gold} /> {x}</div>)}
                   </div>
-                  <button onClick={() => requestPaidAccess("https://buy.stripe.com/28E7sM6tncD23NIadk6Vq00")} className="mt-cta" style={{ marginTop: 18, cursor: "pointer", border: "none", borderRadius: 12, padding: "13px", fontSize: 14.5, fontWeight: 700, color: "#1A1408", background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})` }}>{t.btnSub}</button>
+                  <button onClick={() => requestPaidAccess("https://buy.stripe.com/28E7sM6tncD23NIadk6Vq00?prefilled_promo_code=WELCOME")} className="mt-cta" style={{ marginTop: 18, cursor: "pointer", border: "none", borderRadius: 12, padding: "13px", fontSize: 14.5, fontWeight: 700, color: "#1A1408", background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})` }}>{t.btnSub}</button>
                   <button onClick={openLead} style={{ marginTop: 9, cursor: "pointer", border: `1px solid ${C.gold}`, borderRadius: 12, padding: "12px", fontSize: 13.5, fontWeight: 600, color: C.goldHi, background: "transparent" }}>{t.btnOnce}</button>
                 </div>
                 <div style={{ flex: "1 1 220px", maxWidth: 300, border: `1px solid ${C.line}`, borderRadius: 18, padding: "22px 20px", background: C.panel, display: "flex", flexDirection: "column" }}>
@@ -1283,5 +1283,3 @@ export default function MontaureoPlatform() {
     </div>
   );
 }
-
-
