@@ -196,14 +196,7 @@ function readInputs(body, profile) {
     citizen: LABEL_TO_KEY.citizen[grab(/citizenship ([^,]+),/)],
     from: LABEL_TO_KEY.from[grab(/currently lives in ([^,]+),/)],
   };
-  const taxWarning = [
-      inputs.citizen === "zUS" || inputs.citizen === "zNA" ? "US citizens and certain US residents remain subject to US worldwide taxation. All displayed amounts are LOCAL-REGIME-ONLY illustrations and EXCLUDE continuing US tax, credits and reporting. They are not your total tax or net wealth forecast. A cross-border specialist must calculate these before a decision." : "",
-      inputs.citizen === "zCA" ? "Canadian obligations depend on residence and residential ties, not citizenship alone. Departure tax and any continuing Canadian-source taxation are excluded from this illustration." : "",
-      inputs.citizen === "zFR" && move.key === "Monaco" ? "French nationals moving to Monaco generally remain subject to French income tax under the 1963 convention. This model applies French rates, not zero tax. Treaty exceptions need individual review." : "",
-      inputs.from === "pOther" ? "Current country is unspecified. The calculation uses an illustrative 45% income / 30% portfolio benchmark, NOT the tax rate of your actual country." : ""
-    ].filter(Boolean).join(" ");
-    const out = {
-      taxWarning,};
+  const out = {};
   for (const k of Object.keys(ALLOWED)) out[k] = ALLOWED[k].includes(inp[k]) ? inp[k] : fromText[k] || null;
   return out;
 }
@@ -253,7 +246,14 @@ export default async function handler(req, res) {
     const why = clean(ai.why, 3);
     const alternatives = (Array.isArray(ai.alternatives) ? ai.alternatives : []).map((x) => destKey(x)).filter((k) => k && k !== move.key && base.candidates[k] && !(base.french && k === "Monaco"))
       .concat(cands.map((c) => c.key)).filter((k, i, a) => k !== move.key && a.indexOf(k) === i).slice(0, 3).map((k) => base.candidates[k].name);
+    const taxWarning = [
+      inputs.citizen === "zUS" || inputs.citizen === "zNA" ? "US citizens and certain US residents remain subject to US worldwide taxation. All displayed amounts are LOCAL-REGIME-ONLY illustrations and EXCLUDE continuing US tax, credits and reporting. They are not your total tax or net wealth forecast. A cross-border specialist must calculate these before a decision." : "",
+      inputs.citizen === "zCA" ? "Canadian obligations depend on residence and residential ties, not citizenship alone. Departure tax and any continuing Canadian-source taxation are excluded from this illustration." : "",
+      inputs.citizen === "zFR" && move.key === "Monaco" ? "French nationals moving to Monaco generally remain subject to French income tax under the 1963 convention. This model applies French rates, not zero tax. Treaty exceptions need individual review." : "",
+      inputs.from === "pOther" ? "Current country is unspecified. The calculation uses an illustrative 45% income / 30% portfolio benchmark, NOT the tax rate of your actual country." : ""
+    ].filter(Boolean).join(" ");
     const out = {
+      taxWarning,
       scene: { month: "April 2036", lines: lines.length >= 3 ? lines : ["You wake up in the life you chose.", "The school run takes ten minutes.", "Your capital kept working for your family."], country: move.name },
       confidence: Number.isFinite(+ai.confidence) ? Math.max(0, Math.min(100, Math.round(+ai.confidence))) : 75,
       fitNote: moneyOk(ai.fitNote, allowedMoney) ? String(ai.fitNote || "").slice(0, 200) : "",
