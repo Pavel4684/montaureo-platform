@@ -28,6 +28,7 @@ const T = {
     heroSub: "Compare how staying or moving could shape your wealth, lifestyle and family's future — tax, banking and real estate in one view.",
     heroTrust: "By Monaco Finance International LP",
     heroHow: "See an example result",
+    heroWorld: "Explore the Montaureo World",
     sec: [["Bank-Level Security", "256-bit encryption"], ["Your Data is Private", "Never shared with third parties"]],
     whoTitle: "Who are you?", whatTitle: "What matters to you?", step: "Step", of: "of",
     next: "Next", back: "Back", showTwo: "Show me two futures", drawing: "Montaureo is drawing two futures…",
@@ -696,6 +697,8 @@ export default function MontaureoPlatform() {
       .mt-up{animation:up .55s cubic-bezier(.2,.7,.2,1) both}
       .fade{animation:fade .7s cubic-bezier(.2,.7,.2,1) both}
       .mt-cta:hover{filter:brightness(1.1)}
+      .mt-world-cta{display:flex;align-items:center;justify-content:center;gap:9px;width:min(100%,360px);box-sizing:border-box;border:1px solid rgba(255,255,255,.85);border-radius:99px;padding:13px 24px;color:#17181B;text-decoration:none;font-size:14px;font-weight:600;background:linear-gradient(135deg,#F7F7F5 0%,#C8C9CC 42%,#F1F1EF 68%,#AEB0B5 100%);box-shadow:0 8px 28px rgba(210,214,220,.18),inset 0 1px 0 rgba(255,255,255,.95);transition:filter .15s,transform .15s}
+      .mt-world-cta:hover{filter:brightness(1.05);transform:translateY(-1px)}
       .auth-btn:hover{filter:brightness(1.06);border-color:rgba(198,163,90,0.4)}
       .nav-item:hover{background:rgba(198,163,90,0.06)!important}
       .link:hover{color:${C.goldHi}!important}
@@ -761,6 +764,9 @@ export default function MontaureoPlatform() {
               </button>
               <div style={{ fontSize: 11.5, letterSpacing: ".12em", color: "#C9C8C2", textShadow: "0 1px 14px rgba(0,0,0,0.85)" }}>FREE · 60 SECONDS · NO SIGNUP</div>
               <a href="/how-it-is-calculated.html" onClick={() => trackCtaClick("how_calculated")} style={{ fontSize: 15.5, fontWeight: 500, color: C.goldHi, textDecoration: "underline", textUnderlineOffset: 4, textDecorationThickness: 1, textShadow: "0 1px 14px rgba(0,0,0,0.85)", padding: "4px 0", textAlign: "center" }}>{t.heroHow} →</a>
+              <a href="https://montaureo-two-futures-game.hazytune1024.chatgpt.site/" target="_blank" rel="noopener noreferrer" onClick={() => trackOutbound("montaureo_world_game")} className="mt-world-cta">
+                {t.heroWorld} <ArrowRight size={17} strokeWidth={2.2} />
+              </a>
               <div style={{ fontSize: 11.5, color: C.mist, letterSpacing: ".04em" }}>{t.heroTrust}</div>
             </div>
           </div>
@@ -1331,3 +1337,6 @@ export default function MontaureoPlatform() {
     </div>
   );
 }
+
+
+The focused UI element is 0 AXWebArea raw.githubusercontent.com/Pavel4684/montaureo-platform/main/src/MontaureoPlatform.jsx
