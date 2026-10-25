@@ -17,7 +17,7 @@ const C = {
 
 /* ===================== COPY (English only — AI still replies in the client's own language) ===================== */
 const T = {
-    v: { a30: "30–40", a40: "40–50", a50: "50–60", a60: "60+", c1: "€500K–2M", c2: "€2–5M", c3: "€5–15M", c4: "€15–50M", c5: "€50–100M", c6: "€100M+", i1: "< €200K", i2: "€200–500K", i3: "€500K–1M", i4: "€1M+", s1: "Salary", s2: "Business / company", s3: "Dividends & investments", s4: "Mixed", l1: "< €500K", l2: "€500K–2M", l3: "€2–10M", l4: "€10–50M", l5: "€50M+", fSingle: "Single", fCouple: "Couple", fKids: "Family with children", zFR: "France", zEU: "Other EU", zUK: "UK", zNA: "US/Canada", zOther: "Other", pMC: "Monaco", pCH: "Switzerland", pAE: "UAE", pLU: "Luxembourg", pLI: "Liechtenstein", pAD: "Andorra", pSG: "Singapore", pFR: "France", pUK: "United Kingdom", pDE: "Germany", pOther: "Other", kids: "Children", safety: "Safety", business: "Business", sea: "Sea", taxes: "Taxes", climate: "Climate" },
+    v: { a30: "30–40", a40: "40–50", a50: "50–60", a60: "60+", c1: "€500K–2M", c2: "€2–5M", c3: "€5–15M", c4: "€15–50M", c5: "€50–100M", c6: "€100M+", i1: "< €200K", i2: "€200–500K", i3: "€500K–1M", i4: "€1M+", s1: "Salary", s2: "Business / company", s3: "Dividends & investments", s4: "Mixed", l1: "< €500K", l2: "€500K–2M", l3: "€2–10M", l4: "€10–50M", l5: "€50M+", fSingle: "Single", fCouple: "Couple", fKids: "Family with children", zFR: "France", zEU: "Other EU", zUK: "UK", zUS: "United States", zCA: "Canada", zNA: "US/Canada (legacy)", zOther: "Other", pMC: "Monaco", pCH: "Switzerland", pAE: "UAE", pLU: "Luxembourg", pLI: "Liechtenstein", pAD: "Andorra", pSG: "Singapore", pFR: "France", pUK: "United Kingdom", pDE: "Germany", pOther: "Other", kids: "Children", safety: "Safety", business: "Business", sea: "Sea", taxes: "Taxes", climate: "Climate" },
     f: { age: "Age", capital: "Capital", liquid: "Liquid assets", income: "Income / year", src: "Main source of income", family: "Family", citizen: "Citizenship", from: "Currently living" },
     quote: "The future is not found. It is designed.", h1a: "Where will your capital", h1b: "be worth more?",
     sub: "Here — or somewhere else? Answer 7 questions and AI builds two versions of your 2036: Stay vs Move, with tax, capital and lifestyle. Free · 60 seconds · no signup.",
@@ -33,8 +33,8 @@ const T = {
     whoTitle: "Who are you?", whatTitle: "What matters to you?", step: "Step", of: "of",
     next: "Next", back: "Back", showTwo: "Show me two futures", drawing: "Montaureo is drawing two futures…",
     errBuild: "Couldn't build the scenarios. Please try again.", backToQ: "Back to questionnaire", passAgain: "Start over",
-    twoFutures: "Two futures · 2036", stay: "Stay", move: "Move", tax: "Tax", cap2036: "Capital 2036*", school: "School", climate: "Climate",
-    diffTitle: "Difference · if you move", showPath: "Show Me My Path — open concierge", showPathSub: "Velvet Concierge already knows your profile — continue without repeating.",
+    twoFutures: "Two futures · 2036", stay: "Stay", move: "Move", tax: "Tax", cap2036: "Liquid portfolio 2036*", school: "School", climate: "Climate",
+    diffTitle: "Difference · if you move", showPath: "Show Me My Path — open concierge", showPathSub: "With your permission, Montaureo Concierge reuses your questionnaire answers.",
     bookConsult: "Book Private Consultation",
     leadTitle: "Private Consultation", leadSub: "A Monaco Finance International advisor will reach out directly. No AI in this step.",
     leadName: "Full name", leadEmail: "Email", leadPhone: "Phone / WhatsApp", leadLang: "Preferred language", leadTime: "Best time to contact",
@@ -51,7 +51,7 @@ const T = {
     fcTitle: "Fit with your priorities", fcSub: "How well this destination matches what you selected.", fcJudgement: "A judgement, not a probability.",
     whyTitle: "Why", compareTitle: "Compare with another destination", compareNote: "Same family, same assumptions — only the destination changes. You'll see both destinations side by side. Uses one of today's free runs.",
     h2hTitle: "Side by side · same assumptions",
-    calcTitle: "How these numbers are calculated", calcStart: "Start", calcIncome: "income", calcSpend: "spending", calcReturn: "portfolio return 6%/yr (2.5% income + 3.5% growth), reinvested.",
+    calcTitle: "How these numbers are calculated", calcStart: "Starting liquid portfolio", calcIncome: "income", calcSpend: "spending", calcReturn: "portfolio return 6%/yr (2.5% income + 3.5% growth), reinvested.",
     calcFormula: "Each year: capital + growth + portfolio income + your income − spending − tax. The same formula and the same inputs for every country — only the tax rules change.",
     calcTax1: "Tax in year 1", calcTaxAll: "Tax over 10 years", calcEnd: "Capital in 2036",
     calcWhyGap: "The gap in 2036 is the tax saved each year plus the growth that money earns once it stays invested.",
@@ -63,19 +63,19 @@ const T = {
     pwBodyA: "Kate, Jun and Emily will help you turn this scenario", pwBodyB: "into a real plan: banking, real estate, credit, relocation.",
     tierFree: "Free", tierFreeNow: "Current plan", tierFreeActive: "Active", freeF: ["Landing and sign-in", "Profile questionnaire", "Two Futures · Stay vs Move"],
     recommended: "Recommended", tierPremium: "Premium", perMonth: "/mo", premiumAlt: "or $299 — one-time relocation plan",
-    promoNote: "Use code WELCOME for your first month at $4.99",
-    premF: ["Velvet Concierge · Kate, Jun & Emily", "Banking · Real Estate · Legal · Credit", "Lifestyle · Events · KYC checklists", "8 jurisdictions, profile-aware"],
+    promoNote: "USD $4.99 for the first month with code WELCOME, then USD $49/month. Cancel anytime. Confirm eligibility and the final amount in Stripe Checkout.",
+    premF: ["Montaureo Concierge · Kate, Jun & Emily", "Banking · Real Estate · Legal · Credit", "Lifestyle · Events · KYC checklists", "8 jurisdictions, profile-aware"],
     btnSub: "Subscribe", btnOnce: "$299 — one-time plan",
     tierPrivate: "Private", privatePrice: "By request", privateNote: "Inner circle", privF: ["Everything in Premium", "A real MFI advisor", "Deal & relocation support"], requestAccess: "Request access",
     pwReassure: "Two Futures stays free forever. Cancel anytime.",
-    profile: "Profile", yourProfile: "Your profile", profileSub: "This data powers both Two Futures and Velvet Concierge. Fill it once.",
+    profile: "Profile", yourProfile: "Your profile", profileSub: "This data powers both Two Futures and Montaureo Concierge. Fill it once.",
     priorities: "Priorities", saveProfile: "Save profile", saved: "Saved ✓", savedNote: "Profile updated — the concierge already accounts for the changes.", planLabel: "Plan",
     cWelcomeA: "Given your profile", cWelcomeB: "I already know the details — no need to repeat anything. Where shall we begin?", cMoveInterest: "interest in",
     askPlaceholder: "Ask", cFooter: "Information, not advice. For KYC, documents are submitted directly to the bank or your MFI advisor.",
-    nav: { future: "Design Your Future", concierge: "Concierge", banking: "Banking", realestate: "Real Estate", legal: "Legal", lifestyle: "Lifestyle", events: "Events", credit: "Credit", profile: "Profile" },
-    pmcFreeTitle: "MONTAUREO PREMIUM", pmcFreeSub: "Unlock Velvet Concierge — Kate, Jun and Emily turn the scenario into a plan", pmcUnlock: "Unlock",
+    nav: { future: "Design your future", concierge: "Concierge", banking: "Banking", realestate: "Real Estate", legal: "Legal", lifestyle: "Lifestyle", events: "Events", credit: "Credit", profile: "Profile" },
+    pmcFreeTitle: "MONTAUREO PREMIUM", pmcFreeSub: "Unlock Montaureo Concierge — Kate, Jun and Emily turn the scenario into a plan", pmcUnlock: "Unlock",
     pmcPremTitle: "PREMIUM ACTIVE", pmcPremSub: "Want a real MFI advisor?", pmcToPrivate: "Upgrade to Private", pmcPrivTitle: "PRIVATE", pmcPrivSub: "A Monaco Finance International advisor will be in touch.",
-    dom: { null: ["Velvet Concierge", "Banking, real estate, legal, lifestyle, events, relocation — ask anything."], Banking: ["Banking", "Where and how to open an account — pros and cons by bank."], RealEstate: ["Real Estate", "Where to buy property, with price guidance."], Legal: ["Legal", "Structuring, residency and cross-border questions, explained plainly."], Lifestyle: ["Lifestyle", "Where to dine, private service, seasonal trends."], Events: ["Events", "International forums, fairs, private events."], Credit: ["Credit", "Credit and Lombard — where and on what terms."] },
+    dom: { null: ["Montaureo Concierge", "Banking, real estate, legal, lifestyle, events, relocation — ask anything."], Banking: ["Banking", "Where and how to open an account — pros and cons by bank."], RealEstate: ["Real Estate", "Where to buy property, with price guidance."], Legal: ["Legal", "Structuring, residency and cross-border questions, explained plainly."], Lifestyle: ["Lifestyle", "Where to dine, private service, seasonal trends."], Events: ["Events", "International forums, fairs, private events."], Credit: ["Credit", "Credit and Lombard — where and on what terms."] },
     partnerBankingTitle: "Manage everything in one place", partnerBankingDesc: "monaco-finance.com is our free client portal — track all your accounts, Lombard lines and more.", partnerBankingCta: "Explore monaco-finance.com",
     suggest: { null: ["Best jurisdictions for my profile", "Compare Monaco vs UAE on tax", "Where do I start with relocation?"], Banking: ["Which bank should I open an account with?", "Compare private banks in Monaco", "What's needed for KYC?"], RealEstate: ["What can I buy within my budget?", "Rent or buy?", "Best areas by the sea"], Legal: ["What residency permit fits my profile?", "How is my structure taxed if I move?", "What documents does relocation require?"], Lifestyle: ["Best restaurants of the 2026 season", "Private service and clubs", "What's new on the Riviera"], Events: ["Upcoming private forums", "Calendar of fairs and auctions", "Grand Prix and yacht shows"], Credit: ["Lombard terms against my portfolio", "Where to get an in-fine loan?", "Rates by country"] },
     // ---- Auth modal (only shown at the paywall) ----
@@ -149,7 +149,7 @@ STRICT LENGTH (the result is read on a phone):
 - country names: plain names only ("UAE", "Malta"), no parentheses or city names.
 - alternatives: plain country names only, never the STAY or MOVE country.`
 
-const CONCIERGE_SYSTEM = `You are Velvet Concierge of the Montaureo platform: a private AI concierge for VIP clients with significant capital.
+const CONCIERGE_SYSTEM = `You are Montaureo Concierge of the Montaureo platform: a private AI concierge for VIP clients with significant capital.
 Jurisdiction coverage is open — you advise on any relevant jurisdiction worldwide.
 Tone: discreet, precise, numbers first, never pushy.
 Knowledge (current 2026):${KB}
@@ -178,7 +178,7 @@ Use a card for lists, comparisons and checklists (3-5 rows); otherwise card=null
 
 /* ===================== PAYWALL SAMPLES (shown before paying, per section) ===================== */
 const SAMPLES = {
-  null: { q: "Compare Monaco and the UAE for my family.", a: "Both remove personal income tax for most nationalities. For a family with children, the real trade-offs are schooling, climate and travel time to Europe.", rows: [["Monaco", "0% income tax (not for French nationals) · residence needs a home in Monaco and proof of means · 30 min from Nice airport"], ["UAE", "0% personal income tax · long-term visa through property or investment · 6–7 h flights to most of Europe"], ["Next step", "A document checklist for the option you choose"]] },
+  null: { q: "Compare Monaco and the UAE for my family.", a: "Local personal-tax regimes can be favourable, but French nationals in Monaco and US worldwide tax obligations require special review. For a family, schooling, climate and travel also matter.", rows: [["Monaco", "0% income tax (not for French nationals) · residence needs a home in Monaco and proof of means · 30 min from Nice airport"], ["UAE", "0% personal income tax · long-term visa through property or investment · 6–7 h flights to most of Europe"], ["Next step", "A document checklist for the option you choose"]] },
   Banking: { q: "Where should I open a private bank account in Monaco?", a: "With €2–10M of liquid assets you are within the usual entry range of Monaco private banks. Three kinds of bank fit different needs:", rows: [["Swiss-group private bank", "Entry often from €1–3M · strong Lombard lending"], ["French-group bank", "Broad day-to-day services · detailed source-of-funds review"], ["Boutique Monegasque bank", "One personal banker · flexible with holding structures"]] },
   RealEstate: { q: "Should we rent or buy in Monaco for the first two years?", a: "Most relocating families rent first: a lease is the fastest way to meet the residence requirement while you learn the neighbourhoods.", rows: [["Rent", "Fastest route to a residence card"], ["Buy", "Resale prices are among the highest in the world — often above €50,000 per m²"], ["Shortlist", "Districts compared by school run, sea view and parking"]] },
   Legal: { q: "What do I need for a Monaco residence card?", a: "The application rests on three things: where you live, how you support yourself, and a clean record.", rows: [["Accommodation", "A lease or title deed in Monaco"], ["Financial means", "Usually shown with a deposit at a Monaco bank"], ["Record", "Criminal record extract from your current country"]] },
@@ -218,90 +218,17 @@ const CLIENT_ID = typeof window !== "undefined" ? getClientId() : "ssr";
 function apiError(code) { const e = new Error(code); e.code = code; return e; }
 
 async function designFuture(profile, langName, model = "claude", extra = {}) {
-  const langLine = `\n\nRespond entirely in ${langName}. All JSON string values must be written in ${langName}.`;
-  let r = null;
-  try { r = await fetch("/api/future", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ profile, lang: langName, model, clientId: CLIENT_ID, ...extra }) }); } catch { /* no backend (preview) */ }
-  if (r && r.status === 429) throw apiError("limit");
-  try {
-    if (r && r.ok) { const d = await r.json(); if (d && (d.move || d.scene)) return d; }
-    throw new Error("no-backend");
-  } catch {
-    // Fallback: direct calls (dev/preview only — real traffic should always hit /api/future)
-    if (model === "qwen-plus") {
-      const res = await fetch("https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ model: "qwen-plus", max_tokens: 2048, messages: [{ role: "system", content: FUTURE_SYSTEM + langLine }, { role: "user", content: profile }] }),
-      });
-      if (!res.ok) throw new Error("api");
-      const data = await res.json();
-      const raw = data.choices[0].message.content.trim();
-      return JSON.parse(raw.replace(/```json|```/g, "").trim());
-    } else if (model === "mistral-medium-2508") {
-      const res = await fetch("https://api.mistral.ai/v1/chat/completions", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ model: "mistral-medium-2508", max_tokens: 2048, messages: [{ role: "system", content: FUTURE_SYSTEM + langLine }, { role: "user", content: profile }] }),
-      });
-      if (!res.ok) throw new Error("api");
-      const data = await res.json();
-      const raw = data.choices[0].message.content.trim();
-      return JSON.parse(raw.replace(/```json|```/g, "").trim());
-    } else {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 2048, system: FUTURE_SYSTEM + langLine, messages: [{ role: "user", content: profile }] }),
-      });
-      if (!res.ok) throw new Error("api");
-      const data = await res.json();
-      const raw = data.content.filter((b) => b.type === "text").map((b) => b.text).join("\n").trim();
-      return JSON.parse(raw.replace(/```json|```/g, "").trim());
-    }
-  }
+  const r = await fetch("/api/future", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({profile,lang:langName,model,clientId:CLIENT_ID,...extra})});
+  if(r.status===429)throw apiError("limit");
+  if(!r.ok)throw apiError("scenario_unavailable");
+  return r.json();
 }
-
-async function askConcierge({ profileText, persona, focus, moveCountry, messages, langName, accessToken, email }) {
-  const model = PERSONA_MODEL[persona] || "claude";
-  const personaTone = persona === "Kate" ? "warm, attentive" : persona === "Jun" ? "fast, direct, to the point" : "sharp, analytical, structured";
-  const dynamic = `Client profile: ${profileText}.${moveCountry ? ` The client is considering moving to ${moveCountry}.` : ""}\nService persona: ${persona} (${personaTone}).${focus ? `\nCurrent focus: ${focus} — act as this agent.` : ""}\nDefault response language: ${langName}, unless the client's last message is clearly in another language.`;
-  let r = null;
-  try { r = await fetch("/api/concierge", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ profileText, persona, focus, moveCountry, messages, lang: langName, model, clientId: CLIENT_ID, accessToken, email }) }); } catch { /* no backend (preview) */ }
-  if (r && r.status === 402) throw apiError("payment_required");
-  if (r && r.status === 429) throw apiError("limit");
-  try {
-    if (r && r.ok) { const d = await r.json(); if (d && d.text) return d; }
-    throw new Error("no-backend");
-  } catch {
-    if (model === "qwen-plus") {
-      const res = await fetch("https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ model: "qwen-plus", max_tokens: 1024, messages: [{ role: "system", content: CONCIERGE_SYSTEM + "\n\n" + dynamic }, ...messages] }),
-      });
-      if (!res.ok) throw new Error("api");
-      const data = await res.json();
-      const raw = data.choices[0].message.content.trim();
-      try { return JSON.parse(raw.replace(/```json|```/g, "").trim()); }
-      catch { return { agent: "Velvet", text: raw, card: null }; }
-    } else if (model === "mistral-medium-2508") {
-      const res = await fetch("https://api.mistral.ai/v1/chat/completions", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ model: "mistral-medium-2508", max_tokens: 1024, messages: [{ role: "system", content: CONCIERGE_SYSTEM + "\n\n" + dynamic }, ...messages] }),
-      });
-      if (!res.ok) throw new Error("api");
-      const data = await res.json();
-      const raw = data.choices[0].message.content.trim();
-      try { return JSON.parse(raw.replace(/```json|```/g, "").trim()); }
-      catch { return { agent: "Velvet", text: raw, card: null }; }
-    } else {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 1024, system: CONCIERGE_SYSTEM + "\n\n" + dynamic, messages }),
-      });
-      if (!res.ok) throw new Error("api");
-      const data = await res.json();
-      const raw = data.content.filter((b) => b.type === "text").map((b) => b.text).join("\n").trim();
-      try { return JSON.parse(raw.replace(/```json|```/g, "").trim()); }
-      catch { return { agent: "Velvet", text: raw, card: null }; }
-    }
-  }
+async function askConcierge({profileText,persona,focus,moveCountry,messages,langName,accessToken,email}) {
+  const r=await fetch("/api/concierge",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({profileText,persona,focus,moveCountry,messages,lang:langName,model:PERSONA_MODEL[persona]||"claude",clientId:CLIENT_ID,accessToken,email})});
+  if(r.status===402)throw apiError("payment_required");
+  if(r.status===429)throw apiError("limit");
+  if(!r.ok)throw apiError("concierge_unavailable");
+  return r.json();
 }
 
 /* ===================== BRAND MARKS ===================== */
@@ -327,8 +254,8 @@ function SummitMark({ size = 40 }) {
   );
 }
 const Wordmark = ({ size = 13 }) => (
-  <span style={{ fontSize: size, letterSpacing: "0.30em", fontWeight: 300, paddingLeft: "0.30em" }}>
-    <span style={{ color: C.snow }}>MONT</span><span style={{ background: `linear-gradient(180deg, ${C.goldHi}, ${C.gold})`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>AUREO</span>
+  <span style={{ fontSize: size, letterSpacing: "0.30em", fontWeight: 500, textShadow: "0 2px 10px #000", paddingLeft: "0.30em" }}>
+    <span style={{ color: C.snow }}>MONT</span><span style={{ background: `linear-gradient(180deg, ${C.goldHi}, ${C.gold})`, WebkitBackgroundClip: "text", backgroundClip: "text", color: C.goldHi, WebkitTextFillColor: C.goldHi }}>AUREO</span>
   </span>
 );
 function SpinningGlobe() {
@@ -353,7 +280,7 @@ function SpinningGlobe() {
       <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 6 }}>
         <div style={{ filter: "drop-shadow(0 10px 30px rgba(0,0,0,0.7))" }}><SummitMark size={70} /></div>
         <div style={{ fontSize: "min(4vw,26px)", letterSpacing: "0.36em", color: C.snow, paddingLeft: "0.36em", marginTop: 8, textShadow: "0 2px 18px rgba(0,0,0,0.8)" }}>MONTAUREO</div>
-        <div style={{ fontSize: 11, letterSpacing: "0.34em", color: C.gold, textTransform: "uppercase", paddingLeft: "0.34em" }}>Design Your Future</div>
+        <div style={{ fontSize: 11, letterSpacing: "0.34em", color: C.gold, textTransform: "uppercase", paddingLeft: "0.34em" }}>Design your future</div>
       </div>
     </div>
   );
@@ -384,7 +311,7 @@ function ChatCard({ card }) {
 /* ===================== CONFIG ===================== */
 const SECTIONS = [["future", Compass], ["concierge", Sparkles], ["banking", Landmark], ["realestate", Building2], ["legal", Scale], ["lifestyle", Heart], ["events", Calendar], ["credit", CreditCard], ["profile", User]];
 const FOCUS = { banking: "Banking", realestate: "RealEstate", legal: "Legal", lifestyle: "Lifestyle", events: "Events", credit: "Credit" };
-const FIELDS = [["age", ["a30", "a40", "a50", "a60"]], ["capital", ["c1", "c2", "c3", "c4", "c5", "c6"]], ["liquid", ["l1", "l2", "l3", "l4", "l5"]], ["income", ["i1", "i2", "i3", "i4"]], ["src", ["s1", "s2", "s3", "s4"]], ["family", ["fSingle", "fCouple", "fKids"]], ["citizen", ["zFR", "zEU", "zUK", "zNA", "zOther"]], ["from", ["pOther", "pMC", "pCH", "pAE", "pLU", "pLI", "pAD", "pSG", "pFR", "pUK", "pDE"]]];
+const FIELDS = [["age", ["a30", "a40", "a50", "a60"]], ["capital", ["c1", "c2", "c3", "c4", "c5", "c6"]], ["liquid", ["l1", "l2", "l3", "l4", "l5"]], ["income", ["i1", "i2", "i3", "i4"]], ["src", ["s1", "s2", "s3", "s4"]], ["family", ["fSingle", "fCouple", "fKids"]], ["citizen", ["zFR", "zEU", "zUK", "zUS", "zCA", "zOther"]], ["from", ["pOther", "pMC", "pCH", "pAE", "pLU", "pLI", "pAD", "pSG", "pFR", "pUK", "pDE"]]];
 const MATTER_KEYS = ["kids", "safety", "business", "sea", "taxes", "climate"];
 
 /* ===================== APP ===================== */
@@ -409,6 +336,8 @@ export default function MontaureoPlatform() {
   const [form, setForm] = useState({ age: "a50", capital: "c4", liquid: "l3", income: "i3", src: null, family: "fKids", citizen: null, from: "pOther" });
   const [matters, setMatters] = useState(["kids", "sea"]);
   const [step, setStep] = useState(1);
+  const [profileConsent, setProfileConsent] = useState(false);
+  const [conciergeConsent, setConciergeConsent] = useState(false);
   const [futureState, setFutureState] = useState("form");
   const [futureResult, setFutureResult] = useState(null);
   const [prevResult, setPrevResult] = useState(null); // the result we compare against (same STAY, same base)
@@ -575,6 +504,7 @@ export default function MontaureoPlatform() {
   }, [futureState]);
 
   const runFuture = async (compareWith) => {
+    if (!form.citizen || !form.src || !profileConsent) { setFutureState("form"); setStep(1); return; }
     trackFutureRun();
     setFutureState("loading");
     const cmp = typeof compareWith === "string" ? compareWith.replace(/[^\p{L} .'-]/gu, "").trim().slice(0, 40) : "";
@@ -593,6 +523,7 @@ export default function MontaureoPlatform() {
   const sendChat = async (text) => {
     const content = (text ?? chatInput).trim();
     if (!content || chatBusy) return;
+    if (!conciergeConsent) { setAccessErr("Please consent to profile reuse before using the concierge."); return; }
     trackFirstMessage(persona);
     trackMessageSent(persona);
     const next = [...chat, { role: "user", content }];
@@ -618,11 +549,12 @@ export default function MontaureoPlatform() {
   useEffect(() => {
     try {
       const url = new URL(window.location.href);
-      const start = url.searchParams.has("start"), consult = url.searchParams.has("consult");
-      if (!start && !consult) return;
-      url.searchParams.delete("start"); url.searchParams.delete("consult");
+      const start = url.searchParams.has("start"), consult = url.searchParams.has("consult"), concierge = url.searchParams.has("concierge");
+      if (!start && !consult && !concierge) return;
+      url.searchParams.delete("start"); url.searchParams.delete("consult"); url.searchParams.delete("concierge");
       window.history.replaceState({}, "", url.toString());
-      if (start) enter();
+      if (concierge) { setAuthed(true); setSection("concierge"); }
+      else if (start) enter();
       else { setAuthed(true); openLead(); }
     } catch {}
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -707,7 +639,9 @@ export default function MontaureoPlatform() {
       @media (max-width:860px){
         .mt-shell{flex-direction:column!important}
         .mt-side{width:100%!important;flex-direction:row!important;overflow-x:auto;border-right:none!important;border-bottom:1px solid ${C.line};padding:10px 12px!important;gap:6px!important;align-items:center}
-        .mt-navrow{flex-direction:row!important;gap:6px!important}
+        .mt-navrow{flex-direction:row!important;flex-wrap:wrap!important;gap:6px!important;width:100%}
+        .mt-side{flex-wrap:wrap!important;overflow-x:visible!important}
+        .mt-brand{width:100%}
         .nav-item{white-space:nowrap}
         .mt-premium{display:none!important}
         .mt-landing{grid-template-columns:1fr!important;padding-top:24px!important}
@@ -764,7 +698,7 @@ export default function MontaureoPlatform() {
               </button>
               <div style={{ fontSize: 11.5, letterSpacing: ".12em", color: "#C9C8C2", textShadow: "0 1px 14px rgba(0,0,0,0.85)" }}>FREE · 60 SECONDS · NO SIGNUP</div>
               <a href="/how-it-is-calculated.html" onClick={() => trackCtaClick("how_calculated")} style={{ fontSize: 15.5, fontWeight: 500, color: C.goldHi, textDecoration: "underline", textUnderlineOffset: 4, textDecorationThickness: 1, textShadow: "0 1px 14px rgba(0,0,0,0.85)", padding: "4px 0", textAlign: "center" }}>{t.heroHow} →</a>
-              <a href="https://montaureo-two-futures-game.hazytune1024.chatgpt.site/" target="_blank" rel="noopener noreferrer" onClick={() => trackOutbound("montaureo_world_game")} className="mt-world-cta">
+              <a href="/explore" onClick={() => trackOutbound("montaureo_world_game")} className="mt-world-cta">
                 {t.heroWorld} <ArrowRight size={17} strokeWidth={2.2} />
               </a>
               <div style={{ fontSize: 11.5, color: C.mist, letterSpacing: ".04em" }}>{t.heroTrust}</div>
@@ -847,7 +781,10 @@ export default function MontaureoPlatform() {
                   <div style={{ display: "flex", flexDirection: "column", gap: 17, marginTop: 20 }}>
                     {FIELDS.map(([k, opts]) => <Chips key={k} fieldKey={k} opts={opts} />)}
                     {!form.citizen && <div style={{ fontSize: 12.5, color: C.mist, textAlign: "center" }}>Choose your citizenship to continue — it decides which countries make sense for you.</div>}
-                    <Btn disabled={!form.citizen} onClick={() => setStep(2)}>{t.next} <ArrowRight size={18} strokeWidth={2.4} /></Btn>
+                    {!form.src && <div style={{fontSize:12.5,color:C.goldHi}}>Choose your main source of income. We do not assume salary.</div>}
+                    <div style={{fontSize:12,color:C.mist}}>Calculations use liquid assets only, not your total wealth. Other-country figures use an explicit benchmark, not a country-specific tax rate. US citizens require specialist review of continuing US tax; Canadian obligations depend on residence and ties.</div>
+                    <label style={{fontSize:12,color:C.mist,lineHeight:1.5}}><input type="checkbox" checked={profileConsent} onChange={e=>setProfileConsent(e.target.checked)} /> I agree to my answers being processed to generate my scenario as explained in the <a href="/privacy-policy.html" target="_blank" rel="noopener noreferrer" style={{color:C.goldHi}}>Privacy Policy</a>.</label>
+                    <Btn disabled={!form.citizen || !form.src || !profileConsent} onClick={() => setStep(2)}>{t.next} <ArrowRight size={18} strokeWidth={2.4} /></Btn>
                   </div>
                 </div>
               )}
@@ -932,7 +869,7 @@ export default function MontaureoPlatform() {
                           <circle cx="60" cy="60" r="54" fill="none" stroke="url(#fc)" strokeWidth="9" strokeLinecap="round" strokeDasharray="339" style={{ strokeDashoffset: 339 - 339 * futureResult.confidence / 100, transform: "rotate(-90deg)", transformOrigin: "center", animation: "ring 1s ease both" }} />
                           <defs><linearGradient id="fc" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#F2DCA0" /><stop offset="1" stopColor="#C6A35A" /></linearGradient></defs>
                         </svg>
-                        <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", fontSize: 16, fontWeight: 700, color: C.snow }}>{futureResult.confidence}<span style={{ fontSize: 9, color: C.faint }}>%</span></div>
+                        <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", fontSize: 16, fontWeight: 700, color: C.snow }}>{futureResult.confidence}<span style={{ fontSize: 9, color: C.mist }}>/100</span></div>
                       </div>
                       <div><div style={{ fontSize: 11, letterSpacing: ".18em", textTransform: "uppercase", color: C.gold }}>{t.fcTitle}</div><div style={{ fontSize: 12.5, color: C.mist, marginTop: 3, lineHeight: 1.4 }}>{futureResult.fitNote || t.fcSub} {t.fcJudgement}{matters.length ? <span style={{ display: "block", marginTop: 4, color: C.faint }}>You selected: {matters.map((m) => v(m)).join(", ")}</span> : null}</div></div>
                     </div>
@@ -952,10 +889,10 @@ export default function MontaureoPlatform() {
                     const cur = [futureResult.move?.country, futureResult.stay?.country, futureResult.scene?.country].filter(Boolean).map(norm);
                     const seen = new Set(cur);
                     const opts = [];
-                    for (const raw of [...(Array.isArray(futureResult.alternatives) ? futureResult.alternatives : []), ...(form.citizen === "zFR" ? [] : ["Monaco"]), "UAE", "Switzerland"]) {
+                    for (const raw of [...(form.citizen === "zFR" ? [] : ["Monaco"]), "UAE", "Singapore", "Cyprus"]) {
                       const n = norm(raw); const l = label(raw);
                       if (!n || !l || l.length > 30 || seen.has(n) || cur.some((c) => c.includes(n) || n.includes(c)) || (form.citizen === "zFR" && n === "monaco")) continue;
-                      seen.add(n); opts.push(l); if (opts.length === 4) break;
+                      seen.add(n); opts.push(l); if (opts.length === 5) break;
                     }
                     return opts.length > 0 && (
                       <div className="mt-up" style={{ maxWidth: 600, margin: "12px auto 0", border: `1px solid ${C.line}`, borderRadius: 16, padding: "14px 18px" }}>
@@ -963,7 +900,7 @@ export default function MontaureoPlatform() {
                         <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                           {opts.map((c) => (<button key={c} className="cmp-chip" onClick={() => runFuture(c)} style={{ cursor: "pointer", border: `1px solid ${C.gold}`, background: "transparent", color: C.goldHi, padding: "9px 14px", borderRadius: 99, fontSize: 13, fontWeight: 500 }}>{c}</button>))}
                         </div>
-                        <div style={{ fontSize: 11.5, color: C.faint, marginTop: 9 }}>{t.compareNote}</div>
+                        <div style={{ fontSize: 11.5, color: C.faint, marginTop: 9 }}>{t.compareNote} Saint Barthélemy needs an individual eligibility review: <button onClick={openLead} style={{color:C.goldHi,background:"none",border:0,textDecoration:"underline",cursor:"pointer"}}>Request a review</button>.</div>
                       </div>
                     );
                   })()}
@@ -1007,6 +944,7 @@ export default function MontaureoPlatform() {
                       ))}
                     </div>
                   </div>
+                  {futureResult.taxWarning && <div role="alert" style={{maxWidth:600,margin:"16px auto",padding:16,border:`1px solid ${C.gold}`,borderRadius:12,color:C.goldHi,fontSize:13,lineHeight:1.5}}>{futureResult.taxWarning}</div>}
                   {futureResult.difference && (
                     <div className="mt-up" style={{ maxWidth: 600, margin: "16px auto 0", border: `1px solid rgba(198,163,90,0.35)`, borderRadius: 16, padding: "16px 18px", background: "linear-gradient(180deg, rgba(198,163,90,0.07), rgba(16,17,23,0.5))" }}>
                       <div style={{ fontSize: 10.5, letterSpacing: ".22em", textTransform: "uppercase", color: C.gold, marginBottom: 10 }}>{t.diffTitle}</div>
@@ -1015,7 +953,7 @@ export default function MontaureoPlatform() {
                       </div>
                     </div>
                   )}
-                  {futureResult.calc && (() => { const c = futureResult.calc; const m = (x) => `€${(Math.round(x * 10) / 10).toFixed(1)}M`; const k = (x) => (Math.abs(x) >= 1 ? m(x) : `€${Math.round(x * 1000)}K`); return (
+                  {futureResult.calc && (() => { const c = futureResult.calc; const m = (x) => Math.abs(x) < 0.0005 ? "€0" : `€${(Math.round(x * 10) / 10).toFixed(1)}M`; const k = (x) => Math.abs(x) < 0.0005 ? "€0" : (Math.abs(x) >= 1 ? m(x) : `€${Math.round(x * 1000)}K`); return (
                     <details className="mt-up" style={{ maxWidth: 600, margin: "12px auto 0", border: `1px solid ${C.line}`, borderRadius: 16, padding: "12px 16px", background: C.panel }}>
                       <summary style={{ cursor: "pointer", fontSize: 13.5, color: C.goldHi, fontWeight: 600 }}>{t.calcTitle}</summary>
                       <div style={{ fontSize: 13, color: "#D9D8D2", lineHeight: 1.6, marginTop: 10 }}>
@@ -1036,7 +974,7 @@ export default function MontaureoPlatform() {
                   {/* ---------- INTRO VIDEO — bridge between the free scenario and the paywall ---------- */}
                   <div className="mt-up" style={{ maxWidth: 600, margin: "22px auto 0" }}>
                     <div style={{ fontSize: 10.5, letterSpacing: ".26em", textTransform: "uppercase", color: C.gold, textAlign: "center", marginBottom: 12 }}>
-                      This was the question
+                      Meet your advisors
                     </div>
                     <video
                       src="/montaureo-intro.mp4"
@@ -1052,7 +990,8 @@ export default function MontaureoPlatform() {
                   </div>
 
                   <div className="mt-up" style={{ maxWidth: 600, margin: "20px auto 0" }}>
-                    <Btn onClick={() => { trackCtaClick("show_my_path"); setSection("concierge"); }}>{t.showPath} <ArrowRight size={18} strokeWidth={2.4} /></Btn>
+                    <label style={{display:"block",fontSize:12,color:C.mist,lineHeight:1.5,marginBottom:10}}><input type="checkbox" checked={conciergeConsent} onChange={e=>setConciergeConsent(e.target.checked)} /> I agree to reuse my questionnaire answers in Montaureo Concierge. <a href="/privacy-policy.html" style={{color:C.goldHi}}>Privacy Policy</a></label>
+                    <Btn disabled={!conciergeConsent} onClick={() => { trackCtaClick("show_my_path"); setSection("concierge"); }}>{t.showPath} <ArrowRight size={18} strokeWidth={2.4} /></Btn>
                     <div style={{ fontSize: 11.5, color: C.mist, textAlign: "center", marginTop: 10 }}>{t.showPathSub}</div>
                     <button
                       onClick={openLead}
@@ -1173,6 +1112,7 @@ export default function MontaureoPlatform() {
           {isConcierge && !locked && (
             <div style={{ flex: 1, display: "flex", flexDirection: "column", padding: "8px 0 0", minHeight: 0 }}>
               <div style={{ padding: "0 22px 14px", borderBottom: `1px solid ${C.line}` }}>
+                <label style={{display:"block",fontSize:12,color:C.mist,lineHeight:1.5,marginBottom:12}}><input type="checkbox" checked={conciergeConsent} onChange={e=>setConciergeConsent(e.target.checked)} /> I agree to reuse my profile in Montaureo Concierge. <a href="/privacy-policy.html" style={{color:C.goldHi}}>Privacy Policy</a></label>
                 <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 14, flexWrap: "wrap" }}>
                   <div>
                     <div style={{ fontSize: 11, letterSpacing: ".24em", textTransform: "uppercase", color: C.gold }}>{domTitle}</div>

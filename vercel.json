@@ -3,9 +3,23 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [
-    { "source": "/admin", "destination": "/admin.html" }
+    {
+      "source": "/explore",
+      "destination": "/explore/index.html"
+    },
+    {
+      "source": "/explore/",
+      "destination": "/explore/index.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin.html"
+    }
   ],
   "crons": [
-    { "path": "/api/sla-check", "schedule": "0 9 * * *" }
+    {
+      "path": "/api/sla-check",
+      "schedule": "0 9 * * *"
+    }
   ]
 }
