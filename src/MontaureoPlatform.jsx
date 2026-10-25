@@ -366,7 +366,9 @@ export default function MontaureoPlatform() {
   const locked = isConcierge && plan === "free";
   const PLAN_LABEL = { free: "Free", premium: "Premium", private: "Private" };
 
-  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [chat, chatBusy, section]);
+  useEffect(() => {
+    if (isConcierge && !locked && chat.length) endRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chat, chatBusy, section, isConcierge, locked]);
 
 
   useEffect(() => {
@@ -1039,6 +1041,10 @@ export default function MontaureoPlatform() {
                 <div style={{ fontSize: 11, letterSpacing: ".3em", textTransform: "uppercase", color: C.gold }}>{t.pwEyebrow}</div>
                 <h1 style={{ fontFamily: "'Playfair Display',serif", fontWeight: 600, fontSize: "clamp(28px,5vw,44px)", color: C.snow, margin: "12px 0 6px" }}>{futureResult ? t.pwReady : t.pwVip}</h1>
                 <div style={{ fontFamily: "'Playfair Display',serif", fontStyle: "italic", fontSize: "clamp(18px,3vw,24px)", color: C.goldHi, marginBottom: 12 }}>{t.pwUnlock}</div>
+                <div style={{ fontSize: "clamp(30px,6vw,48px)", fontWeight: 700, color: C.goldHi, margin: "14px 0 4px" }}>$4.99 <span style={{ fontSize: 18 }}>first month</span></div>
+                <div style={{ color: C.snow, fontSize: 14, marginBottom: 10 }}>Use code <strong>WELCOME</strong> at checkout · then $49/month · cancel anytime</div>
+                <button onClick={() => requestPaidAccess("https://buy.stripe.com/28E7sM6tncD23NIadk6Vq00")} className="mt-cta" style={{ cursor: "pointer", border: "none", borderRadius: 12, padding: "15px 24px", margin: "8px 0", fontSize: 16, fontWeight: 700, color: "#1A1408", background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})` }}>Get Premium - $4.99 first month →</button>
+                <div style={{ fontSize: 12.5, color: C.goldHi, margin: "0 auto 16px", maxWidth: 540 }}>{t.promoNote}</div>
                 <p style={{ fontSize: 15, color: C.mist, maxWidth: 540, margin: "0 auto", lineHeight: 1.55 }}>
                   {t.pwBodyA}{futureResult?.move?.country ? ` (${futureResult.move.country})` : ""} {t.pwBodyB}
                 </p>
