@@ -764,7 +764,7 @@ export default function MontaureoPlatform() {
               </button>
               <div style={{ fontSize: 11.5, letterSpacing: ".12em", color: "#C9C8C2", textShadow: "0 1px 14px rgba(0,0,0,0.85)" }}>FREE · 60 SECONDS · NO SIGNUP</div>
               <a href="/how-it-is-calculated.html" onClick={() => trackCtaClick("how_calculated")} style={{ fontSize: 15.5, fontWeight: 500, color: C.goldHi, textDecoration: "underline", textUnderlineOffset: 4, textDecorationThickness: 1, textShadow: "0 1px 14px rgba(0,0,0,0.85)", padding: "4px 0", textAlign: "center" }}>{t.heroHow} →</a>
-              <a href="#" aria-hidden="true" tabIndex={-1} style={{ display: "none" }} className="mt-world-cta">
+              <a href="https://montaureo-two-futures-game.hazytune1024.chatgpt.site/" target="_blank" rel="noopener noreferrer" onClick={() => trackOutbound("montaureo_world_game")} className="mt-world-cta">
                 {t.heroWorld} <ArrowRight size={17} strokeWidth={2.2} />
               </a>
               <div style={{ fontSize: 11.5, color: C.mist, letterSpacing: ".04em" }}>{t.heroTrust}</div>
