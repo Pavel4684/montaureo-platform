@@ -696,8 +696,8 @@ export default function MontaureoPlatform() {
       @keyframes dot{0%,80%,100%{opacity:.25}40%{opacity:1}}
       .mt-up{animation:up .55s cubic-bezier(.2,.7,.2,1) both}
       .fade{animation:fade .7s cubic-bezier(.2,.7,.2,1) both}
-      .mt-cta:hover{filter:brightness(1.1)}
-      .mt-world-cta{display:flex;align-items:center;justify-content:center;gap:9px;width:min(100%,360px);box-sizing:border-box;border:1px solid rgba(255,255,255,.85);border-radius:99px;padding:13px 24px;color:#17181B;text-decoration:none;font-size:14px;font-weight:600;background:linear-gradient(135deg,#F7F7F5 0%,#C8C9CC 42%,#F1F1EF 68%,#AEB0B5 100%);box-shadow:0 8px 28px rgba(210,214,220,.18),inset 0 1px 0 rgba(255,255,255,.95);transition:filter .15s,transform .15s}
+      .mt-cta:hover{filter:brightness(1.1)} @keyframes platinum-shine{0%,68%,100%{background-position:180% 0}82%{background-position:-80% 0}}
+      .mt-world-cta{display:flex;align-items:center;justify-content:center;gap:9px;width:min(100%,360px);box-sizing:border-box;border:1px solid rgba(255,255,255,.85);border-radius:99px;padding:13px 24px;color:#17181B;text-decoration:none;font-size:14px;font-weight:600;background:linear-gradient(135deg,#F7F7F5 0%,#C8C9CC 42%,#F1F1EF 68%,#AEB0B5 100%);box-shadow:0 8px 28px rgba(210,214,220,.18),inset 0 1px 0 rgba(255,255,255,.95);transition:filter .15s,transform .15s;animation:platinum-shine 5.5s ease-in-out infinite;background-size:240% 100%}
       .mt-world-cta:hover{filter:brightness(1.05);transform:translateY(-1px)}
       .auth-btn:hover{filter:brightness(1.06);border-color:rgba(198,163,90,0.4)}
       .nav-item:hover{background:rgba(198,163,90,0.06)!important}
@@ -1339,4 +1339,3 @@ export default function MontaureoPlatform() {
 }
 
 
-The focused UI element is 0 AXWebArea raw.githubusercontent.com/Pavel4684/montaureo-platform/main/src/MontaureoPlatform.jsx
