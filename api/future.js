@@ -95,7 +95,7 @@ const ORDINARY = {
   Singapore:   { name: "Singapore", sal: 0.24, biz: 0.17, div: 0, port: 0, label: "Up to 24% · foreign dividends exempt" },
   Monaco:      { name: "Monaco", sal: 0, biz: 0, div: 0, port: 0, label: "0% personal income tax" },
   UAE:         { name: "UAE", sal: 0, biz: 0.09, div: 0, port: 0, label: "0% personal income tax" },
-  Other:       { name: "Current country", sal: 0.45, biz: 0.45, div: 0.30, port: 0.30, label: "Typical high-tax European rates" },
+  Other:       { name: "Current country", sal: 0.45, biz: 0.45, div: 0.30, port: 0.30, label: "Unknown country: illustrative 45% income / 30% portfolio benchmark, not a local rate" },
 };
 // Destinations, with the regime a new resident would normally use. Income is assumed to keep arising abroad.
 const DEST = {
@@ -147,8 +147,8 @@ function simulate(regime, src, start, income) {
   return { end: c, taxFirstYear: first, taxTotal: total, path };
 }
 
-const M = (x) => `€${(Math.round(x * 10) / 10).toFixed(1)}M`;
-const K = (x) => (Math.abs(x) >= 1 ? M(x) : `€${Math.round(x * 1000)}K`);
+const M = (x) => Math.abs(x) < 0.0005 ? "€0" : `€${(Math.round(x * 10) / 10).toFixed(1)}M`;
+const K = (x) => Math.abs(x) < 0.0005 ? "€0" : (Math.abs(x) >= 1 ? M(x) : `€${Math.round(x * 1000)}K`);
 
 // inputs: { liquid, income, src, citizen, from }
 function computeScenarios(inputs) {
@@ -171,7 +171,7 @@ function computeScenarios(inputs) {
 
 function assumptionsLine(base, inputs) {
   const src = SRC[inputs.src] ? `${SRC[inputs.src]}` : "salary (not specified)";
-  return `Start ${M(base.start)} liquid (midpoint of ${LIQUID_LABEL[inputs.liquid] || "your band"}) · income ${K(base.income)}/yr from ${src}, earned outside the portfolio · portfolio return 6%/yr (2.5% income + 3.5% growth), reinvested · spending ${K(base.spend)}/yr · ${START_YEAR}–${START_YEAR + YEARS} · portfolio not sold · simplified effective tax rates; exit taxes and wealth/inheritance taxes not included${inputs.citizen === "zNA" ? " · US citizens stay taxed by the US wherever they live" : ""}`;
+  return `Liquid portfolio only; total wealth and illiquid property are excluded. Start ${M(base.start)} liquid (midpoint of ${LIQUID_LABEL[inputs.liquid] || "your band"}) · income ${K(base.income)}/yr from ${src}, earned outside the portfolio · portfolio return 6%/yr (2.5% income + 3.5% growth), reinvested · spending ${K(base.spend)}/yr · ${START_YEAR}–${START_YEAR + YEARS} · portfolio not sold · simplified effective tax rates; exit taxes and wealth/inheritance taxes not included${inputs.citizen === "zNA" ? " · US citizens stay taxed by the US wherever they live" : ""}`;
 }
 
 
@@ -280,10 +280,10 @@ const LABEL_TO_KEY = {
   liquid: { "< €500K": "l1", "€500K–2M": "l2", "€2–10M": "l3", "€10–50M": "l4", "€50M+": "l5" },
   income: { "< €200K": "i1", "€200–500K": "i2", "€500K–1M": "i3", "€1M+": "i4" },
   src: { "Salary": "s1", "Business / company": "s2", "Dividends & investments": "s3", "Mixed": "s4" },
-  citizen: { "France": "zFR", "Other EU": "zEU", "UK": "zUK", "US/Canada": "zNA", "Other": "zOther" },
+  citizen: { "France": "zFR", "Other EU": "zEU", "UK": "zUK", "US/Canada": "zNA", "United States": "zUS", "Canada": "zCA", "Other": "zOther" },
   from: { "Other": "pOther", "Monaco": "pMC", "Switzerland": "pCH", "UAE": "pAE", "Luxembourg": "pLU", "Liechtenstein": "pLI", "Andorra": "pAD", "Singapore": "pSG", "France": "pFR", "United Kingdom": "pUK", "Germany": "pDE" },
 };
-const ALLOWED = { liquid: Object.keys(LIQUID_MID), income: Object.keys(INCOME_MID), src: Object.keys(SRC), citizen: ["zFR", "zEU", "zUK", "zNA", "zOther"], from: Object.keys(FROM_KEY) };
+const ALLOWED = { liquid: Object.keys(LIQUID_MID), income: Object.keys(INCOME_MID), src: Object.keys(SRC), citizen: ["zFR", "zEU", "zUK", "zNA", "zUS", "zCA", "zOther"], from: Object.keys(FROM_KEY) };
 function readInputs(body, profile) {
   const inp = body.inputs && typeof body.inputs === "object" ? body.inputs : {};
   const grab = (re) => (re.exec(profile) || [])[1]?.trim();
@@ -294,7 +294,14 @@ function readInputs(body, profile) {
     citizen: LABEL_TO_KEY.citizen[grab(/citizenship ([^,]+),/)],
     from: LABEL_TO_KEY.from[grab(/currently lives in ([^,]+),/)],
   };
-  const out = {};
+  const taxWarning = [
+      inputs.citizen === "zUS" || inputs.citizen === "zNA" ? "US citizens and certain US residents remain subject to US worldwide taxation. All displayed amounts are LOCAL-REGIME-ONLY illustrations and EXCLUDE continuing US tax, credits and reporting. They are not your total tax or net wealth forecast. A cross-border specialist must calculate these before a decision." : "",
+      inputs.citizen === "zCA" ? "Canadian obligations depend on residence and residential ties, not citizenship alone. Departure tax and any continuing Canadian-source taxation are excluded from this illustration." : "",
+      inputs.citizen === "zFR" && move.key === "Monaco" ? "French nationals moving to Monaco generally remain subject to French income tax under the 1963 convention. This model applies French rates, not zero tax. Treaty exceptions need individual review." : "",
+      inputs.from === "pOther" ? "Current country is unspecified. The calculation uses an illustrative 45% income / 30% portfolio benchmark, NOT the tax rate of your actual country." : ""
+    ].filter(Boolean).join(" ");
+    const out = {
+      taxWarning,};
   for (const k of Object.keys(ALLOWED)) out[k] = ALLOWED[k].includes(inp[k]) ? inp[k] : fromText[k] || null;
   return out;
 }
@@ -318,6 +325,7 @@ export default async function handler(req, res) {
 
   // 1) Numbers — computed here, identical for every run with the same inputs.
   const inputs = readInputs(body, profile);
+  if (!inputs.citizen || !inputs.src || !inputs.liquid || !inputs.income || !inputs.from) return res.status(400).json({error:"incomplete_profile"});
   const base = computeScenarios(inputs);
   const fixedKey = body.compare ? destKey(body.compare) : null;
   let cands = Object.values(base.candidates).filter((c) => !(base.french && c.key === "Monaco" && fixedKey !== "Monaco"));
@@ -349,8 +357,8 @@ export default async function handler(req, res) {
       fitNote: moneyOk(ai.fitNote, allowedMoney) ? String(ai.fitNote || "").slice(0, 200) : "",
       why,
       alternatives,
-      stay: { country: stay.name, tax: stay.regime.label, capital2036: M(stay.end), school: String(ai.school?.stay || "—").slice(0, 60), climate: String(ai.climate?.stay || "—").slice(0, 60) },
-      move: { country: move.name, tax: move.regime.label, capital2036: M(move.end), school: String(ai.school?.move || "—").slice(0, 60), climate: String(ai.climate?.move || "—").slice(0, 60) },
+      stay: { country: stay.name, tax: ["zUS","zNA"].includes(inputs.citizen) ? "Local regime only; US tax NOT included" : stay.regime.label, capital2036: M(stay.end), school: String(ai.school?.stay || "—").slice(0, 60), climate: String(ai.climate?.stay || "—").slice(0, 60) },
+      move: { country: move.name, tax: ["zUS","zNA"].includes(inputs.citizen) ? "Local regime only; US tax NOT included" : move.regime.label, capital2036: M(move.end), school: String(ai.school?.move || "—").slice(0, 60), climate: String(ai.climate?.move || "—").slice(0, 60) },
       difference: [
         gain > 0.05 ? `+${M(gain)} more capital by 2036` : gain < -0.05 ? `${M(gain)} less capital by 2036` : "About the same capital by 2036",
         `Tax in year 1: ${K(stay.taxFirstYear)} → ${K(move.taxFirstYear)}`,
