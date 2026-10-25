@@ -549,11 +549,12 @@ export default function MontaureoPlatform() {
   useEffect(() => {
     try {
       const url = new URL(window.location.href);
-      const start = url.searchParams.has("start"), consult = url.searchParams.has("consult");
-      if (!start && !consult) return;
-      url.searchParams.delete("start"); url.searchParams.delete("consult");
+      const start = url.searchParams.has("start"), consult = url.searchParams.has("consult"), concierge = url.searchParams.has("concierge");
+      if (!start && !consult && !concierge) return;
+      url.searchParams.delete("start"); url.searchParams.delete("consult"); url.searchParams.delete("concierge");
       window.history.replaceState({}, "", url.toString());
-      if (start) enter();
+      if (concierge) { setAuthed(true); setSection("concierge"); }
+      else if (start) enter();
       else { setAuthed(true); openLead(); }
     } catch {}
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
