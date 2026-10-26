@@ -169,8 +169,8 @@ export default async function handler(req, res) {
     utm_source = null, utm_medium = null, utm_campaign = null, referrer = null,
   } = req.body || {};
 
-  if (!name.trim() || !isValidEmail(email)) {
-    return res.status(400).json({ error: "bad_request", message: "name and a valid email are required" });
+  if (!isValidEmail(email)) {
+    return res.status(400).json({ error: "bad_request", message: "a valid email is required" });
   }
 
   if (!consent) {
