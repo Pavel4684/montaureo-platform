@@ -63,9 +63,9 @@ const T = {
     pwBodyA: "Kate, Jun and Emily will help you turn this scenario", pwBodyB: "into a real plan: banking, real estate, credit, relocation.",
     tierFree: "Free", tierFreeNow: "Current plan", tierFreeActive: "Active", freeF: ["Landing and sign-in", "Profile questionnaire", "Two Futures · Stay vs Move"],
     recommended: "Recommended", tierPremium: "Premium", perMonth: "/mo", premiumAlt: "or $299 — one-time relocation plan",
-    promoNote: "USD $4.99 for the first month with code WELCOME, then USD $49/month. Cancel anytime. Confirm eligibility and the final amount in Stripe Checkout.",
+    promoNote: "WELCOME applied automatically. USD $4.99 for the first month, then USD $49/month. Cancel anytime.",
     premF: ["Montaureo Concierge · Kate, Jun & Emily", "Banking · Real Estate · Legal · Credit", "Lifestyle · Events · KYC checklists", "8 jurisdictions, profile-aware"],
-    btnSub: "Subscribe", btnOnce: "$299 — one-time plan",
+    btnSub: "Get Premium — $4.99", btnOnce: "$299 — one-time plan",
     tierPrivate: "Private", privatePrice: "By request", privateNote: "Inner circle", privF: ["Everything in Premium", "A real MFI advisor", "Deal & relocation support"], requestAccess: "Request access",
     pwReassure: "Two Futures stays free forever. Cancel anytime.",
     profile: "Profile", yourProfile: "Your profile", profileSub: "This data powers both Two Futures and Montaureo Concierge. Fill it once.",
@@ -73,7 +73,7 @@ const T = {
     cWelcomeA: "Given your profile", cWelcomeB: "I already know the details — no need to repeat anything. Where shall we begin?", cMoveInterest: "interest in",
     askPlaceholder: "Ask", cFooter: "Information, not advice. For KYC, documents are submitted directly to the bank or your MFI advisor.",
     nav: { future: "Design your future", concierge: "Concierge", banking: "Banking", realestate: "Real Estate", legal: "Legal", lifestyle: "Lifestyle", events: "Events", credit: "Credit", profile: "Profile" },
-    pmcFreeTitle: "MONTAUREO PREMIUM", pmcFreeSub: "Unlock Montaureo Concierge — Kate, Jun and Emily turn the scenario into a plan", pmcUnlock: "Unlock",
+    pmcFreeTitle: "MONTAUREO PREMIUM", pmcFreeSub: "Unlock Montaureo Concierge — Kate, Jun and Emily turn the scenario into a plan", pmcUnlock: "Get Premium — $4.99",
     pmcPremTitle: "PREMIUM ACTIVE", pmcPremSub: "Want a real MFI advisor?", pmcToPrivate: "Upgrade to Private", pmcPrivTitle: "PRIVATE", pmcPrivSub: "A Monaco Finance International advisor will be in touch.",
     dom: { null: ["Montaureo Concierge", "Banking, real estate, legal, lifestyle, events, relocation — ask anything."], Banking: ["Banking", "Where and how to open an account — pros and cons by bank."], RealEstate: ["Real Estate", "Where to buy property, with price guidance."], Legal: ["Legal", "Structuring, residency and cross-border questions, explained plainly."], Lifestyle: ["Lifestyle", "Where to dine, private service, seasonal trends."], Events: ["Events", "International forums, fairs, private events."], Credit: ["Credit", "Credit and Lombard — where and on what terms."] },
     partnerBankingTitle: "Manage everything in one place", partnerBankingDesc: "monaco-finance.com is our free client portal — track all your accounts, Lombard lines and more.", partnerBankingCta: "Explore monaco-finance.com",
@@ -1042,7 +1042,7 @@ export default function MontaureoPlatform() {
                 <h1 style={{ fontFamily: "'Playfair Display',serif", fontWeight: 600, fontSize: "clamp(28px,5vw,44px)", color: C.snow, margin: "12px 0 6px" }}>{futureResult ? t.pwReady : t.pwVip}</h1>
                 <div style={{ fontFamily: "'Playfair Display',serif", fontStyle: "italic", fontSize: "clamp(18px,3vw,24px)", color: C.goldHi, marginBottom: 12 }}>{t.pwUnlock}</div>
                 <div style={{ fontSize: "clamp(30px,6vw,48px)", fontWeight: 700, color: C.goldHi, margin: "14px 0 4px" }}>$4.99 <span style={{ fontSize: 18 }}>first month</span></div>
-                <div style={{ color: C.snow, fontSize: 14, marginBottom: 10 }}>Use code <strong>WELCOME</strong> at checkout · then $49/month · cancel anytime</div>
+                <div style={{ color: C.snow, fontSize: 14, marginBottom: 10 }}>Then $49/month · cancel anytime · <strong>WELCOME applied automatically</strong></div>
                 <button onClick={() => requestPaidAccess("https://buy.stripe.com/28E7sM6tncD23NIadk6Vq00?prefilled_promo_code=WELCOME")} className="mt-cta" style={{ cursor: "pointer", border: "none", borderRadius: 12, padding: "15px 24px", margin: "8px 0", fontSize: 16, fontWeight: 700, color: "#1A1408", background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})` }}>Get Premium - $4.99 first month →</button>
                 <div style={{ fontSize: 12.5, color: C.goldHi, margin: "0 auto 16px", maxWidth: 540 }}>{t.promoNote}</div>
                 <p style={{ fontSize: 15, color: C.mist, maxWidth: 540, margin: "0 auto", lineHeight: 1.55 }}>
@@ -1073,7 +1073,8 @@ export default function MontaureoPlatform() {
                 <div style={{ flex: "1 1 240px", maxWidth: 320, border: `1px solid rgba(198,163,90,0.5)`, borderRadius: 18, padding: "22px 20px", background: "linear-gradient(180deg, rgba(198,163,90,0.12), rgba(16,17,23,0.7))", display: "flex", flexDirection: "column", boxShadow: "0 0 50px rgba(198,163,90,0.12)", position: "relative" }}>
                   <div style={{ position: "absolute", top: -11, left: "50%", transform: "translateX(-50%)", background: `linear-gradient(140deg, ${C.goldHi}, ${C.gold})`, color: "#1A1408", fontSize: 10.5, fontWeight: 700, letterSpacing: ".08em", padding: "3px 12px", borderRadius: 99, textTransform: "uppercase" }}>{t.recommended}</div>
                   <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: C.gold }}>{t.tierPremium}</div>
-                  <div style={{ display: "flex", alignItems: "baseline", gap: 6, margin: "8px 0 2px" }}><span style={{ fontSize: 34, fontWeight: 700, color: C.snow }}>$49</span><span style={{ fontSize: 13, color: C.mist }}>{t.perMonth}</span></div>
+                  <div style={{ display: "flex", alignItems: "baseline", flexWrap: "wrap", gap: 8, margin: "12px 0 4px" }}><span style={{ fontSize: 48, fontWeight: 700, color: C.goldHi, lineHeight: 1.1 }}>$4.99</span><span style={{ fontSize: 16, fontWeight: 600, color: C.goldHi }}>first month</span></div>
+                  <div style={{ fontSize: 14, color: C.snow, marginBottom: 10 }}>Then $49/month · Cancel anytime</div>
                   <div style={{ fontSize: 12.5, color: C.mist, marginBottom: 4 }}>{t.premiumAlt}</div>
                   <div style={{ fontSize: 12.5, color: C.goldHi, fontWeight: 600, marginBottom: 16 }}>{t.promoNote}</div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 9, fontSize: 13, color: "#E6E5DE", flex: 1 }}>
