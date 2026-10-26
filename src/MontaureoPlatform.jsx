@@ -35,18 +35,18 @@ const T = {
     errBuild: "Couldn't build the scenarios. Please try again.", backToQ: "Back to questionnaire", passAgain: "Start over",
     twoFutures: "Two futures · 2036", stay: "Stay", move: "Move", tax: "Tax", cap2036: "Liquid portfolio 2036*", school: "School", climate: "Climate",
     diffTitle: "Difference · if you move", showPath: "Show Me My Path — open concierge", showPathSub: "With your permission, Montaureo Concierge reuses your questionnaire answers.",
-    bookConsult: "Book Private Consultation",
-    leadTitle: "Private Consultation", leadSub: "A Monaco Finance International advisor will reach out directly. No AI in this step.",
-    leadName: "Full name", leadEmail: "Email", leadPhone: "Phone / WhatsApp", leadLang: "Preferred language", leadTime: "Best time to contact",
+    bookConsult: "Request a private introduction",
+    leadTitle: "Request a private introduction", leadSub: "A member of Monaco Finance International will contact you to discuss your request and, where appropriate, introduce you to a relevant professional. Professional services are provided separately by the relevant specialists.",
+    leadName: "Name (optional)", leadEmail: "Email (required)", leadPhone: "Phone / WhatsApp (optional)", leadLang: "Preferred language", leadTime: "Best time to contact",
     leadGoal: "What is this about?", leadGoals: ["Banking", "Relocation", "Real Estate", "Credit", "Family Office"],
     leadTimeOpts: ["Morning", "Afternoon", "Evening", "Anytime"],
     leadNamePh: "Your full name", leadEmailPh: "name@email.com", leadPhonePh: "+377…",
     leadSubmit: "Send request", leadSending: "Sending…", leadCancel: "Cancel",
-    leadRequired: "Please fill in your name and email.",
+    leadRequired: "Please enter a valid email address.",
     leadConsentLabel: "I agree to be contacted by Monaco Finance International regarding my request.",
     leadConsentRequired: "Please confirm you agree to be contacted.",
     leadConnError: "Connection error. Please try again or contact us directly.",
-    leadConfirmTitle: "Your request has been received.", leadConfirmBody: "A private advisor will contact you shortly.",
+    leadConfirmTitle: "Your request has been received.", leadConfirmBody: "A member of Monaco Finance International will contact you about your request.",
     leadContinue: "Continue to Concierge", leadClose: "Close",
     fcTitle: "Fit with your priorities", fcSub: "How well this destination matches what you selected.", fcJudgement: "A judgement, not a probability.",
     whyTitle: "Why", compareTitle: "Compare with another destination", compareNote: "Same family, same assumptions — only the destination changes. You'll see both destinations side by side. Uses one of today's free runs.",
@@ -66,7 +66,7 @@ const T = {
     promoNote: "WELCOME applied automatically. USD $4.99 for the first month, then USD $49/month. Cancel anytime.",
     premF: ["Montaureo Concierge · Kate, Jun & Emily", "Banking · Real Estate · Legal · Credit", "Lifestyle · Events · KYC checklists", "8 jurisdictions, profile-aware"],
     btnSub: "Get Premium — $4.99", btnOnce: "$299 — one-time plan",
-    tierPrivate: "Private", privatePrice: "By request", privateNote: "Inner circle", privF: ["Everything in Premium", "A real MFI advisor", "Deal & relocation support"], requestAccess: "Request access",
+    tierPrivate: "Private", privatePrice: "By request", privateNote: "Inner circle", privF: ["Everything in Premium", "Direct contact with an MFI representative", "Introductions to relevant professionals"], requestAccess: "Request access",
     pwReassure: "Two Futures stays free forever. Cancel anytime.",
     profile: "Profile", yourProfile: "Your profile", profileSub: "This data powers both Two Futures and Montaureo Concierge. Fill it once.",
     priorities: "Priorities", saveProfile: "Save profile", saved: "Saved ✓", savedNote: "Profile updated — the concierge already accounts for the changes.", planLabel: "Plan",
@@ -74,7 +74,7 @@ const T = {
     askPlaceholder: "Ask", cFooter: "Information, not advice. For KYC, documents are submitted directly to the bank or your MFI advisor.",
     nav: { future: "Design your future", concierge: "Concierge", banking: "Banking", realestate: "Real Estate", legal: "Legal", lifestyle: "Lifestyle", events: "Events", credit: "Credit", profile: "Profile" },
     pmcFreeTitle: "MONTAUREO PREMIUM", pmcFreeSub: "Unlock Montaureo Concierge — Kate, Jun and Emily turn the scenario into a plan", pmcUnlock: "Get Premium — $4.99",
-    pmcPremTitle: "PREMIUM ACTIVE", pmcPremSub: "Want a real MFI advisor?", pmcToPrivate: "Upgrade to Private", pmcPrivTitle: "PRIVATE", pmcPrivSub: "A Monaco Finance International advisor will be in touch.",
+    pmcPremTitle: "PREMIUM ACTIVE", pmcPremSub: "Want an introduction to a professional?", pmcToPrivate: "Upgrade to Private", pmcPrivTitle: "PRIVATE", pmcPrivSub: "A Monaco Finance International representative will be in touch.",
     dom: { null: ["Montaureo Concierge", "Banking, real estate, legal, lifestyle, events, relocation — ask anything."], Banking: ["Banking", "Where and how to open an account — pros and cons by bank."], RealEstate: ["Real Estate", "Where to buy property, with price guidance."], Legal: ["Legal", "Structuring, residency and cross-border questions, explained plainly."], Lifestyle: ["Lifestyle", "Where to dine, private service, seasonal trends."], Events: ["Events", "International forums, fairs, private events."], Credit: ["Credit", "Credit and Lombard — where and on what terms."] },
     partnerBankingTitle: "Manage everything in one place", partnerBankingDesc: "monaco-finance.com is our free client portal — track all your accounts, Lombard lines and more.", partnerBankingCta: "Explore monaco-finance.com",
     suggest: { null: ["Best jurisdictions for my profile", "Compare Monaco vs UAE on tax", "Where do I start with relocation?"], Banking: ["Which bank should I open an account with?", "Compare private banks in Monaco", "What's needed for KYC?"], RealEstate: ["What can I buy within my budget?", "Rent or buy?", "Best areas by the sea"], Legal: ["What residency permit fits my profile?", "How is my structure taxed if I move?", "What documents does relocation require?"], Lifestyle: ["Best restaurants of the 2026 season", "Private service and clubs", "What's new on the Riviera"], Events: ["Upcoming private forums", "Calendar of fairs and auctions", "Grand Prix and yacht shows"], Credit: ["Lombard terms against my portfolio", "Where to get an in-fine loan?", "Rates by country"] },
@@ -562,7 +562,7 @@ export default function MontaureoPlatform() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const submitLead = async () => {
-    if (!lead.name.trim() || !lead.email.trim()) { setLeadErr(t.leadRequired); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lead.email.trim())) { setLeadErr(t.leadRequired); return; }
     if (!lead.consent) { setLeadErr(t.leadConsentRequired); return; }
     setLeadErr(""); setLeadSending(true);
     const payload = {
@@ -1252,6 +1252,8 @@ export default function MontaureoPlatform() {
                     />
                     <span style={{ fontSize: 12, color: C.mist, lineHeight: 1.45 }}>{t.leadConsentLabel}</span>
                   </label>
+
+                  <p style={{ fontSize: 12, color: C.mist, lineHeight: 1.5, margin: "8px 0" }}>Only your email is required. MONACO FINANCE INTERNATIONAL LP uses your contact details, selected topic and questionnaire summary to respond to this request and coordinate any introduction you choose to pursue. You may withdraw your contact consent by emailing pavel@monaco-finance.com. See our <a href="/privacy-policy.html" target="_blank" rel="noopener noreferrer" style={{ color: C.goldHi }}>Privacy Policy</a> for data handling and your rights. Do not submit identity documents, tax returns or bank login details through this form.</p>
 
                   {leadErr && <div style={{ fontSize: 12, color: "#E08A8A" }}>{leadErr}</div>}
 
