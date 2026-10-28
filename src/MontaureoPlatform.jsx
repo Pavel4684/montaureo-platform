@@ -15,6 +15,16 @@ const C = {
   mist: "#8A8A92", faint: "#5A5A63", snow: "#F1EFE8", green: "#7FB082",
 };
 
+const PRESS_URL = "https://startupvalley.news/de/montaureo-ki-plattform-internationale-umzuege/";
+function PressMention() {
+  return <section aria-label="Montaureo in the press" style={{ maxWidth: 860, margin: "28px auto", padding: "0 20px", boxSizing: "border-box", position: "relative" }}>
+    <a href={PRESS_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackOutbound("startupvalley_interview")} style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "center", gap: "14px 28px", padding: "20px 24px", borderRadius: 16, background: "#F1EFE8", color: "#17181B", textDecoration: "none" }}>
+      <img src="/startupvalley-logo.png" alt="StartupValley Magazine" width="160" height="76" loading="lazy" decoding="async" style={{ display: "block", width: 160, maxWidth: "100%", height: "auto" }} />
+      <div><h2 style={{ margin: "0 0 7px", fontSize: 15, fontWeight: 600 }}>Montaureo in the press</h2><span style={{ fontSize: 13, textDecoration: "underline", textUnderlineOffset: 4 }}>Read the interview ↗</span><span style={{ display: "block", marginTop: 5, fontSize: 11, color: "#5A5A63" }}>StartupValley · Interview in German</span></div>
+    </a>
+  </section>;
+}
+
 /* ===================== COPY (English only — AI still replies in the client's own language) ===================== */
 const T = {
     v: { a30: "30–40", a40: "40–50", a50: "50–60", a60: "60+", c1: "€500K–2M", c2: "€2–5M", c3: "€5–15M", c4: "€15–50M", c5: "€50–100M", c6: "€100M+", i1: "< €200K", i2: "€200–500K", i3: "€500K–1M", i4: "€1M+", s1: "Salary", s2: "Business / company", s3: "Dividends & investments", s4: "Mixed", l1: "< €500K", l2: "€500K–2M", l3: "€2–10M", l4: "€10–50M", l5: "€50M+", fSingle: "Single", fCouple: "Couple", fKids: "Family with children", zFR: "France", zEU: "Other EU", zUK: "UK", zUS: "United States", zCA: "Canada", zNA: "US/Canada (legacy)", zOther: "Other", pMC: "Monaco", pCH: "Switzerland", pAE: "UAE", pLU: "Luxembourg", pLI: "Liechtenstein", pAD: "Andorra", pSG: "Singapore", pFR: "France", pUK: "United Kingdom", pDE: "Germany", pOther: "Other", kids: "Children", safety: "Safety", business: "Business", sea: "Sea", taxes: "Taxes", climate: "Climate" },
@@ -707,6 +717,7 @@ export default function MontaureoPlatform() {
             </div>
           </div>
         </div>
+        <PressMention />
       </div>
     );
   }
@@ -1060,6 +1071,7 @@ export default function MontaureoPlatform() {
                   <div style={{ fontSize: 11, color: C.faint, marginTop: 10 }}>{t.sampleNote}</div>
                 </div>
               ); })()}
+              <PressMention />
               <div style={{ display: "flex", gap: 14, marginTop: 30, alignItems: "stretch", flexWrap: "wrap", justifyContent: "center", position: "relative" }}>
                 <div style={{ flex: "1 1 220px", maxWidth: 300, border: `1px solid ${C.line}`, borderRadius: 18, padding: "22px 20px", background: C.panel, display: "flex", flexDirection: "column" }}>
                   <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: C.faint }}>{t.tierFree}</div>
