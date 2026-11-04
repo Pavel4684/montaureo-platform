@@ -25,6 +25,36 @@ function PressMention() {
   </section>;
 }
 
+const DOCUMENTS_URL = "https://docs.montaureo.com/";
+function DocumentsMention() {
+  return <section className="mt-documents" aria-labelledby="mt-documents-title">
+    <style>{`
+      .mt-documents{background:linear-gradient(115deg,#0b1725,#080e18);border-top:1px solid rgba(198,163,90,.65);border-bottom:1px solid rgba(198,163,90,.4);padding:64px 6vw}
+      .mt-documents-inner{max-width:1280px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+      .mt-documents h2{font-family:'Playfair Display',serif;font-size:clamp(29px,3.1vw,44px);font-weight:500;line-height:1.15;margin:20px 0 24px;color:#F1EFE8}
+      .mt-documents-copy{font-size:16px;line-height:1.65;color:#D9D8D2;max-width:540px;margin:0 0 28px}
+      .mt-documents-cta{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:48px;padding:14px 24px;border-radius:99px;background:linear-gradient(140deg,#F2DCA0,#C6A35A);color:#1A1408;font-size:15px;font-weight:600;text-decoration:none}
+      .mt-documents-cta:focus-visible,.mt-documents-nav:focus-visible{outline:2px solid #F2DCA0;outline-offset:5px}
+      .mt-documents-image{width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;display:block;border-radius:14px;border:1px solid rgba(198,163,90,.25)}
+      .mt-documents-nav{position:absolute;right:5vw;top:18px;z-index:5;min-height:44px;display:flex;align-items:center;gap:6px;color:#F1EFE8;text-decoration:none;font-size:14px}
+      @media(max-width:760px){.mt-documents{padding:40px 20px}.mt-documents-inner{grid-template-columns:1fr;gap:30px}.mt-documents h2{font-size:31px}.mt-documents-cta{box-sizing:border-box;width:100%}.mt-documents-nav{right:20px;top:62px;font-size:12px}}
+    `}</style>
+    <div className="mt-documents-inner">
+      <div>
+        <p style={{color:C.goldHi,fontSize:11,letterSpacing:'.32em',margin:0}}>MONTAUREO DOCUMENTS</p>
+        <h2 id="mt-documents-title">Understand your documents.<br />Make informed decisions.</h2>
+        <p className="mt-documents-copy">Upload an invoice, letter or contract. Emily, your AI assistant, explains the key points in English, French or Russian.</p>
+        <a className="mt-documents-cta" href={DOCUMENTS_URL} onClick={()=>trackOutbound("montaureo_documents_trial")}>Try one document free <ArrowRight size={18} aria-hidden="true" /></a>
+        <p style={{margin:'14px 0 22px'}}><a href={DOCUMENTS_URL} style={{color:C.snow,fontSize:14,textUnderlineOffset:4}} onClick={()=>trackOutbound("montaureo_documents_address")}>docs.montaureo.com</a></p>
+        <p style={{fontSize:11,lineHeight:1.6,color:'#B4B7BF',margin:0}}>AI-assisted explanations. Not legal or financial advice.</p>
+      </div>
+      <a href={DOCUMENTS_URL} aria-label="Explore Montaureo Documents" onClick={()=>trackOutbound("montaureo_documents_image")}>
+        <img className="mt-documents-image" src="https://docs.montaureo.com/montaureo-film-poster.jpg" alt="Emily, Montaureo AI assistant, reviewing documents by Monaco harbour" width="1280" height="720" loading="lazy" decoding="async" />
+      </a>
+    </div>
+  </section>;
+}
+
 /* ===================== COPY (English only — AI still replies in the client's own language) ===================== */
 const T = {
     v: { a30: "30–40", a40: "40–50", a50: "50–60", a60: "60+", c1: "€500K–2M", c2: "€2–5M", c3: "€5–15M", c4: "€15–50M", c5: "€50–100M", c6: "€100M+", i1: "< €200K", i2: "€200–500K", i3: "€500K–1M", i4: "€1M+", s1: "Salary", s2: "Business / company", s3: "Dividends & investments", s4: "Mixed", l1: "< €500K", l2: "€500K–2M", l3: "€2–10M", l4: "€10–50M", l5: "€50M+", fSingle: "Single", fCouple: "Couple", fKids: "Family with children", zFR: "France", zEU: "Other EU", zUK: "UK", zUS: "United States", zCA: "Canada", zNA: "US/Canada (legacy)", zOther: "Other", pMC: "Monaco", pCH: "Switzerland", pAE: "UAE", pLU: "Luxembourg", pLI: "Liechtenstein", pAD: "Andorra", pSG: "Singapore", pFR: "France", pUK: "United Kingdom", pDE: "Germany", pOther: "Other", kids: "Children", safety: "Safety", business: "Business", sea: "Sea", taxes: "Taxes", climate: "Climate" },
@@ -694,6 +724,7 @@ export default function MontaureoPlatform() {
             aria-hidden="true"
             style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
           />
+          <a className="mt-documents-nav" href={DOCUMENTS_URL} onClick={()=>trackOutbound("montaureo_documents_nav")}>Documents <ArrowRight size={15} style={{transform:'rotate(-35deg)'}} aria-hidden="true" /></a>
           {/* readable text over any frame */}
           <div className="mt-hero-shade" style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 2 }} />
           <div style={{ position: "absolute", top: 22, left: 0, right: 0, zIndex: 3, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, pointerEvents: "none" }}>
@@ -717,6 +748,7 @@ export default function MontaureoPlatform() {
             </div>
           </div>
         </div>
+        <DocumentsMention />
         <PressMention />
       </div>
     );
