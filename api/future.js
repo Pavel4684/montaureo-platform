@@ -5,6 +5,7 @@
 // затем  npm i @upstash/redis  и redeploy. Ключи интеграция кладёт в env сама.
 // Body: { profile, lang, clientId, model }. Ключ модели — только в env.
 // model: "claude" (Kate) | "qwen-plus" (Jun) | "mistral-medium-2508" (Emily)
+// Keep the browser's Emily selector stable; only the upstream API model changes.
 // =====================================================================
 
 import crypto from "crypto";
@@ -162,7 +163,8 @@ async function callMistral(profile, langLine) {
       "Authorization": `Bearer ${process.env.MISTRAL_API_KEY}`,
     },
     body: JSON.stringify({
-      model: "mistral-medium-2508",
+      model: "mistral-large-4-0",
+      response_format: { type: "json_object" },
       max_tokens: 2048,
       temperature: 0.2,
       messages: [
