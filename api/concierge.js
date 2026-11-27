@@ -10,6 +10,7 @@
 // Поле isPaid от браузера больше не принимается. Без оплаты — 402 payment_required.
 // Пока ACCESS_TOKEN_SECRET не задан, оплата проверяется по email (слабее, но уже на сервере).
 // persona → model: Kate → claude | Jun → qwen-plus | Emily → mistral-medium-2508
+// Keep the browser's Emily selector stable; only the upstream API model changes.
 // =====================================================================
 
 import crypto from "crypto";
@@ -220,7 +221,8 @@ async function callMistral(dynamic, messages) {
       "Authorization": `Bearer ${process.env.MISTRAL_API_KEY}`,
     },
     body: JSON.stringify({
-      model: "mistral-medium-2508",
+      model: "mistral-large-4-0",
+      response_format: { type: "json_object" },
       max_tokens: 2048,
       messages: [
         { role: "system", content: SYSTEM + "\n\n" + dynamic },
