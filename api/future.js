@@ -175,7 +175,12 @@ async function callMistral(profile, langLine) {
   });
   if (!r.ok) { console.error("mistral", r.status, await r.text().catch(() => "")); throw new Error("model_error"); }
   const data = await r.json();
-  const raw = (data.choices?.[0]?.message?.content || "").trim();
+  const content = data.choices?.[0]?.message?.content;
+  const raw = (typeof content === "string" ? content : Array.isArray(content)
+    ? content.filter((chunk) => chunk?.type === "text" && typeof chunk.text === "string")
+        .map((chunk) => chunk.text).join("")
+    : "").trim();
+  if (!raw) { console.error("Mistral returned no final text"); throw new Error("model_error"); }
   return extractJson(raw);
 }
 
